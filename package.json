@@ -1,0 +1,17 @@
+{
+  "name": "Twitter API Tool",
+  "version": "0.0.1",
+  "description": "Tool to search the twitter API",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zachbachiri/Twitter-Analysis-Tool.git"
+  },
+  "author": "Zach Bachiri, Alexander Seeto, Premal Patel, Jimmy Ly",
+  "homepage": "https://github.com/zachbachiri/Twitter-Analysis-Tool.git",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-compass": "^0.9.1",
+    "grunt-contrib-sass": "^0.7.3",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}
