@@ -7,6 +7,7 @@ html,body{
 	padding: 0;
 	height: 100%;
 	color: $flock-grey;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .page_wrap{
@@ -24,7 +25,7 @@ html,body{
 .left_column{
 	margin: 0;
 	padding: 0;
-	width: 33%;
+	width: 30%;
 	height: 100%;
 	float: left;
 	overflow: scroll;
@@ -33,12 +34,26 @@ html,body{
 	.search_wrap{
 		position: relative;
 		min-height: 100%;
-		padding-bottom: 190px;
+		//padding-bottom: 190px;
 		.search{
 
 			padding: 25px 50px;
 			.logo{
 				width: 200px;
+			}
+
+			.parameters{
+				margin-top: 15px;
+				#query_text{
+					width: 100%;
+					padding-left: 15px;
+					height: 40px;
+					border-radius: 8px;
+					border: solid 2px $background-grey;
+				}
+				#query_submit{
+
+				}
 			}
 
 		}
@@ -83,9 +98,33 @@ html,body{
 
 .right_column{
 	margin: 0;
-	width: 67%;
+	width: 70%;
 	height: 100%;
 	float: left;
 	background-color: $background-grey;
 	overflow: scroll;
+	#container{
+		width: 100%;
+		.tweet{
+			background-color: white;
+			width: 30%;
+			float: left;
+			margin-bottom: 15px;
+			margin-left: 1%;
+			margin-right: 1%;
+			box-shadow: 2px 2px 3px #E0E0E0;
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
