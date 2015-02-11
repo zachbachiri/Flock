@@ -23,9 +23,8 @@
 					<img src="styles/images/logo.png" class="logo">
 
 					<form novalidate class="parameters">
-
-					  <input type="text" ng-model="parameters.q" value="" placeholder="Search @user, #hashtag or Keyword"/>
-					  <input type="submit" ng-click="query(parameters)" value="Search"/>
+						<input id="query_text" type="text" ng-model="parameters.q" value="" placeholder="Search @user, #hashtag or Keyword"/>
+						<input id="query_submit" type="submit" ng-click="query(parameters)" value="Search"/>
 					</form>
 				</div>
 
@@ -42,7 +41,7 @@
 
 			<div id="container" masonry="true">
 				<div ng-repeat="tweet in tweets" class="tweet">
-					<img ng-src="{{ tweet.user.profile_image_url_https }}">
+					<img ng-src="{{ tweet.user.profile_image_url_https }}" class="profile_image">
 					<span>{{ tweet.user.name }}</span>
 					<span>@{{ tweet.user.screen_name }}</span>
 					<p>{{ tweet.text }}</p>

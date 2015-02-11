@@ -2,7 +2,8 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  color: #4c4c4c; }
+  color: #4c4c4c;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 
 .page_wrap {
   height: 100%; }
@@ -29,6 +30,14 @@ html, body {
       padding: 25px 50px; }
       .left_column .search_wrap .search .logo {
         width: 200px; }
+      .left_column .search_wrap .search .parameters {
+        margin-top: 15px; }
+        .left_column .search_wrap .search .parameters #query_text {
+          width: 100%;
+          padding-left: 15px;
+          height: 40px;
+          border-radius: 8px;
+          border: solid 2px #f0f0f0; }
     .left_column .search_wrap .download {
       padding: 35px 0 35px 0;
       background-color: #55acee;
@@ -66,4 +75,7 @@ html, body {
       background-color: white;
       width: 30%;
       float: left;
-      margin-bottom: 15px; }
+      margin-bottom: 15px;
+      margin-left: 1%;
+      margin-right: 1%;
+      box-shadow: 2px 2px 3px #E0E0E0; }

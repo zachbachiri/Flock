@@ -21,12 +21,15 @@
 			return tweets;
 		}
 
+
+		//NOTE: if we want to allow free text location search, like boston, ma, 
+		//      we need to use a geocoder, like https://developers.google.com/maps/documentation/javascript/geocoding
 		$scope.query = function(params) {
 			if (params.q == "") {
 				return;
 			}
 
-			params.count = 50;
+			params.count = 100;
 			params.lang = "en";
 
 			cb.__call(
