@@ -39,8 +39,8 @@
 
 		<div class="right_column">
 
-			<div id="container" masonry="true">
-				<div ng-repeat="tweet in tweets" class="tweet">
+			<div id="container" masonry='{ "transitionDuration" : "0.1s" , "itemSelector" : ".tweet", "gutter" : 25}'>
+				<div masonry-tile ng-repeat="tweet in tweets" class="tweet">
 					<img ng-src="{{ tweet.user.profile_image_url_https }}" class="profile_image">
 					<span>{{ tweet.user.name }}</span>
 					<span>@{{ tweet.user.screen_name }}</span>
@@ -57,12 +57,13 @@
 	</div>
 
   
-
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="plugins/masonry.pkgd.min.js"></script>
+	<script src="plugins/imagesloaded.pkgd.min.js"></script>
 	<script type="text/javascript" src="plugins/codebird.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
  	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.min.js"></script>
+ 	<script src="plugins/angular-masonry-directive.js"></script>
  	<script src="app.js"></script>
- 	<script src="plugins/masonry.pkgd.min.js"></script>
 
  	<script>
  	/*

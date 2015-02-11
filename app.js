@@ -1,5 +1,5 @@
 (function(){
-	var app = angular.module('twitterTool', []);
+	var app = angular.module('twitterTool', ['masonry']);
 
 	var cb = new Codebird;
 	cb.setConsumerKey("pEaf5TgKTpz0Tf1M9uyqZSysQ", "dTV7OuEkgauN8syVrOT5T9XzK8CnXpSvjMEELlZshz1aqdsAVW");
@@ -36,7 +36,6 @@
 				"search_tweets",
 				params,
 				function (reply) {
-					console.log(reply);
 					$scope.tweets = reply.statuses;
 					$scope.$apply();
 				}
