@@ -36,6 +36,7 @@
 				"search_tweets",
 				params,
 				function (reply) {
+					console.log(reply);
 					$scope.tweets = reply.statuses;
 					$scope.$apply();
 				}
