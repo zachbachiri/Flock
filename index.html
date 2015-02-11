@@ -5,20 +5,68 @@
 <!--[if gt IE 8]><!--> <html lang="en" ng-app="twitterTool" class="no-js"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Twitter Tool</title>
-  <meta name="description" content="A tool to search and filter tweets.">
+  <title>Flock - Twitter Search</title>
+  <meta name="description" content="A tool to search, filter and download tweets.">
+
+  <link rel="stylesheet" type="text/css" href="styles/main.css">
+  <link rel="stylesheet" type="text/css" href="styles/normalize.css">
+  
 </head>
 <body>
 
-	<h1>Flock</h1>
+	<!--  <div ng-view></div>  -->
+	<div class="page_wrap">
+		<div class="left_column">
 
-  <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-  <![endif]-->
+			<div class="search_wrap">
 
-  <div ng-view></div>
+				<div class="search">
+					<img src="styles/images/logo.png" class="logo">
 
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.min.js"></script>
-  <script src="app.js"></script>
+					<div class="parameters">
+
+					</div>
+
+					<h1>Test Content</h1>
+		       
+					<p><strong>Pellentesque habitant morbi tristique</strong> senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. <em>Aenean ultricies mi vitae est.</em> Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, <code>commodo vitae</code>, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. <a href="#">Donec non enim</a> in turpis pulvinar facilisis. Ut felis.</p>
+
+					<h2>Header Level 2</h2>
+						       
+					<ol>
+					   <li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</li>
+					   <li>Aliquam tincidunt mauris eu risus.</li>
+					</ol>
+
+					<blockquote><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus magna. Cras in mi at felis aliquet congue. Ut a est eget ligula molestie gravida. Curabitur massa. Donec eleifend, libero at sagittis mollis, tellus est malesuada tellus, at luctus turpis elit sit amet quam. Vivamus pretium ornare est.</p></blockquote> 
+				</div>
+
+				<div class="download">
+					<button id="visualize" type="button">Download</button>
+
+					<button id="download" type="button">Visualize</button>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="right_column">
+			<h1>Flock</h1>
+
+			<div class="tweet">
+			</div>
+
+		</div>
+
+	</div>
+
+  
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+ 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.min.js"></script>
+ 	<script src="app.js"></script>
+ 	<script src="plugins/masonry.pkgd.min.js"></script>
+
+
 </body>
 </html>
