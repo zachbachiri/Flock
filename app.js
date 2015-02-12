@@ -48,7 +48,54 @@
 
 	    //Placeholder functions for downloading and visualizing
 	    $scope.download = function() {
-	    	console.log("Download");
+	    	
+	    	var CSV = '';
+	    	var row = "";
+
+			//Array of CSV column headers
+			row += "Username,Timestamp,Message,"; 
+			row = row.slice(0, -1);
+			
+			//Append column header row with line break
+			CSV += row + '\r\n';
+
+			//Loop through all tweets
+		    for (var i = 0; i < $scope.tweets.length; i++) {
+		        var row = "";
+		        
+		        //Extract specifc data for each tweet
+		        row += '"' + $scope.tweets[i]["user"]["screen_name"] + '",';
+		        row += '"' + $scope.tweets[i]["created_at"] + '",';
+		        row += '"' + $scope.tweets[i]["text"] + '",';
+		        row.slice(0, row.length - 1);
+		        
+		        //Add a line break after each row
+		        CSV += row + '\r\n';
+		    }
+
+		    if (CSV == '') {        
+		        alert("Invalid data");
+		        return;
+		    }
+			
+			//Generate a file name
+		    var fileName = "flockData";
+		    
+		    //Initialize file format you want csv or xls
+    		var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+
+    		//this trick will generate a temp <a /> tag
+		    var link = document.createElement("a");    
+		    link.href = uri;
+		    
+		    //set the visibility hidden so it will not effect on your web-layout
+		    link.style = "visibility:hidden";
+		    link.download = fileName + ".csv";
+		    
+		    //this part will append the anchor tag and remove it after automatic click
+		    document.body.appendChild(link);
+		    link.click();
+		    document.body.removeChild(link);
 	    }
 
 	    $scope.visualize = function() {
