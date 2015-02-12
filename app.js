@@ -5,10 +5,13 @@
 	cb.setConsumerKey("pEaf5TgKTpz0Tf1M9uyqZSysQ", "dTV7OuEkgauN8syVrOT5T9XzK8CnXpSvjMEELlZshz1aqdsAVW");
 	cb.setToken("3029162194-GAze2tNS3Y4rPvIwvXZ1j813hZriXKWNpWjo3dd", "ndsckIxbSpvDuTZGdmzP4pGac6fsBjfQAVkL5EoTzpd3M");
 
+	//Initialize geocoder
+	var geocoder = new google.maps.Geocoder();
+
 	/* Main Controller */
 	app.controller('MainController', function($scope, $q){
 		$scope.tweets = [];
-		
+		$scope.loc = {};
 		
 		var query_api = function(params){
 			var tweets;
@@ -21,16 +24,33 @@
 			return tweets;
 		}
 
+		$scope.setGeolocation = function(location){
+			//convert location input to geolocation
+			geocoder.geocode( { 'address': location}, function(results, status){
+		        if (status == google.maps.GeocoderStatus.OK){
+		            $scope.loc = results[0].geometry.location;
+		            $scope.$apply();
+		        }else{
+		            alert("Geocode unsuccessful, Status: " + status);
+		        }
+		    });
+		}
 
-		//NOTE: if we want to allow free text location search, like boston, ma, 
-		//      we need to use a geocoder, like https://developers.google.com/maps/documentation/javascript/geocoding
 		$scope.query = function(params) {
 			if (params.q == "") {
 				return;
 			}
+			
+			//Get user location input
+			var location = $('#location').val();
+			//Get latitude, longitude using geocoder
+			$scope.setGeolocation(location);
+			console.log($scope.loc);
 
 			params.count = 100;
 			params.lang = "en";
+			// params.lat = $scope.loc.lat();
+			// params.long = $scope.loc.lng();
 
 			cb.__call(
 				"search_tweets",
@@ -42,9 +62,6 @@
 			);
 			
 	    };
-
-
-
 
 	    //Placeholder functions for downloading and visualizing
 	    $scope.download = function() {
@@ -84,15 +101,15 @@
 		    //Initialize file format you want csv or xls
     		var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
 
-    		//this trick will generate a temp <a /> tag
+    		//Generate a temp <a /> tag
 		    var link = document.createElement("a");    
 		    link.href = uri;
 		    
-		    //set the visibility hidden so it will not effect on your web-layout
+		    //Set the visibility hidden so it will not affect web-layout
 		    link.style = "visibility:hidden";
 		    link.download = fileName + ".csv";
 		    
-		    //this part will append the anchor tag and remove it after automatic click
+		    //Append the anchor tag and remove it after automatic click
 		    document.body.appendChild(link);
 		    link.click();
 		    document.body.removeChild(link);

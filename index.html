@@ -10,6 +10,7 @@
 
   <link rel="stylesheet" type="text/css" href="styles/main.css">
   <link rel="stylesheet" type="text/css" href="styles/normalize.css">
+  <script src="plugins/geocoding.js"></script>
   
 </head>
 <body ng-controller="MainController">
@@ -25,6 +26,8 @@
 					<form novalidate class="parameters">
 						<input id="query_text" type="text" ng-model="parameters.q" value="" placeholder="Search @user, #hashtag or Keyword"/>
 						<input id="query_submit" type="submit" ng-click="query(parameters)" value="Search"/>
+
+						<input id="location" type="text" ng-model="paramaters.q" value="" placeholder="Boston, MA">
 					</form>
 				</div>
 
