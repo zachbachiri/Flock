@@ -8,61 +8,56 @@
 	/* Main Controller */
 	app.controller('MainController', function($scope, $q){
 		$scope.tweets = [];
-		
-		var query_api = function(params){
-			var tweets;
-			cb.__call(
-			"search_tweets",
-			params,
-			function (reply) {
-				tweets = reply.statuses;
-			});
-			return tweets;
-		}
 
-		$scope.setGeolocation = function(location, callback){
-			//Initialize geocoder
-			var geocoder = new google.maps.Geocoder();
-
-			if(geocoder){
-				//convert location input to geolocation
-				geocoder.geocode( { 'address': location}, function(results, status){
-			        if (status == google.maps.GeocoderStatus.OK){
-			        	var locData = results[0].geometry.location;
-			            callback(locData);
-			        }else{
-			            alert("Geocode unsuccessful, Status: " + status);
-			        }
-			    });
-			}
-			
-		}
-
-		$scope.query = function(params) {
-			if (params.q == "") {
+		$scope.query = function(form_parameters) {
+			if (form_parameters.q == "") {
 				return;
 			}
-			params.count = 100;
-			params.lang = "en";
 			
-			if(params.loc != null && params.loc != ""){
-				//Get latitude, longitude using location input and geocoder
-				$scope.setGeolocation(params.loc, function(locData){
-		            params.lat = locData.lat();
-		            params.long = locData.lng();
-				});
-			}
+			var geocoder = new google.maps.Geocoder();
+			var query_parameters = [];
+			query_parameters.q = form_parameters.q;
+			query_parameters.count = 100;
+			query_parameters.lang =  "en";
+			
+			if(form_parameters.loc != null && form_parameters.loc != ""){
+				if(geocoder){
+					//convert location input to geolocation
+					geocoder.geocode( { 'address': form_parameters.loc}, function(results, status){
+				        if (status == google.maps.GeocoderStatus.OK){
+				        	var locData = results[0].geometry.location;
 
-			cb.__call(
-				"search_tweets",
-				params,
-				function (reply) {
-					$scope.tweets = reply.statuses;
-					$scope.$apply();
-					console.log(params);
+				        	query_parameters.geocode = String(locData.lat()) + 
+				        						   ',' + 
+				        						   String(locData.lng()) + 
+				        						   ',' + 
+				        						   '25mi';
+
+				        	cb.__call(
+								"search_tweets",
+								query_parameters,
+								function (reply) {
+									//now you can see that all tweets have a geo object
+									console.log(reply.statuses);
+									$scope.tweets = reply.statuses;
+									$scope.$apply();
+								}
+							);
+				        }else{
+				        	cb.__call(
+								"search_tweets",
+								query_parameters,
+								function (reply) {
+									console.log(reply.statuses);
+									$scope.tweets = reply.statuses;
+									$scope.$apply();
+								}
+							);
+				            console.log("Geocode unsuccessful, Status: " + status);
+				        }
+			    	});
 				}
-			);
-			
+			}
 	    };
 
 	    //Placeholder functions for downloading and visualizing
