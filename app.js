@@ -8,43 +8,57 @@
 	/* Main Controller */
 	app.controller('MainController', function($scope, $q){
 		$scope.tweets = [];
-		
-		
-		var query_api = function(params){
-			var tweets;
-			cb.__call(
-			"search_tweets",
-			params,
-			function (reply) {
-				tweets = reply.statuses;
-			});
-			return tweets;
-		}
 
-
-		//NOTE: if we want to allow free text location search, like boston, ma, 
-		//      we need to use a geocoder, like https://developers.google.com/maps/documentation/javascript/geocoding
-		$scope.query = function(params) {
-			if (params.q == "") {
+		$scope.query = function(form_parameters) {
+			if (form_parameters.q == "") {
 				return;
 			}
-
-			params.count = 100;
-			params.lang = "en";
-
-			cb.__call(
-				"search_tweets",
-				params,
-				function (reply) {
-					$scope.tweets = reply.statuses;
-					$scope.$apply();
-				}
-			);
 			
+			var geocoder = new google.maps.Geocoder();
+			var query_parameters = [];
+			query_parameters.q = form_parameters.q;
+			query_parameters.count = 100;
+			query_parameters.lang =  "en";
+			
+			if(form_parameters.loc != null && form_parameters.loc != ""){
+				if(geocoder){
+					//convert location input to geolocation
+					geocoder.geocode( { 'address': form_parameters.loc}, function(results, status){
+				        if (status == google.maps.GeocoderStatus.OK){
+				        	var locData = results[0].geometry.location;
+
+				        	query_parameters.geocode = String(locData.lat()) + 
+				        						   ',' + 
+				        						   String(locData.lng()) + 
+				        						   ',' + 
+				        						   '25mi';
+
+				        	cb.__call(
+								"search_tweets",
+								query_parameters,
+								function (reply) {
+									//now you can see that all tweets have a geo object
+									console.log(reply.statuses);
+									$scope.tweets = reply.statuses;
+									$scope.$apply();
+								}
+							);
+				        }else{
+				        	cb.__call(
+								"search_tweets",
+								query_parameters,
+								function (reply) {
+									console.log(reply.statuses);
+									$scope.tweets = reply.statuses;
+									$scope.$apply();
+								}
+							);
+				            console.log("Geocode unsuccessful, Status: " + status);
+				        }
+			    	});
+				}
+			}
 	    };
-
-
-
 
 	    //Placeholder functions for downloading and visualizing
 	    $scope.download = function() {
@@ -84,15 +98,15 @@
 		    //Initialize file format you want csv or xls
     		var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
 
-    		//this trick will generate a temp <a /> tag
+    		//Generate a temp <a /> tag
 		    var link = document.createElement("a");    
 		    link.href = uri;
 		    
-		    //set the visibility hidden so it will not effect on your web-layout
+		    //Set the visibility hidden so it will not affect web-layout
 		    link.style = "visibility:hidden";
 		    link.download = fileName + ".csv";
 		    
-		    //this part will append the anchor tag and remove it after automatic click
+		    //Append the anchor tag and remove it after automatic click
 		    document.body.appendChild(link);
 		    link.click();
 		    document.body.removeChild(link);
