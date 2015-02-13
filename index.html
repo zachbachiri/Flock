@@ -24,6 +24,7 @@
 					<img src="styles/images/logo.png" class="logo">
 
 					<form novalidate class="parameters">
+						<p class="parameters_title">Search tweets</p>
 						<input id="query_text" type="text" ng-model="parameters.q" value="" placeholder="Search @user, #hashtag or Keyword"/>
 						<input id="location" type="text" ng-model="parameters.loc" value="" placeholder="Boston, MA"/>
 						<input id="query_submit" type="submit" ng-click="query(parameters)" value="Search"/>
@@ -42,17 +43,21 @@
 
 		<div class="right_column">
 
-			<div id="container" masonry='{ "transitionDuration" : "0.1s" , "itemSelector" : ".tweet", "gutter" : 25}'>
+			<div class="container" ng-hide="show_visualize" masonry='{ "transitionDuration" : "0.1s" , "itemSelector" : ".tweet", "gutter" : 25}'>
 				<div masonry-tile ng-repeat="tweet in tweets" class="tweet">
 					<img ng-src="{{ tweet.user.profile_image_url_https }}" class="profile_image">
-					<span>{{ tweet.user.name }}</span>
-					<span>@{{ tweet.user.screen_name }}</span>
-					<p>{{ tweet.text }}</p>
+					<span class="profile_name">{{ tweet.user.name }}</span><br>
+					<span class="profile_screen_name">@{{ tweet.user.screen_name }}</span>
+					<p class="profile_tweet">{{ tweet.text }}</p>
 
 					<span ng-if="tweet.entities.media">
-						<img style="max-width:100%;" ng-src="{{ tweet.entities.media[0].media_url }}">
+						<img class="profile_media" style="max-width:100%;" ng-src="{{ tweet.entities.media[0].media_url }}">
 					</span>
 				</div>
+			</div>
+
+			<div class="container" ng-show="show_visualize">
+				<h1>Visualize</h1>
 			</div>
 
 		</div>

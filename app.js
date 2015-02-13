@@ -8,6 +8,7 @@
 	/* Main Controller */
 	app.controller('MainController', function($scope, $q){
 		$scope.tweets = [];
+		$scope.show_visualize = false;
 
 		$scope.query = function(form_parameters) {
 			if (form_parameters.q == "") {
@@ -113,7 +114,7 @@
 	    }
 
 	    $scope.visualize = function() {
-	    	console.log("Visualize");  
+	    	$scope.show_visualize = !$scope.show_visualize;
 	    }  
 	});
   
