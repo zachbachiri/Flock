@@ -5,13 +5,9 @@
 	cb.setConsumerKey("pEaf5TgKTpz0Tf1M9uyqZSysQ", "dTV7OuEkgauN8syVrOT5T9XzK8CnXpSvjMEELlZshz1aqdsAVW");
 	cb.setToken("3029162194-GAze2tNS3Y4rPvIwvXZ1j813hZriXKWNpWjo3dd", "ndsckIxbSpvDuTZGdmzP4pGac6fsBjfQAVkL5EoTzpd3M");
 
-	//Initialize geocoder
-	var geocoder = new google.maps.Geocoder();
-
 	/* Main Controller */
 	app.controller('MainController', function($scope, $q){
 		$scope.tweets = [];
-		$scope.loc = {};
 		
 		var query_api = function(params){
 			var tweets;
@@ -24,33 +20,38 @@
 			return tweets;
 		}
 
-		$scope.setGeolocation = function(location){
-			//convert location input to geolocation
-			geocoder.geocode( { 'address': location}, function(results, status){
-		        if (status == google.maps.GeocoderStatus.OK){
-		            $scope.loc = results[0].geometry.location;
-		            $scope.$apply();
-		        }else{
-		            alert("Geocode unsuccessful, Status: " + status);
-		        }
-		    });
+		$scope.setGeolocation = function(location, callback){
+			//Initialize geocoder
+			var geocoder = new google.maps.Geocoder();
+
+			if(geocoder){
+				//convert location input to geolocation
+				geocoder.geocode( { 'address': location}, function(results, status){
+			        if (status == google.maps.GeocoderStatus.OK){
+			        	var locData = results[0].geometry.location;
+			            callback(locData);
+			        }else{
+			            alert("Geocode unsuccessful, Status: " + status);
+			        }
+			    });
+			}
+			
 		}
 
 		$scope.query = function(params) {
 			if (params.q == "") {
 				return;
 			}
-			
-			//Get user location input
-			var location = $('#location').val();
-			//Get latitude, longitude using geocoder
-			$scope.setGeolocation(location);
-			console.log($scope.loc);
-
 			params.count = 100;
 			params.lang = "en";
-			// params.lat = $scope.loc.lat();
-			// params.long = $scope.loc.lng();
+			
+			if(params.loc != null && params.loc != ""){
+				//Get latitude, longitude using location input and geocoder
+				$scope.setGeolocation(params.loc, function(locData){
+		            params.lat = locData.lat();
+		            params.long = locData.lng();
+				});
+			}
 
 			cb.__call(
 				"search_tweets",
@@ -58,6 +59,7 @@
 				function (reply) {
 					$scope.tweets = reply.statuses;
 					$scope.$apply();
+					console.log(params);
 				}
 			);
 			
