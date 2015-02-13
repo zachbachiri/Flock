@@ -21,45 +21,42 @@
 			query_parameters.count = 100;
 			query_parameters.lang =  "en";
 			
-			if(form_parameters.loc != null && form_parameters.loc != ""){
-				if(geocoder){
-					//convert location input to geolocation
-					geocoder.geocode( { 'address': form_parameters.loc}, function(results, status){
-				        if (status == google.maps.GeocoderStatus.OK){
-				        	var locData = results[0].geometry.location;
+			if(form_parameters.loc != null && form_parameters.loc != "" && geocoder){
+				//convert location input to geolocation
+				geocoder.geocode( { 'address': form_parameters.loc}, function(results, status){
+				if (status == google.maps.GeocoderStatus.OK){
+					var locData = results[0].geometry.location;
 
-				        	query_parameters.geocode = String(locData.lat()) + 
-				        						   ',' + 
-				        						   String(locData.lng()) + 
-				        						   ',' + 
-				        						   '25mi';
+				     query_parameters.geocode = String(locData.lat()) + 
+				        						',' + 
+				        						String(locData.lng()) + 
+				        						',' + 
+				        						'25mi';
 
-				        	cb.__call(
-								"search_tweets",
-								query_parameters,
-								function (reply) {
-									//now you can see that all tweets have a geo object
-									console.log(reply.statuses);
-									$scope.tweets = reply.statuses;
-									$scope.$apply();
-								}
-							);
-				        }else{
-				        	cb.__call(
-								"search_tweets",
-								query_parameters,
-								function (reply) {
-									console.log(reply.statuses);
-									$scope.tweets = reply.statuses;
-									$scope.$apply();
-								}
-							);
-				            console.log("Geocode unsuccessful, Status: " + status);
-				        }
-			    	});
+				    twitterCall(query_parameters);
+				}else{
+					query_parameters.geocode = "";
+					twitterCall(query_parameters);
+				    console.log("Geocode unsuccessful, Status: " + status);
 				}
+			    	});
+			} else {
+				query_parameters.geocode = "";
+				twitterCall(query_parameters);
 			}
 	    };
+
+	    var twitterCall = function(params){
+	    	cb.__call(
+				"search_tweets",
+				params,
+				function (reply) {
+					console.log(reply.statuses);
+					$scope.tweets = reply.statuses;
+					$scope.$apply();
+				}
+			);
+	    }
 
 	    //Placeholder functions for downloading and visualizing
 	    $scope.download = function() {
