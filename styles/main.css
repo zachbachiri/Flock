@@ -27,9 +27,9 @@ html, body {
     position: relative;
     min-height: 100%; }
     .left_column .search_wrap .search {
-      padding: 25px 50px; }
+      padding: 25px 50px 202px 50px; }
       .left_column .search_wrap .search .logo {
-        width: 200px; }
+        width: 175px; }
       .left_column .search_wrap .search .parameters {
         margin-top: 15px; }
         .left_column .search_wrap .search .parameters #query_text {
@@ -38,6 +38,21 @@ html, body {
           height: 40px;
           border-radius: 8px;
           border: solid 2px #f0f0f0; }
+        .left_column .search_wrap .search .parameters #query_submit {
+          border: none;
+          background-color: #55acee;
+          background-image: url("images/twitter_icon.png");
+          background-position: 40px 10px;
+          background-size: 25px;
+          background-repeat: no-repeat;
+          color: white;
+          padding: 10px 50px 10px 75px;
+          font-size: 1.2em;
+          margin-top: 20px;
+          border-radius: 3px; }
+        .left_column .search_wrap .search .parameters .parameters_title {
+          font-size: 1.3em;
+          margin-bottom: 5px; }
     .left_column .search_wrap .download {
       padding: 35px 0 35px 0;
       background-color: #55acee;
@@ -69,13 +84,31 @@ html, body {
   float: left;
   background-color: #f0f0f0;
   overflow: scroll; }
-  .right_column #container {
+  .right_column .container {
     width: 95%;
     margin-top: 25px;
     margin-left: auto;
     margin-right: auto; }
-    .right_column #container .tweet {
+    .right_column .container .tweet {
       background-color: white;
-      width: 31%;
+      width: 42%;
+      padding: 3%;
       margin-bottom: 25px;
       box-shadow: 2px 2px 3px #E0E0E0; }
+      .right_column .container .tweet .profile_image {
+        float: left;
+        border-radius: 6px; }
+      .right_column .container .tweet .profile_name {
+        display: inline-block;
+        font-weight: bold;
+        padding-left: 15px; }
+      .right_column .container .tweet .profile_screen_name {
+        display: inline-block;
+        color: #8899a6;
+        padding-left: 15px;
+        margin-top: 5px; }
+      .right_column .container .tweet .profile_tweet {
+        clear: both;
+        margin-top: 15px; }
+      .right_column .container .tweet .profile_media {
+        max-width: 100%; }

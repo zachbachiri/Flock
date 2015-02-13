@@ -36,10 +36,9 @@ html,body{
 		min-height: 100%;
 		//padding-bottom: 190px;
 		.search{
-
-			padding: 25px 50px;
+			padding: 25px 50px 202px 50px;
 			.logo{
-				width: 200px;
+				width: 175px;
 			}
 
 			.parameters{
@@ -52,7 +51,22 @@ html,body{
 					border: solid 2px $background-grey;
 				}
 				#query_submit{
+					border: none;
+					background-color: $twitter-blue;
+					background-image: url('images/twitter_icon.png');
+					background-position: 40px 10px;
+					background-size: 25px;
+					background-repeat: no-repeat;
+					color: white;
+					padding: 10px 50px 10px 75px;
+					font-size: 1.2em;
+					margin-top: 20px;
+					border-radius: 3px;
 
+				}
+				.parameters_title{
+					font-size: 1.3em;
+					margin-bottom: 5px;
 				}
 			}
 
@@ -103,16 +117,39 @@ html,body{
 	float: left;
 	background-color: $background-grey;
 	overflow: scroll;
-	#container{
+	.container{
 		width: 95%;
 		margin-top: 25px;
 		margin-left: auto;
 		margin-right: auto;
 		.tweet{
 			background-color: white;
-			width: 31%;
+			width: 42%;
+			padding: 3%;
 			margin-bottom: 25px;
 			box-shadow: 2px 2px 3px #E0E0E0;
+			.profile_image{
+				float: left;
+				border-radius: 6px;
+			}
+			.profile_name{
+				display: inline-block;
+				font-weight: bold;
+				padding-left: 15px;
+			}
+			.profile_screen_name{
+				display: inline-block;
+				color: #8899a6;
+				padding-left: 15px;
+				margin-top: 5px;
+			}
+			.profile_tweet{
+				clear: both;
+				margin-top: 15px;
+			}
+			.profile_media{
+				max-width: 100%;
+			}
 		}
 	}
 }
