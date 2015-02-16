@@ -13,8 +13,8 @@ Tool for advanced twitter search
 5. After doing work locally, add files. There are multiple ways to do this('git add file-or-directory_name', git add -A <- this is dangerous sometimes)
 6. commit change (git commit -m "commit message - description of what you did")
 7. push changes to branch ('git push origin branch_name')
-6. Create pull request in github. Go to the branch and hit 'Compare, review, create a pull request', make request to merge branch into master
-7. After review, merge the branch into master in github. Then merge master to the gh-page branch so that branch is up to date.
+8. Create pull request in github. Go to the branch and hit 'Compare, review, create a pull request', make request to merge branch into master
+9. After review, merge the branch into master in github. Then merge master to the gh-page branch so that branch is up to date.
 
 ###More useful github commands
 ####Rebase. Use case is if you are doing work locally and someone merges to master. This will rebase your work on top of the new work
@@ -26,7 +26,13 @@ Tool for advanced twitter search
 #### Status
 - 'git status' shows all modified files(helps when you are doing a git add)
 
-
+#### Update gh-pages
+1. 'git checkout master'
+2. 'git pull origin master' 
+3. 'git checkout gh-pages'
+4. 'git pull origin gh-pages'
+5. 'git rebase master'
+6. 'git push origin gh-pages'
 
 ## Building sass
 1. install Sass(follow mac command line installation instructions)
