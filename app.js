@@ -32,7 +32,6 @@
 				        						String(locData.lng()) + 
 				        						',' + 
 				        						'25mi';
-
 				    twitterCall(query_parameters);
 				}else{
 					query_parameters.geocode = "";
@@ -51,7 +50,6 @@
 				"search_tweets",
 				params,
 				function (reply) {
-					console.log(reply.statuses);
 					$scope.tweets = reply.statuses;
 					$scope.$apply();
 				}
@@ -65,8 +63,7 @@
 	    	var row = "";
 
 			//Array of CSV column headers
-			row += "Username,Timestamp,Message,"; 
-			row = row.slice(0, -1);
+			row += "Username,Timestamp,Message";
 			
 			//Append column header row with line break
 			CSV += row + '\r\n';
@@ -78,8 +75,7 @@
 		        //Extract specifc data for each tweet
 		        row += '"' + $scope.tweets[i]["user"]["screen_name"] + '",';
 		        row += '"' + $scope.tweets[i]["created_at"] + '",';
-		        row += '"' + $scope.tweets[i]["text"] + '",';
-		        row.slice(0, row.length - 1);
+		        row += '"' + $scope.tweets[i]["text"];
 		        
 		        //Add a line break after each row
 		        CSV += row + '\r\n';
