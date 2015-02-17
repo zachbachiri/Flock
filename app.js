@@ -119,6 +119,16 @@
 	    $scope.visualize = function() {
 	    	$scope.show_visualize = !$scope.show_visualize;
 	    }
+
+		$scope.autosuggest = function() {
+			var place;
+			var autocomplete = new google.maps.places.Autocomplete(loc_text);
+
+			google.maps.event.addListener(autocomplete, 'place_changed', function (){
+		        place = autocomplete.getPlace();
+		        console.log(place);
+			});
+		}
 	});
   
 })();
