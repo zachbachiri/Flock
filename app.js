@@ -21,6 +21,7 @@
 			query_parameters.count = 100;
 			query_parameters.lang =  "en";
 			
+			// If a location input is entered
 			if(form_parameters.loc != null && form_parameters.loc != "" && geocoder){
 				//convert location input to geolocation
 				geocoder.geocode( { 'address': form_parameters.loc}, function(results, status){
@@ -63,7 +64,7 @@
 	    	var row = "";
 
 			//Array of CSV column headers
-			row += "Username,Timestamp,Message";
+			row += "Username,Country,Location,Timestamp,Message,Image";
 			
 			//Append column header row with line break
 			CSV += row + '\r\n';
@@ -74,8 +75,17 @@
 		        
 		        //Extract specifc data for each tweet
 		        row += '"' + $scope.tweets[i]["user"]["screen_name"] + '",';
+		        row += '"' + $scope.tweets[i]["place"]["country_code"] + '",';
+		        row += '"' + $scope.tweets[i]["place"]["full_name"] + '",';
 		        row += '"' + $scope.tweets[i]["created_at"] + '",';
-		        row += '"' + $scope.tweets[i]["text"];
+		        // Clean tweet messages of line breaks and commas
+		        row += '"' + $scope.tweets[i]["text"].replace(/\n/g, " ").replace(/\n\"/g, " ").replace(/\,/g, "") + '",';
+		        // If media exists for tweet, add image url to CSV file
+		        if($scope.tweets[i]["entities"]["media"]){
+		        	row += '"' + $scope.tweets[i]["entities"]["media"][0]["url"] + '"';
+		        }else{
+					row += "No Image Attached";
+		        }
 		        
 		        //Add a line break after each row
 		        CSV += row + '\r\n';
@@ -108,7 +118,7 @@
 
 	    $scope.visualize = function() {
 	    	$scope.show_visualize = !$scope.show_visualize;
-	    }  
+	    }
 	});
   
 })();
