@@ -8,9 +8,11 @@
 	/* Main Controller */
 	app.controller('MainController', function($scope, $q){
 		$scope.tweets = [];
+		$scope.show_loading = false;
 		$scope.show_visualize = false;
 
 		$scope.query = function(form_parameters) {
+			$scope.show_loading = !$scope.show_loading;
 			if (form_parameters.q == "") {
 				return;
 			}
@@ -52,6 +54,7 @@
 				params,
 				function (reply) {
 					$scope.tweets = reply.statuses;
+					$scope.show_loading = !$scope.show_loading;
 					$scope.$apply();
 				}
 			);
