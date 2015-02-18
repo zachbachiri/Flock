@@ -31,12 +31,14 @@ html, body {
       .left_column .search_wrap .search .logo {
         width: 175px; }
       .left_column .search_wrap .search .parameters {
-        margin-top: 15px; }
-        .left_column .search_wrap .search .parameters #query_text {
+        margin-top: 15px;
+        margin-bottom: 50px; }
+        .left_column .search_wrap .search .parameters .text_box {
           width: 100%;
           padding-left: 15px;
           height: 40px;
           border-radius: 8px;
+          margin-bottom: 15px;
           border: solid 2px #f0f0f0; }
         .left_column .search_wrap .search .parameters #query_submit {
           border: none;

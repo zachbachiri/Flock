@@ -43,11 +43,13 @@ html,body{
 
 			.parameters{
 				margin-top: 15px;
-				#query_text{
+				margin-bottom: 50px;
+				.text_box{
 					width: 100%;
 					padding-left: 15px;
 					height: 40px;
 					border-radius: 8px;
+					margin-bottom: 15px;
 					border: solid 2px $background-grey;
 				}
 				#query_submit{

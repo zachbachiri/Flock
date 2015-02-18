@@ -25,8 +25,15 @@
 
 					<form novalidate class="parameters">
 						<p class="parameters_title">Search tweets</p>
-						<input id="query_text" type="text" ng-model="parameters.q" value="" placeholder="Search @user, #hashtag or Keyword"/>
-						<input id="loc_text" type="text" ng-keyup="autosuggest()" ng-model="parameters.loc" value="" placeholder="Boston, MA"/>
+						<input id="query_text" class="text_box" type="text" ng-model="parameters.q" value="" placeholder="Search @user, #hashtag or Keyword"/>
+						<input id="loc_text" class="text_box" type="text" ng-keyup="autosuggest()" ng-model="parameters.loc" value="" placeholder="Boston, MA"/>
+
+
+						<div id="advanced_search">
+							
+						</div>
+
+
 						<input id="query_submit" type="submit" ng-click="query(parameters)" value="Search"/>
 
 					</form>
@@ -61,7 +68,7 @@
 			</div>
 			<div class="container" ng-show="show_loading">
 				<h1>Loading Tweets</h1>
-				<img src="img/ajax-loader.gif" width="500px" height="500px">
+				<img src="img/ajax-loader.gif" width="250px" height="250px">
 			</div>
 		</div>
 
