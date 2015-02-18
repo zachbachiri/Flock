@@ -43,7 +43,7 @@
 
 		<div class="right_column">
 
-			<div class="container" ng-hide="show_visualize" masonry='{ "transitionDuration" : "0.1s" , "itemSelector" : ".tweet", "gutter" : 25}'>
+			<div class="container" ng-hide="show_visualize || show_loading" masonry='{ "transitionDuration" : "0.1s" , "itemSelector" : ".tweet", "gutter" : 25}'>
 				<div masonry-tile ng-repeat="tweet in tweets" class="tweet">
 					<img ng-src="{{ tweet.user.profile_image_url_https }}" class="profile_image">
 					<span class="profile_name">{{ tweet.user.name }}</span><br>
@@ -59,7 +59,10 @@
 			<div class="container" ng-show="show_visualize">
 				<h1>Visualize</h1>
 			</div>
-
+			<div class="container" ng-show="show_loading">
+				<h1>Loading Tweets</h1>
+				<img src="img/ajax-loader.gif" width="500px" height="500px">
+			</div>
 		</div>
 
 	</div>
