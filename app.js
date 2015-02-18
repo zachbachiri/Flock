@@ -35,11 +35,6 @@
 			query_parameters.q = form_parameters.q;
 			query_parameters.count = 100;
 			query_parameters.lang =  "en";
-			if (form_parameters.result_type) {
-				query_parameters.result_type = form_parameters.result_type;
-			} else {
-				console.log('bullshit');
-			}
 			
 			// If a location input is entered
 			if(form_parameters.loc != null && form_parameters.loc != "" && geocoder){
