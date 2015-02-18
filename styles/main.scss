@@ -76,9 +76,10 @@ html,body{
 					font-size: .9em;
 					display: inline-block;
 					cursor: pointer;
+					color: $twitter-blue;
 				}
 				.show_hide_search:hover{
-					color: $twitter-blue;
+					color: #3E7EAE;
 				}
 				#result_type {
 					margin-bottom: 15px;

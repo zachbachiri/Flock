@@ -60,9 +60,10 @@ html, body {
         .left_column .search_wrap .search .parameters .show_hide_search {
           font-size: .9em;
           display: inline-block;
-          cursor: pointer; }
-        .left_column .search_wrap .search .parameters .show_hide_search:hover {
+          cursor: pointer;
           color: #55acee; }
+        .left_column .search_wrap .search .parameters .show_hide_search:hover {
+          color: #3E7EAE; }
         .left_column .search_wrap .search .parameters #result_type {
           margin-bottom: 15px;
           display: block;
