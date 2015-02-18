@@ -47,7 +47,7 @@
 				        						',' + 
 				        						String(locData.lng()) + 
 				        						',' + 
-				        						'25mi';
+				        						'50mi';
 				    twitterCall(query_parameters);
 				}else{
 					query_parameters.geocode = "";
