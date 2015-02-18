@@ -29,7 +29,8 @@ html, body {
     .left_column .search_wrap .search {
       padding: 25px 50px 202px 50px; }
       .left_column .search_wrap .search .logo {
-        width: 175px; }
+        width: 175px;
+        margin-bottom: 25px; }
       .left_column .search_wrap .search .parameters {
         margin-top: 15px;
         margin-bottom: 50px; }
@@ -53,8 +54,29 @@ html, body {
           margin-top: 20px;
           border-radius: 3px; }
         .left_column .search_wrap .search .parameters .parameters_title {
-          font-size: 1.3em;
-          margin-bottom: 5px; }
+          font-size: 1.1em;
+          margin-bottom: 5px;
+          margin-top: 15px; }
+        .left_column .search_wrap .search .parameters .show_hide_search {
+          font-size: .9em;
+          display: inline-block;
+          cursor: pointer; }
+        .left_column .search_wrap .search .parameters .show_hide_search:hover {
+          color: #55acee; }
+        .left_column .search_wrap .search .parameters #result_type {
+          margin-bottom: 15px;
+          display: block;
+          width: 45%;
+          height: 40px;
+          background: -webkit-linear-gradient(white, #f7f7f7);
+          /* For Safari 5.1 to 6.0 */
+          background: -o-linear-gradient(white, #f7f7f7);
+          /* For Opera 11.1 to 12.0 */
+          background: -moz-linear-gradient(white, #f7f7f7);
+          /* For Firefox 3.6 to 15 */
+          background: linear-gradient(white, #f7f7f7);
+          border: solid 2px #f0f0f0;
+          border-radius: 3px; }
     .left_column .search_wrap .download {
       padding: 35px 0 35px 0;
       background-color: #55acee;

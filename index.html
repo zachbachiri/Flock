@@ -26,12 +26,19 @@
 					<form novalidate class="parameters">
 						<p class="parameters_title">Search tweets</p>
 						<input id="query_text" class="text_box" type="text" ng-model="parameters.q" value="" placeholder="Search @user, #hashtag or Keyword"/>
+						<p class="parameters_title">Location</p>
 						<input id="loc_text" class="text_box" type="text" ng-keyup="autosuggest()" ng-model="parameters.loc" value="" placeholder="Boston, MA"/>
 
 
-						<div id="advanced_search">
-							
+						<span class="show_hide_search" ng-hide="show_advanced_search" ng-click="toggle_advanced_search()">Advanced Search</span>
+
+						<p class="parameters_title" ng-show="show_advanced_search">Results Type</p>
+						<div id="advanced_search" ng-show="show_advanced_search">
+							<select id="result_type" ng-model="parameters.result_type" ng-init="parameters.result_type = result_types[2].value" ng-options="option.value as option.name for option in result_types">
+							</select>
 						</div>
+
+						<span class="show_hide_search" ng-show="show_advanced_search" ng-click="toggle_advanced_search()">Hide Advanced Search</span>
 
 
 						<input id="query_submit" type="submit" ng-click="query(parameters)" value="Search"/>
@@ -42,7 +49,7 @@
 				<div class="download">
 					<button id="download" type="button" ng-click="download()">Download</button>
 
-					<button id="visualize" type="button" ng-click="visualize()">Visualize</button>
+					<button id="visualize" type="button" ng-click="visualize()">{{ visualize_copy }}</button>
 				</div>
 
 			</div>

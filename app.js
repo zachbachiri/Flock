@@ -10,6 +10,19 @@
 		$scope.tweets = [];
 		$scope.show_loading = false;
 		$scope.show_visualize = false;
+		$scope.show_advanced_search = false;
+		$scope.visualize_copy = "Visualize";
+
+		$scope.result_types = [{
+		   name: 'Popular',
+		   value: 'popular'
+		}, {
+			name: 'Recent',
+			value: 'recent'
+		}, {
+		   name: 'Mixed',
+		   value: 'mixed'
+		}];
 
 		$scope.query = function(form_parameters) {
 			$scope.show_loading = !$scope.show_loading;
@@ -22,6 +35,11 @@
 			query_parameters.q = form_parameters.q;
 			query_parameters.count = 100;
 			query_parameters.lang =  "en";
+			if (form_parameters.result_type) {
+				query_parameters.result_type = form_parameters.result_type;
+			} else {
+				console.log('bullshit');
+			}
 			
 			// If a location input is entered
 			if(form_parameters.loc != null && form_parameters.loc != "" && geocoder){
@@ -121,6 +139,11 @@
 
 	    $scope.visualize = function() {
 	    	$scope.show_visualize = !$scope.show_visualize;
+	    	if($scope.visualize_copy == "Visualize") {
+	    		$scope.visualize_copy = "Tweets";
+	    	} else {
+	    		$scope.visualize_copy = "Visualize";
+	    	}
 	    }
 
 		$scope.autosuggest = function() {
@@ -131,6 +154,10 @@
 		        place = autocomplete.getPlace();
 		        console.log(place);
 			});
+		}
+
+		$scope.toggle_advanced_search = function() {
+			$scope.show_advanced_search = !$scope.show_advanced_search;
 		}
 	});
   
