@@ -53,6 +53,8 @@ html, body {
           font-size: 1.2em;
           margin-top: 20px;
           border-radius: 3px; }
+        .left_column .search_wrap .search .parameters #query_submit:hover {
+          background-color: #4387bb; }
         .left_column .search_wrap .search .parameters .parameters_title {
           font-size: 1.1em;
           margin-bottom: 5px;
@@ -63,7 +65,7 @@ html, body {
           cursor: pointer;
           color: #55acee; }
         .left_column .search_wrap .search .parameters .show_hide_search:hover {
-          color: #3E7EAE; }
+          color: #4387bb; }
         .left_column .search_wrap .search .parameters #result_type {
           margin-bottom: 15px;
           display: block;
@@ -137,3 +139,13 @@ html, body {
         margin-top: 15px; }
       .right_column .container .tweet .profile_media {
         max-width: 100%; }
+    .right_column .container .loading_gif {
+      width: 250px;
+      height: 250px; }
+    .right_column .container .load_more {
+      position: absolute;
+      bottom: 0;
+      margin-left: auto;
+      margin-right: auto;
+      right: 0;
+      left: 0; }

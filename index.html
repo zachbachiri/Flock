@@ -58,7 +58,7 @@
 		<div class="right_column">
 
 			<div class="container" ng-hide="show_visualize || show_loading" masonry='{ "transitionDuration" : "0.1s" , "itemSelector" : ".tweet", "gutter" : 25}'>
-				<div masonry-tile ng-repeat="tweet in tweets" class="tweet">
+				<div masonry-tile ng-repeat="tweet in tweets" class="tweet clearfix">
 					<img ng-src="{{ tweet.user.profile_image_url_https }}" class="profile_image">
 					<span class="profile_name">{{ tweet.user.name }}</span><br>
 					<span class="profile_screen_name">@{{ tweet.user.screen_name }}</span>
@@ -68,6 +68,8 @@
 						<img class="profile_media" style="max-width:100%;" ng-src="{{ tweet.entities.media[0].media_url }}">
 					</span>
 				</div>
+
+				<button class="load_more">Load more tweets</button>
 			</div>
 
 			<div class="container" ng-show="show_visualize">
@@ -75,7 +77,7 @@
 			</div>
 			<div class="container" ng-show="show_loading">
 				<h1>Loading Tweets</h1>
-				<img src="img/ajax-loader.gif" width="250px" height="250px">
+				<img class="loading_gif" src="img/ajax-loader.gif">
 			</div>
 		</div>
 
@@ -89,15 +91,6 @@
  	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.min.js"></script>
  	<script src="plugins/angular-masonry-directive.js"></script>
  	<script src="app.js"></script>
-
- 	<script>
- 	/*
- 	$('#container').masonry({
-	  gutter: 20,
-	  itemSelector: '.tweet',
-	});
-	*/
- 	</script>
 
 </body>
 </html>
