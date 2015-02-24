@@ -42,7 +42,11 @@ Tool for advanced twitter search
 ## Grunt
 - Grunt files are included in node_modules, for use if we want. Package.json and gruntfile.js are both related to grunt, so if we don't use it these are not necessary
 
-
+## Unit Testing
+- Unit tests live in the /test/unit directory. They use Jasmine, and more information can be found in the documentation: http://jasmine.github.io/2.2/introduction.html
+- For the moment, we can have a separate unit testing file for each controller. Within each unit testing file, we can group tests by 'suites' (using the 'describe' function) and group them even further by 'specs' (using the 'it' function). The individual tests are similar to other unit tests where you will create example data and use expect([expected value]).toBe([actual value]) to make sure the code is doing what it should be doing
+- To run the tests, go to the root directory of the project and type 'npm install'. This should install all the dependencies needed for testing. Then you can type 'npm test'. This will start a server, open a window in Chrome, and the terminal should display how many tests passed. If you keep the server running and add more unit tests later, then all the tests will be re-run.
+- The /test/karma.conf.js file is a configuration file for running the tests. NOTE: If you are testing code that uses new dependencies or code that is in a new file, then add the files/dependencies to the 'files' array in the karma.conf.js file
 
 
 
