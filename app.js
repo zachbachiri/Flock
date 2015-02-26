@@ -12,6 +12,8 @@
 		$scope.show_visualize = false;
 		$scope.show_advanced_search = false;
 		$scope.visualize_copy = "Visualize";
+		$scope.last_query = [];
+		$scope.load_more_copy = "View More Tweets";
 
 		$scope.result_types = [{
 		   name: 'Popular',
@@ -25,7 +27,7 @@
 		}];
 
 		$scope.query = function(form_parameters) {
-			$scope.show_loading = !$scope.show_loading;
+			$scope.show_loading = true;
 			if (form_parameters.q == "") {
 				return;
 			}
@@ -61,13 +63,43 @@
 			}
 	    };
 
+	    $scope.load_more = function(){
+	    	$scope.load_more_copy = "...";
+	    	cb.__call(
+				"search_tweets",
+				$scope.last_query,
+				function (reply) {
+					reply.statuses.forEach(function(x) {
+						if(!contains_tweet($scope.tweets, x)){ //doesn't work, need to find if array contains
+							$scope.tweets.push(x);
+						}
+					})
+					console.log("done");
+					$scope.load_more_copy = "View More Tweets";
+					$scope.$apply();
+				}
+			);
+	    }
+
+	    var contains_tweet = function(tweets, tweet){
+	    	var contains = false;
+	    	tweets.forEach(function(x){
+	    		if(x.id == tweet.id){
+	    			contains = true;
+	    		}
+	    	});
+	    	return contains;
+	    }
+
 	    var twitterCall = function(params){
+	    	$scope.last_query = params;
 	    	cb.__call(
 				"search_tweets",
 				params,
 				function (reply) {
 					$scope.tweets = reply.statuses;
-					$scope.show_loading = !$scope.show_loading;
+					console.log(reply.statuses);
+					$scope.show_loading = false;
 					$scope.$apply();
 				}
 			);

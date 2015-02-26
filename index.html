@@ -67,10 +67,20 @@
 					<span ng-if="tweet.entities.media">
 						<img class="profile_media" style="max-width:100%;" ng-src="{{ tweet.entities.media[0].media_url }}">
 					</span>
-				</div>
 
-				<button class="load_more">Load more tweets</button>
+					<span ng-if="tweet.retweeted_status">
+						<span class="retweet_count">{{ tweet.retweeted_status.retweet_count }}</span>
+						<span class="favorite_count">{{ tweet.retweeted_status.favorite_count }}</span>
+					</span>
+
+					<span ng-if="tweet.retweeted_status == null">
+						<span class="retweet_count">{{ tweet.retweet_count }}</span>
+						<span class="favorite_count">{{ tweet.favorite_count }}</span>
+					</span>
+				</div>
 			</div>
+
+			<button id="load_more" ng-hide="show_loading || show_visualize" ng-click="load_more()">{{ load_more_copy }}</button>
 
 			<div class="container" ng-show="show_visualize">
 				<h1>Visualize</h1>
