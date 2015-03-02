@@ -1,12 +1,23 @@
+/*
+	@author:  Zach Bachiri
+	@created: Jan 26, 2015
+	@group:   #11
+	@purpose: Initiate Angular Modules and Controller
+*/
 (function(){
-	// var app = angular.module('twitterTool', ['masonry'], ['ngDialog']);
 	var app = angular.module('twitterTool', ['masonry']);
 
 	var cb = new Codebird;
 	cb.setConsumerKey("pEaf5TgKTpz0Tf1M9uyqZSysQ", "dTV7OuEkgauN8syVrOT5T9XzK8CnXpSvjMEELlZshz1aqdsAVW");
 	cb.setToken("3029162194-GAze2tNS3Y4rPvIwvXZ1j813hZriXKWNpWjo3dd", "ndsckIxbSpvDuTZGdmzP4pGac6fsBjfQAVkL5EoTzpd3M");
 
-    /* Main Controller */
+    /*
+		@author:  Zach Bachiri
+		@created: Jan 26, 2015
+		@purpose: Initiate Main Controller
+		@args:    $scope, $q // TODO: add arg type
+		@return:  void 
+	*/
 	app.controller('MainController', function($scope, $q){
 		$scope.tweets = [];
 		$scope.show_loading = false;
@@ -25,7 +36,18 @@
 		   value: 'mixed'
 		}];
 
-	    /* Parses the json response and downloads into a CSV file */
+	    /* 
+	    	@name:    query
+	    	@author:  Zach Bachiri
+			@created: Jan 26, 2015
+	    	@purpose: Builds query parametes and performs twitterCall 
+			@args:    $scope, $q // TODO: add arg type
+			@reqfile: 
+			@return:  void
+			@errors:  
+			@modhist: Feb 12 : Alex Seeto : Add geocoding
+			          Feb 13 : Zach Bachiri : Geocoding modifications
+	    */
 		$scope.query = function(form_parameters) {
 			$scope.show_loading = !$scope.show_loading;
 			if (form_parameters.q == "") {
@@ -70,8 +92,18 @@
 			}
 	    };
 
-	    /* Makes request using Codebird for authentication and Twitter Search API */
-	    var twitterCall = function(params){
+		/* 
+	    	@name:    twitterCall
+	    	@author:  Zach Bachiri
+			@created: Feb 13, 2015
+	    	@purpose: Makes request using Codebird for authentication and Twitter Search API 
+			@args:    params // TODO: add arg type
+			@reqfile: 
+			@return:  void
+			@errors:  
+			@modhist: 
+	    */
+		var twitterCall = function(params){
 	    	cb.__call(
 				"search_tweets",
 				params,
@@ -83,21 +115,38 @@
 			);
 	    }
 
-	    /* Parses the json response and downloads into a CSV file */
-	    $scope.download = function() {
+	    /* 
+	    	@name:    showNgDialog
+	    	@author:  Alex Seeto
+			@created: Feb 28, 2015
+	    	@purpose: Show ngDialog box for selecting columns for download 
+			@args:    
+			@reqfile: plugins/ngDialog.js
+			@return:  void
+			@errors:  
+			@modhist: 
+	    */
+	    $scope.showNgDialog = function() {
 	    	// ngDialog.open({
-		    //     template: '<div>By updating i need it to reflect in the root scope:<br /><br />' + 
-		    //               '<input type="text" ng-model="passedObject"/></div>',
+		    //     template: '<div>Select Columns to Download<br /><br />' + 
+		    //               '</div>',
 		    //     plain: true,
-		    //     scope: $scope,
-		    //     controller: ['$scope', function($scope){
-		    //         $scope.$watch('passedObject', function(passedObject){
-		    //             //What do i need to do? it seems like the scope at this level is updating how come the parent is not?
-		    //             if(window.console){console.log('updated with: ' + passedObject);}
-		    //             //$scope.$apply();
-		    //         });
-		    //     }]
+		    //     scope: $scope
 		    // });
+	    }
+
+	    /* 
+	    	@name:    showNgDialog
+	    	@author:  Alex Seeto
+			@created: Feb 11, 2015
+	    	@purpose: Parses the json response and downloads into a CSV file
+			@args:    
+			@reqfile: 
+			@return:  void
+			@errors:  
+			@modhist: 
+	    */
+	    $scope.download = function() {
 	    	// Check CSV data exists
 		    if ($scope.tweets == []) {        
 		        alert("Please perform a search before downloading!");
@@ -179,7 +228,17 @@
 		    document.body.removeChild(link);
 	    }
 
-		/* Toggles display of Visualization */
+		/* 
+	    	@name:    visualize
+	    	@author:  Zach Bachiri
+			@created: Jan 26, 2015
+	    	@purpose: Toggles display of Visualization
+			@args:    
+			@reqfile: 
+			@return:  void
+			@errors:  
+			@modhist: 
+	    */
 	    $scope.visualize = function() {
 	    	$scope.show_visualize = !$scope.show_visualize;
 	    	if($scope.visualize_copy == "Visualize") {
@@ -189,7 +248,17 @@
 	    	}
 	    }
 
-		/* Uses Google Maps API and places library to form autocomplete for location input */
+	    /* 
+	    	@name:    visualize
+	    	@author:  Zach Bachiri
+			@created: Jan 26, 2015
+	    	@purpose: Uses Google Maps API and places library to form autocomplete for location input
+			@args:    
+			@reqfile: http://maps.google.com/maps/api/js?sensor=false&libraries=places
+			@return:  void
+			@errors:  
+			@modhist: 
+	    */
 		$scope.autosuggest = function() {
 			var place;
 			var autocomplete = new google.maps.places.Autocomplete(loc_text);
@@ -198,7 +267,17 @@
 			});
 		}
 
-		/* Toggles display of advanced search options */
+		/* 
+	    	@name:    visualize
+	    	@author:  Zach Bachiri
+			@created: Feb 18, 2015
+	    	@purpose: Toggles display of advanced search options
+			@args:    
+			@reqfile: 
+			@return:  void
+			@errors:  
+			@modhist: 
+	    */
 		$scope.toggle_advanced_search = function() {
 			$scope.show_advanced_search = !$scope.show_advanced_search;
 		}
