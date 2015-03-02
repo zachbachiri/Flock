@@ -136,7 +136,7 @@
         }
 
         /* 
-            @name:    showNgDialog
+            @name:    download
             @author:  Alex Seeto
             @created: Feb 11, 2015
             @purpose: Parses the json response and downloads into a CSV file
@@ -249,7 +249,7 @@
         }
 
         /* 
-            @name:    visualize
+            @name:    autosuggest
             @author:  Zach Bachiri
             @created: Jan 26, 2015
             @purpose: Uses Google Maps API and places library to form autocomplete for location input
@@ -268,7 +268,7 @@
         }
 
         /* 
-            @name:    visualize
+            @name:    toggle_advanced_search
             @author:  Zach Bachiri
             @created: Feb 18, 2015
             @purpose: Toggles display of advanced search options
