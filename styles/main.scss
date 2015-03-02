@@ -74,7 +74,7 @@ html,body{
 				}
 				.show_hide_search{
 					font-size: .9em;
-					display: inline-block;
+					display: block;
 					cursor: pointer;
 					color: $twitter-blue;
 				}
@@ -191,6 +191,15 @@ html,body{
 				padding-left: 25px;
 				font-size: .8em;
 			}
+		}
+		.loading_gif{
+			width: 250px;
+			height: 250px;
+			margin-left: auto;
+			margin-right: auto;
+			display: block;
+			padding-top: 10px;
+			padding-bottom: 10px;
 		}
 	}
 	#load_more{

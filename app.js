@@ -26,6 +26,7 @@
         $scope.visualize_copy = "Visualize";
         $scope.last_query = [];
         $scope.load_more_copy = "View More Tweets";
+        $scope.have_searched = false;
 
         $scope.result_types = [{
            name: 'Popular',
@@ -52,6 +53,7 @@
         */
         $scope.query = function(form_parameters) {
             $scope.show_loading = true;
+            $scope.have_searched = true;
             if (form_parameters.q == "") {
                 return;
             }
@@ -182,7 +184,7 @@
         */
         $scope.download = function() {
             // Check CSV data exists
-            if ($scope.tweets == []) {        
+            if ($scope.tweets.length == 0) {        
                 alert("Please perform a search before downloading!");
                 return;
             }

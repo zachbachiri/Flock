@@ -79,14 +79,13 @@
 				</div>
 			</div>
 
-			<button id="load_more" ng-hide="show_loading || show_visualize" ng-click="load_more()">{{ load_more_copy }}</button>
+			<button id="load_more" ng-hide="show_loading || show_visualize || !have_searched" ng-click="load_more()">{{ load_more_copy }}</button>
 
 			<div class="container" ng-show="show_visualize">
 				<h1>Visualize</h1>
 			</div>
 			<div class="container" ng-show="show_loading">
-				<h1>Loading Tweets</h1>
-				<img src="styles/images/ajax-loader.gif" width="250px" height="250px">
+				<img class="loading_gif" src="styles/images/ajax-loader.gif">
 			</div>
 		</div>
 

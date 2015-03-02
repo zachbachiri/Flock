@@ -59,7 +59,7 @@ html, body {
           margin-top: 15px; }
         .left_column .search_wrap .search .parameters .show_hide_search {
           font-size: .9em;
-          display: inline-block;
+          display: block;
           cursor: pointer;
           color: #55acee; }
         .left_column .search_wrap .search .parameters .show_hide_search:hover {
@@ -150,6 +150,14 @@ html, body {
         background-position: left center;
         padding-left: 25px;
         font-size: .8em; }
+    .right_column .container .loading_gif {
+      width: 250px;
+      height: 250px;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+      padding-top: 10px;
+      padding-bottom: 10px; }
   .right_column #load_more {
     margin-left: auto;
     margin-right: auto;
