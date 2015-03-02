@@ -250,8 +250,8 @@
 
         /* 
             @name:    autosuggest
-            @author:  Zach Bachiri
-            @created: Jan 26, 2015
+            @author:  Alex Seeto
+            @created: Feb 17, 2015
             @purpose: Uses Google Maps API and places library to form autocomplete for location input
             @args:    
             @reqfile: http://maps.google.com/maps/api/js?sensor=false&libraries=places
