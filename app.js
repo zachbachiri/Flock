@@ -5,7 +5,7 @@
     @purpose: Initiate Angular Modules and Controller
 */
 (function(){
-    var app = angular.module('twitterTool', ['masonry']);
+    var app = angular.module('twitterTool', ['masonry', 'ngDialog']);
 
     var cb = new Codebird;
     cb.setConsumerKey("pEaf5TgKTpz0Tf1M9uyqZSysQ", "dTV7OuEkgauN8syVrOT5T9XzK8CnXpSvjMEELlZshz1aqdsAVW");
@@ -17,9 +17,10 @@
         @purpose: Initiate Main Controller
         @param:   $scope - object required for angular usage
         @param:   $q - string, search term
+        @param:   ngDialog - ngDialog object
         @return:  void 
     */
-    app.controller('MainController', function($scope, $q){
+    app.controller('MainController', function($scope, $q, ngDialog){
         $scope.tweets = [];
         $scope.show_loading = false;
         $scope.show_visualize = false;
@@ -39,6 +40,33 @@
         }, {
            name: 'Mixed',
            value: 'mixed'
+        }];
+
+        // CSV Column Names Array
+        $scope.column_names = [{
+            name: 'Username',
+            value: 'username',
+            isChecked: true
+        }, {
+            name: 'Country',
+            value: 'country',
+            isChecked: true
+        }, {
+            name: 'Location',
+            value: 'location',
+            isChecked: true
+        }, {
+            name: 'Timestamp',
+            value: 'timestamp',
+            isChecked: true
+        }, {
+            name: 'Message',
+            value: 'message',
+            isChecked: true
+        }, {
+            name: 'Media',
+            value: 'media',
+            isChecked: true
         }];
 
         /* 
@@ -175,6 +203,59 @@
         }
 
         /* 
+            @name:    showNgDialog
+            @author:  Alex Seeto
+            @created: Feb 28, 2015
+            @purpose: Show ngDialog box for selecting columns for download 
+            @param:    
+            @reqfile: plugins/ngDialog.js
+            @return:  void
+            @errors:  
+            @modhist: 
+        */
+        $scope.showNgDialog = function() {
+            // Check CSV data exists
+            if ($scope.tweets.length == 0) {        
+                alert("Please perform a search before downloading!");
+                return;
+            }
+            ngDialog.open({
+                template: '<div><h3>Select Columns to Download </h3>' +
+                              '<div ng-repeat="elem in column_names">' +
+                              '<input type="checkbox" ng-model="elem.isChecked" id="check-box-{{$index}}" />' +
+                              '&nbsp;<label ng-bind="elem.name" for="check-box-{{$index}}"></label>' +
+                              '</div>' +
+                              '<br />' +
+                              '<div>' +
+                              '<button id="download" type="button" ng-disabled="!isChecked()" ng-click="download()">Download</button>' +
+                              '</div>' +
+                          '</div>',
+                plain: true,
+                scope: $scope
+            });
+        }
+        
+        /* 
+            @name:    isChecked
+            @author:  Alex Seeto
+            @created: Mar 02, 2015
+            @purpose: returns true if any checkboxes in $scope.column_names are checked
+            @param:    
+            @reqfile: 
+            @return:  boolean
+            @errors:  
+            @modhist: 
+        */
+        $scope.isChecked = function() {
+            for(var e in $scope.column_names) {
+                var checkBox = $scope.column_names[e];
+                if(checkBox.isChecked)
+                return true;
+            }
+            return false;
+        };
+        
+        /* 
             @name:    download
             @author:  Alex Seeto
             @created: Feb 11, 2015
@@ -186,12 +267,6 @@
             @modhist: 
         */
         $scope.download = function() {
-            // Check CSV data exists
-            if ($scope.tweets.length == 0) {        
-                alert("Please perform a search before downloading!");
-                return;
-            }
-
             // Initiate final CSV string
             var CSV = '';
 
@@ -205,8 +280,23 @@
             var message   = '';
             var media     = '';
 
-            // Array of CSV column headers
-            row += "Username,Country,Location,Timestamp,Message,Image";
+            // Boolean checks for selected columns
+            var checkedUsername = $scope.column_names[0].isChecked;
+            var checkedCountry = $scope.column_names[1].isChecked;
+            var checkedLocation = $scope.column_names[2].isChecked;
+            var checkedTimestamp = $scope.column_names[3].isChecked;
+            var checkedMessage = $scope.column_names[4].isChecked;
+            var checkedMedia = $scope.column_names[5].isChecked;
+
+            // Create string of CSV column headers separated by commas
+            for(var e in $scope.column_names) {
+                var checkBox = $scope.column_names[e];
+                if(checkBox.isChecked)
+                row+=checkBox.name + ",";
+            }
+            
+            // Remove last comma from String
+            row = row.slice(0,-1);
             
             // Append column header row with line break
             CSV += row + '\r\n';
@@ -221,7 +311,7 @@
                 timestamp = $scope.tweets[i]["created_at"];
                 message   = $scope.tweets[i]["text"];
                 media     = $scope.tweets[i]["entities"]["media"];
-                
+
                 // Boolean checks for possible null or undefined variables
                 var placeCheck = place === null;
                 var mediaCheck = typeof media == "undefined";
@@ -230,12 +320,12 @@
                 message = escape(message);
                 
                 // Separate data with commas
-                row += '"' + username + '",';
-                row += '"' + (placeCheck ? "Not Available" : place["country_code"]) + '",';
-                row += '"' + (placeCheck ? "Not Available" : place["full_name"]) + '",';
-                row += '"' + timestamp + '",';
-                row += '"' + message + '",';
-                row += '"' + (mediaCheck ? "Not Available" : media[0]["url"]) + '",';
+                (checkedUsername)   ?     row += '"' + username + '",' : "";
+                (checkedCountry)    ?     row += '"' + (placeCheck ? "Not Available" : place["country_code"]) + '",' : "";
+                (checkedLocation)   ?     row += '"' + (placeCheck ? "Not Available" : place["full_name"]) + '",' : "";
+                (checkedTimestamp)  ?     row += '"' + timestamp + '",' : "";
+                (checkedMessage)    ?     row += '"' + message + '",' : "";
+                (checkedMedia)      ?     row += '"' + (mediaCheck ? "Not Available" : media[0]["url"]) + '",' : "";
                 
                 // Add a line break after each row of data
                 CSV += row + '\r\n';
