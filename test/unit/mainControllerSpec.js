@@ -85,7 +85,7 @@ describe('Directives', function() {
     it('should test that a masonry brick contains tweet data', function() {
 
         // example tweet data used from Twitter API response
-        var sample_tweet1 = {
+        var sample_tweet = {
                                "text":"Test Tweet 1",
                                "user":{
                                    "name":"Test User1",
@@ -94,26 +94,56 @@ describe('Directives', function() {
                                }
                            }
 
-        $rootScope.tweet = sample_tweet1;
+        $rootScope.tweet = sample_tweet;
 
-        // sample_tweet1 user picture
+        // sample_tweet user picture
         var element = $compile('<img ng-src="{{ tweet.user.profile_image_url_https }}" class="profile_image">')($rootScope);
         $rootScope.$digest();
         expect(element.attr('src')).toBe("https:\/\/abs.twimg.com\/sticky\/default_profile_images\/default_profile_6_normal.png");
 
-        // sample_tweet1 user name
+        // sample_tweet user name
         element = $compile('<span class="profile_name">{{ tweet.user.name }}</span>')($rootScope);
         $rootScope.$digest();
         expect(element.html()).toBe("Test User1");
 
-        // sample_tweet1 user screen name
+        // sample_tweet user screen name
         element = $compile('<span class="profile_screen_name">@{{ tweet.user.screen_name }}</span>')($rootScope);
         $rootScope.$digest();
         expect(element.html()).toBe("@TestUser1");
 
-        // sample_tweet1 user tweet
+        // sample_tweet user tweet
         element = $compile('<p class="profile_tweet">{{ tweet.text }}</p>')($rootScope);
         $rootScope.$digest();
         expect(element.html()).toBe("Test Tweet 1");
+
+        // sample_tweet without attached picture
+        var mediaTmpl = '<div>' +
+                            '<span ng-if="tweet.entities.media">' +
+                                '<img class="profile_media" style="max-width:100%;" ng-src="{{ tweet.entities.media[0].media_url }}">' +
+                            '</span>' +
+                        '</div>'
+        element = $compile('<div>' +
+                                                       '<span ng-if="tweet.entities.media">' +
+                                                           '<img class="profile_media" style="max-width:100%;" ng-src="{{ tweet.entities.media[0].media_url }}">' +
+                                                       '</span>' +
+                                                   '</div>')($rootScope);
+        $rootScope.$digest();
+        var img = element.find('img');
+        expect(img.length).toBe(0);
+/*
+        // sample_tweet with attached picture
+        $rootScope.tweet.entities = {
+                                        media: [{
+                                            "media_url":"http:\/\/pbs.twimg.com\/media\/B_HMH5CXIAEwPtM.jpg"
+                                        }]
+                                    });
+
+        element = $compile(mediaTmpl)($rootScope);
+        $rootScope.$digest();
+        img = element.find('img');
+        expect(img.length).toBe(1);
+        expect(element.html()).toContain("http:\/\/pbs.twimg.com\/media\/B_HMH5CXIAEwPtM.jpg");
+
+*/
     })
 })
