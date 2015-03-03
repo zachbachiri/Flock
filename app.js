@@ -131,7 +131,7 @@
         /*
             @name: contains_tweet
             @author: Zach Bachiri
-            @crated: Mar 02, 2015
+            @created: Mar 02, 2015
             @purpose: returns true if the given array of tweets contains the given tweet; false otherwise
             @param: tweets - array containing a list of tweet objects from Twitter Search API
             @param: tweet - a tweet object being searched for in tweets input
