@@ -15,7 +15,8 @@
         @author:  Zach Bachiri
         @created: Jan 26, 2015
         @purpose: Initiate Main Controller
-        @args:    $scope, $q // TODO: add arg type
+        @param:   $scope - object required for angular usage
+        @param:   $q - string, search term
         @return:  void 
     */
     app.controller('MainController', function($scope, $q){
@@ -28,6 +29,7 @@
         $scope.load_more_copy = "View More Tweets";
         $scope.have_searched = false;
 
+        // Result Types Array
         $scope.result_types = [{
            name: 'Popular',
            value: 'popular'
@@ -43,9 +45,10 @@
             @name:    query
             @author:  Zach Bachiri
             @created: Jan 26, 2015
-            @purpose: Builds query parametes and performs twitterCall 
-            @args:    $scope, $q // TODO: add arg type
-            @reqfile: 
+            @purpose: Builds query parameters and performs twitterCall 
+            @param:   form_parameters - array of paramter objects
+            @reqfile: http://maps.google.com/maps/api/js?sensor=false&libraries=places
+            @reqfile: plugins/codebird.js
             @return:  void
             @errors:  
             @modhist: Feb 12 : Alex Seeto : Add geocoding
@@ -96,7 +99,17 @@
             }
         };
 
-
+        /* 
+            @name:    load_more
+            @author:  Zach Bachiri
+            @created: Mar 02, 2015
+            @purpose: Executes an additional query to load more tweets
+            @args:    
+            @reqfile: 
+            @return:  void
+            @errors:  
+            @modhist: 
+        */
         $scope.load_more = function(){
             $scope.load_more_copy = "...";
             cb.__call(
@@ -114,7 +127,18 @@
                 }
             );
         }
- 
+
+        /*
+            @name: contains_tweet
+            @author: Zach Bachiri
+            @created: Mar 02, 2015
+            @purpose: returns true if the given array of tweets contains the given tweet; false otherwise
+            @param: tweets - array containing a list of tweet objects from Twitter Search API
+            @param: tweet - a tweet object being searched for in tweets input
+            @return: boolean indicating whether or not the tweets input contains the tweet input
+            @errors:
+            @modhist:
+        */
         var contains_tweet = function(tweets, tweet){
             var contains = false;
             tweets.forEach(function(x){
@@ -125,13 +149,12 @@
             return contains;
         }
 
-
         /* 
             @name:    twitterCall
             @author:  Zach Bachiri
             @created: Feb 13, 2015
             @purpose: Makes request using Codebird for authentication and Twitter Search API 
-            @args:    params // TODO: add arg type
+            @param:   params - array containing parameter objects
             @reqfile: 
             @return:  void
             @errors:  
@@ -152,31 +175,11 @@
         }
 
         /* 
-            @name:    showNgDialog
-            @author:  Alex Seeto
-            @created: Feb 28, 2015
-            @purpose: Show ngDialog box for selecting columns for download 
-            @args:    
-            @reqfile: plugins/ngDialog.js
-            @return:  void
-            @errors:  
-            @modhist: 
-        */
-        $scope.showNgDialog = function() {
-            // ngDialog.open({
-            //     template: '<div>Select Columns to Download<br /><br />' + 
-            //               '</div>',
-            //     plain: true,
-            //     scope: $scope
-            // });
-        }
-
-        /* 
             @name:    download
             @author:  Alex Seeto
             @created: Feb 11, 2015
             @purpose: Parses the json response and downloads into a CSV file
-            @args:    
+            @param:    
             @reqfile: 
             @return:  void
             @errors:  
@@ -269,7 +272,7 @@
             @author:  Zach Bachiri
             @created: Jan 26, 2015
             @purpose: Toggles display of Visualization
-            @args:    
+            @param:    
             @reqfile: 
             @return:  void
             @errors:  
@@ -289,7 +292,7 @@
             @author:  Alex Seeto
             @created: Feb 17, 2015
             @purpose: Uses Google Maps API and places library to form autocomplete for location input
-            @args:    
+            @param:    
             @reqfile: http://maps.google.com/maps/api/js?sensor=false&libraries=places
             @return:  void
             @errors:  
@@ -308,7 +311,7 @@
             @author:  Zach Bachiri
             @created: Feb 18, 2015
             @purpose: Toggles display of advanced search options
-            @args:    
+            @param:    
             @reqfile: 
             @return:  void
             @errors:  
