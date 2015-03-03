@@ -114,7 +114,18 @@
                 }
             );
         }
- 
+
+        /*
+            @name: contains_tweet
+            @author: Zach Bachiri
+            @crated: March 2, 2015
+            @purpose: returns true if the given array of tweets contains the given tweet; false otherwise
+            @param: tweets - array containing a list of tweet objects from Twitter Search API
+            @param: tweet - a tweet object being searched for in tweets input
+            @return: boolean indicating whether or not the tweets input contains the tweet input
+            @errors:
+            @modhist:
+        */
         var contains_tweet = function(tweets, tweet){
             var contains = false;
             tweets.forEach(function(x){

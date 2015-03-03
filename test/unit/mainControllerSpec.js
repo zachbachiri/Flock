@@ -1,10 +1,10 @@
 /*
-author: Jimmy Ly
-date: February 23, 2015
-group: P11 - Flock
-purpose: Provide Jasmine unit tests for the MainController. The functionality
-         being tested includes the search, the results display, and the download
-         to .csv feature.
+    @author:  Jimmy Ly
+    @created: February 23, 2015
+    @group:   #11
+    @purpose: Provide Jasmine unit tests for the MainController.
+              Most of the code is encapsulated, so only the publicly
+              accessible code is tested.
 */
 
 // Test suite for the MainController
@@ -17,11 +17,16 @@ describe('MainController', function() {
     it('should test initialization of variables', inject(function($controller) {
         var scope = {},
             ctrl = $controller('MainController', { $scope: scope });
+
+        // make sure the scope variables are initialized properly
         expect(scope.tweets).toEqual([]);
         expect(scope.show_loading).toBe(false);
         expect(scope.show_visualize).toBe(false);
         expect(scope.show_advanced_search).toBe(false);
         expect(scope.visualize_copy).toBe("Visualize");
+        expect(scope.last_query).toEqual([]);
+        expect(scope.load_more_copy).toBe("View More Tweets");
+        expect(scope.have_searched).toBe(false);
 
         var expected_result_types = [{
             name: 'Popular',
@@ -65,85 +70,4 @@ describe('MainController', function() {
         expect(scope.show_advanced_search).toBe(false);
 
     }));
-})
-
-// Test suite for directives
-describe('Directives', function() {
-    var $compile,
-        $rootScope;
-
-    // Load the main app before each spec
-    beforeEach(module('twitterTool'));
-
-    // Store references to $rootScope and $compile
-    // so they are available to all tests in this describe block
-    beforeEach(inject(function(_$compile_, _$rootScope_) {
-        $compile = _$compile_;
-        $rootScope = _$rootScope_;
-    }));
-
-    it('should test that a masonry brick contains tweet data', function() {
-
-        // example tweet data used from Twitter API response
-        var sample_tweet = {
-                               "text":"Test Tweet 1",
-                               "user":{
-                                   "name":"Test User1",
-                                   "screen_name":"TestUser1",
-                                   "profile_image_url_https":"https:\/\/abs.twimg.com\/sticky\/default_profile_images\/default_profile_6_normal.png",
-                               }
-                           }
-
-        $rootScope.tweet = sample_tweet;
-
-        // sample_tweet user picture
-        var element = $compile('<img ng-src="{{ tweet.user.profile_image_url_https }}" class="profile_image">')($rootScope);
-        $rootScope.$digest();
-        expect(element.attr('src')).toBe("https:\/\/abs.twimg.com\/sticky\/default_profile_images\/default_profile_6_normal.png");
-
-        // sample_tweet user name
-        element = $compile('<span class="profile_name">{{ tweet.user.name }}</span>')($rootScope);
-        $rootScope.$digest();
-        expect(element.html()).toBe("Test User1");
-
-        // sample_tweet user screen name
-        element = $compile('<span class="profile_screen_name">@{{ tweet.user.screen_name }}</span>')($rootScope);
-        $rootScope.$digest();
-        expect(element.html()).toBe("@TestUser1");
-
-        // sample_tweet user tweet
-        element = $compile('<p class="profile_tweet">{{ tweet.text }}</p>')($rootScope);
-        $rootScope.$digest();
-        expect(element.html()).toBe("Test Tweet 1");
-
-        // sample_tweet without attached picture
-        var mediaTmpl = '<div>' +
-                            '<span ng-if="tweet.entities.media">' +
-                                '<img class="profile_media" style="max-width:100%;" ng-src="{{ tweet.entities.media[0].media_url }}">' +
-                            '</span>' +
-                        '</div>'
-        element = $compile('<div>' +
-                                                       '<span ng-if="tweet.entities.media">' +
-                                                           '<img class="profile_media" style="max-width:100%;" ng-src="{{ tweet.entities.media[0].media_url }}">' +
-                                                       '</span>' +
-                                                   '</div>')($rootScope);
-        $rootScope.$digest();
-        var img = element.find('img');
-        expect(img.length).toBe(0);
-/*
-        // sample_tweet with attached picture
-        $rootScope.tweet.entities = {
-                                        media: [{
-                                            "media_url":"http:\/\/pbs.twimg.com\/media\/B_HMH5CXIAEwPtM.jpg"
-                                        }]
-                                    });
-
-        element = $compile(mediaTmpl)($rootScope);
-        $rootScope.$digest();
-        img = element.find('img');
-        expect(img.length).toBe(1);
-        expect(element.html()).toContain("http:\/\/pbs.twimg.com\/media\/B_HMH5CXIAEwPtM.jpg");
-
-*/
-    })
 })
