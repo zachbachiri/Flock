@@ -7,6 +7,7 @@
 (function(){
     var app = angular.module('twitterTool', ['masonry']);
 
+    // For Twitter application-authenticated service calls
     var cb = new Codebird;
     cb.setConsumerKey("pEaf5TgKTpz0Tf1M9uyqZSysQ", "dTV7OuEkgauN8syVrOT5T9XzK8CnXpSvjMEELlZshz1aqdsAVW");
     cb.setToken("3029162194-GAze2tNS3Y4rPvIwvXZ1j813hZriXKWNpWjo3dd", "ndsckIxbSpvDuTZGdmzP4pGac6fsBjfQAVkL5EoTzpd3M");
@@ -20,6 +21,7 @@
         @return:  void 
     */
     app.controller('MainController', function($scope, $q){
+        // Set default variable values
         $scope.tweets = [];
         $scope.show_loading = false;
         $scope.show_visualize = false;
@@ -54,10 +56,10 @@
             @modhist: Feb 12 : Alex Seeto : Add geocoding
                       Feb 13 : Zach Bachiri : Geocoding modifications
         */
-        $scope.query = function(form_parameters) {
+        $scope.query = function(form_parameters){
             $scope.show_loading = true;
             $scope.have_searched = true;
-            if (form_parameters.q == "") {
+            if (form_parameters.q == ""){
                 return;
             }
             
@@ -84,12 +86,12 @@
                 if (status == google.maps.GeocoderStatus.OK){
                     var locData = results[0].geometry.location;
 
-                     // Set new geocode based off of location input
-                     query_parameters.geocode = String(locData.lat()) + 
-                                                ',' + 
-                                                String(locData.lng()) + 
-                                                ',' + 
-                                                '50mi';
+                    // Set new geocode based off of location input
+                    query_parameters.geocode = String(locData.lat()) +
+                                               ',' +
+                                               String(locData.lng()) +
+                                               ',' +
+                                               '50mi';
                     // Make request with parameters
                     twitterCall(query_parameters);
                 }
@@ -111,12 +113,13 @@
             @modhist: 
         */
         $scope.load_more = function(){
+            // Change 'View More Tweets' button display value
             $scope.load_more_copy = "...";
             cb.__call(
                 "search_tweets",
                 $scope.last_query,
-                function (reply) {
-                    reply.statuses.forEach(function(x) {
+                function (reply){
+                    reply.statuses.forEach(function(x){
                         if(!contains_tweet($scope.tweets, x)){ //doesn't work, need to find if array contains
                             $scope.tweets.push(x);
                         }
@@ -140,13 +143,12 @@
             @modhist:
         */
         var contains_tweet = function(tweets, tweet){
-            var contains = false;
             tweets.forEach(function(x){
                 if(x.id == tweet.id){
-                    contains = true;
+                    return true;
                 }
             });
-            return contains;
+            return false;
         }
 
         /* 
@@ -165,7 +167,7 @@
             cb.__call(
                 "search_tweets",
                 params,
-                function (reply) {
+                function (reply){
                     $scope.tweets = reply.statuses;
                     $scope.show_loading = !$scope.show_loading;
                     $scope.$apply();
@@ -185,9 +187,9 @@
             @errors:  
             @modhist: 
         */
-        $scope.download = function() {
+        $scope.download = function(){
             // Check CSV data exists
-            if ($scope.tweets.length == 0) {        
+            if ($scope.tweets.length == 0){        
                 alert("Please perform a search before downloading!");
                 return;
             }
@@ -212,7 +214,7 @@
             CSV += row + '\r\n';
 
             // Loop through all tweets
-            for (var i = 0; i < $scope.tweets.length; i++) {
+            for (var i = 0; i < $scope.tweets.length; i++){
                 var row = "";
                 
                 // Set initiated variables parsed from json response
@@ -242,7 +244,7 @@
             }
 
             // Check CSV data exists
-            if (CSV == '') {        
+            if (CSV == ''){        
                 alert("Invalid data");
                 return;
             }
@@ -278,9 +280,9 @@
             @errors:  
             @modhist: 
         */
-        $scope.visualize = function() {
+        $scope.visualize = function(){
             $scope.show_visualize = !$scope.show_visualize;
-            if($scope.visualize_copy == "Visualize") {
+            if($scope.visualize_copy == "Visualize"){
                 $scope.visualize_copy = "Tweets";
             } else {
                 $scope.visualize_copy = "Visualize";
@@ -298,7 +300,7 @@
             @errors:  
             @modhist: 
         */
-        $scope.autosuggest = function() {
+        $scope.autosuggest = function(){
             var place;
             var autocomplete = new google.maps.places.Autocomplete(loc_text);
             google.maps.event.addListener(autocomplete, 'place_changed', function (){
@@ -317,7 +319,7 @@
             @errors:  
             @modhist: 
         */
-        $scope.toggle_advanced_search = function() {
+        $scope.toggle_advanced_search = function(){
             $scope.show_advanced_search = !$scope.show_advanced_search;
         }
     });
