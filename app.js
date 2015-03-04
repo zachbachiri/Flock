@@ -56,10 +56,10 @@
             @modhist: Feb 12 : Alex Seeto : Add geocoding
                       Feb 13 : Zach Bachiri : Geocoding modifications
         */
-        $scope.query = function(form_parameters) {
+        $scope.query = function(form_parameters){
             $scope.show_loading = true;
             $scope.have_searched = true;
-            if (form_parameters.q == "") {
+            if (form_parameters.q == ""){
                 return;
             }
             
@@ -118,8 +118,8 @@
             cb.__call(
                 "search_tweets",
                 $scope.last_query,
-                function (reply) {
-                    reply.statuses.forEach(function(x) {
+                function (reply){
+                    reply.statuses.forEach(function(x){
                         if(!contains_tweet($scope.tweets, x)){ //doesn't work, need to find if array contains
                             $scope.tweets.push(x);
                         }
@@ -167,7 +167,7 @@
             cb.__call(
                 "search_tweets",
                 params,
-                function (reply) {
+                function (reply){
                     $scope.tweets = reply.statuses;
                     $scope.show_loading = !$scope.show_loading;
                     $scope.$apply();
@@ -187,9 +187,9 @@
             @errors:  
             @modhist: 
         */
-        $scope.download = function() {
+        $scope.download = function(){
             // Check CSV data exists
-            if ($scope.tweets.length == 0) {        
+            if ($scope.tweets.length == 0){        
                 alert("Please perform a search before downloading!");
                 return;
             }
@@ -214,7 +214,7 @@
             CSV += row + '\r\n';
 
             // Loop through all tweets
-            for (var i = 0; i < $scope.tweets.length; i++) {
+            for (var i = 0; i < $scope.tweets.length; i++){
                 var row = "";
                 
                 // Set initiated variables parsed from json response
@@ -244,7 +244,7 @@
             }
 
             // Check CSV data exists
-            if (CSV == '') {        
+            if (CSV == ''){        
                 alert("Invalid data");
                 return;
             }
@@ -280,9 +280,9 @@
             @errors:  
             @modhist: 
         */
-        $scope.visualize = function() {
+        $scope.visualize = function(){
             $scope.show_visualize = !$scope.show_visualize;
-            if($scope.visualize_copy == "Visualize") {
+            if($scope.visualize_copy == "Visualize"){
                 $scope.visualize_copy = "Tweets";
             } else {
                 $scope.visualize_copy = "Visualize";
@@ -300,7 +300,7 @@
             @errors:  
             @modhist: 
         */
-        $scope.autosuggest = function() {
+        $scope.autosuggest = function(){
             var place;
             var autocomplete = new google.maps.places.Autocomplete(loc_text);
             google.maps.event.addListener(autocomplete, 'place_changed', function (){
@@ -319,7 +319,7 @@
             @errors:  
             @modhist: 
         */
-        $scope.toggle_advanced_search = function() {
+        $scope.toggle_advanced_search = function(){
             $scope.show_advanced_search = !$scope.show_advanced_search;
         }
     });
