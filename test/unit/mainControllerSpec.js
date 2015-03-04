@@ -52,10 +52,14 @@ describe('MainController', function() {
             loc: "",
             result_type: "popular"
         };
+
         scope.query(form_parameters);
+        expect(scope.last_query.q).toBe("oscars");
+        expect(scope.last_query.geocode).toBe("");
+        expect(scope.last_query.count).toBe(100);
+        expect(scope.last_query.lang).toBe("en");
         expect(scope.show_loading).toBe(true);
         expect(scope.tweets.length).toBe(0);
-
     }));
 
     // Test the advanced search toggle function

@@ -65,7 +65,7 @@
             
             // Initializes Google Maps API geocoder
             var geocoder = new google.maps.Geocoder();
-            var query_parameters = [];
+            var query_parameters = {};
 
             // Search Term
             query_parameters.q = form_parameters.q;
@@ -78,7 +78,6 @@
             
             // Geocode (defaulted)
             query_parameters.geocode = "";
-
             // If a location input is entered
             if(form_parameters.loc != null && form_parameters.loc != "" && geocoder){
                 // Convert location input to geolocation
