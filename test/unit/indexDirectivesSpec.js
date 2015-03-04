@@ -6,22 +6,23 @@
 */
 
 // Test suite for directives
-describe('Directives', function() {
+describe('Directives', function(){
     var $compile,
-        $rootScope;
+        $rootScope,
+        element;
 
     // Load the main app before each spec
     beforeEach(module('twitterTool'));
 
     // Store references to $rootScope and $compile
     // so they are available to all tests in this describe block
-    beforeEach(inject(function(_$compile_, _$rootScope_) {
+    beforeEach(inject(function(_$compile_, _$rootScope_){
         $compile = _$compile_;
         $rootScope = _$rootScope_;
     }));
 
     // make sure that the display blocks contain the appropriate Twitter data
-    it('should test that a masonry brick contains correct tweet data', function() {
+    it('should test that a masonry brick contains correct tweet data', function(){
 
         // example tweet data used from Twitter API response
         var sample_tweet = {
@@ -36,7 +37,7 @@ describe('Directives', function() {
         $rootScope.tweet = sample_tweet;
 
         // sample_tweet user picture
-        var element = $compile('<img ng-src="{{ tweet.user.profile_image_url_https }}" class="profile_image">')($rootScope);
+        element = $compile('<img ng-src="{{ tweet.user.profile_image_url_https }}" class="profile_image">')($rootScope);
         $rootScope.$digest();
         expect(element.attr('src')).toBe("https:\/\/abs.twimg.com\/sticky\/default_profile_images\/default_profile_6_normal.png");
 
@@ -97,9 +98,9 @@ describe('Directives', function() {
 
         var no_retweet_template = '<div>' +
                                       '<span ng-if="tweet.retweeted_status == null">' +
-                                   	      '<span class="retweet_count">{{ tweet.retweet_count }}</span>' +
-                                   		  '<span class="favorite_count">{{ tweet.favorite_count }}</span>' +
-                                   	  '</span>' +
+                                          '<span class="retweet_count">{{ tweet.retweet_count }}</span>' +
+                                          '<span class="favorite_count">{{ tweet.favorite_count }}</span>' +
+                                      '</span>' +
                                   '</div>';
         element = $compile(no_retweet_template)($rootScope);
         $rootScope.$digest();
@@ -129,7 +130,7 @@ describe('Directives', function() {
     });
 
     // Test the View More Tweets button
-    it('should test the "View More Tweets" view', function() {
+    it('should test the "View More Tweets" view', function(){
         // simulate initial state of variables
         $rootScope.show_loading = false;
         $rootScope.show_visualize = false;
@@ -137,7 +138,7 @@ describe('Directives', function() {
         $rootScope.load_more_copy = "View More Tweets";
         var view_more_template = '<button id="load_more" ng-hide="show_loading || show_visualize || !have_searched" ng-click="load_more()">{{ load_more_copy }}</button>';
 
-        var element = $compile(view_more_template)($rootScope);
+        element = $compile(view_more_template)($rootScope);
         $rootScope.$digest();
         expect(element.hasClass('ng-hide')).toBe(true);
         expect(element.html()).toBe('View More Tweets');
@@ -165,18 +166,36 @@ describe('Directives', function() {
         expect(element.html()).toBe('...');
     });
 
-    it('should test the visualize view behavior', function() {
+    // Test the Visualize button
+    it('should test the visualize view behavior', function(){
         $rootScope.show_visualize = false;
         var visualize_template = '<div class="container" ng-show="show_visualize">' +
                                     '<h1>Visualize</h1>' +
                                 '</div>';
 
-        var element = $compile(visualize_template)($rootScope);
+        element = $compile(visualize_template)($rootScope);
         $rootScope.$digest();
         expect(element.hasClass('ng-hide')).toBe(true);
 
         $rootScope.show_visualize = true;
         element = $compile(visualize_template)($rootScope);
+        $rootScope.$digest();
+        expect(element.hasClass('ng-hide')).toBe(false);
+    });
+
+    // Test the Loading Spinner
+    it('should test the loading_gif behavior', function(){
+        $rootScope.show_loading = false;
+        var loading_template = '<div class="container" ng-show="show_loading">' +
+                                   '<img class="loading_gif" src="/styles/images/ajax-loader.gif">' +
+                               '</div>';
+
+        element = $compile(loading_template)($rootScope);
+        $rootScope.$digest();
+        expect(element.hasClass('ng-hide')).toBe(true);
+
+        $rootScope.show_loading = true;
+        element = $compile(loading_template)($rootScope);
         $rootScope.$digest();
         expect(element.hasClass('ng-hide')).toBe(false);
     });

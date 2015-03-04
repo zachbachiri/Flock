@@ -7,6 +7,7 @@
 (function(){
     var app = angular.module('twitterTool', ['masonry']);
 
+    // For Twitter application-authenticated service calls
     var cb = new Codebird;
     cb.setConsumerKey("pEaf5TgKTpz0Tf1M9uyqZSysQ", "dTV7OuEkgauN8syVrOT5T9XzK8CnXpSvjMEELlZshz1aqdsAVW");
     cb.setToken("3029162194-GAze2tNS3Y4rPvIwvXZ1j813hZriXKWNpWjo3dd", "ndsckIxbSpvDuTZGdmzP4pGac6fsBjfQAVkL5EoTzpd3M");
@@ -20,6 +21,7 @@
         @return:  void 
     */
     app.controller('MainController', function($scope, $q){
+        // Set default variable values
         $scope.tweets = [];
         $scope.show_loading = false;
         $scope.show_visualize = false;
@@ -84,12 +86,12 @@
                 if (status == google.maps.GeocoderStatus.OK){
                     var locData = results[0].geometry.location;
 
-                     // Set new geocode based off of location input
-                     query_parameters.geocode = String(locData.lat()) + 
-                                                ',' + 
-                                                String(locData.lng()) + 
-                                                ',' + 
-                                                '50mi';
+                    // Set new geocode based off of location input
+                    query_parameters.geocode = String(locData.lat()) +
+                                               ',' +
+                                               String(locData.lng()) +
+                                               ',' +
+                                               '50mi';
                     // Make request with parameters
                     twitterCall(query_parameters);
                 }
@@ -111,6 +113,7 @@
             @modhist: 
         */
         $scope.load_more = function(){
+            // Change 'View More Tweets' button display value
             $scope.load_more_copy = "...";
             cb.__call(
                 "search_tweets",
@@ -140,13 +143,12 @@
             @modhist:
         */
         var contains_tweet = function(tweets, tweet){
-            var contains = false;
             tweets.forEach(function(x){
                 if(x.id == tweet.id){
-                    contains = true;
+                    return true;
                 }
             });
-            return contains;
+            return false;
         }
 
         /* 

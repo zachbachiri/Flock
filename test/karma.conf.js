@@ -11,7 +11,6 @@ module.exports = function(config){
       'plugins/codebird.js',
       'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.min.js',
       'https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.13/angular-mocks.js',
-      'plugins/ngDialog.min.js',
       'plugins/angular-masonry-directive.js',
       'app.js',
       'test/unit/*.js'
