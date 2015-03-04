@@ -78,6 +78,7 @@
             
             // Geocode (defaulted)
             query_parameters.geocode = "";
+            
             // If a location input is entered
             if(form_parameters.loc != null && form_parameters.loc != "" && geocoder){
                 // Convert location input to geolocation
