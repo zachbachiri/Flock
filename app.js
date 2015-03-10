@@ -216,7 +216,7 @@
             @modhist: 
         */
         $scope.showNgDialog = function() {
-            // Check CSV data exists
+            // Check search has been performed
             if ($scope.tweets.length == 0){        
                 alert("Please perform a search before downloading!");
                 return;
@@ -377,6 +377,192 @@
             } else {
                 $scope.visualize_copy = "Visualize";
             }
+        }
+
+        /* 
+            @name:    wordcloud
+            @author:  Alex Seeto
+            @created: Mar 09, 2015
+            @purpose: passes array of words into calculateCloud
+            @param:   
+            @reqfile: 
+            @return:  
+            @errors:  
+            @modhist: 
+        */
+        $scope.buildCloud = function(){
+            // Check search has been performed
+            if ($scope.tweets.length == 0){        
+                alert("Please perform a search before building a word cloud!");
+                return;
+            }
+            // Initiate text variable
+            var wordsArray = $scope.frequencycount();
+            $scope.calculateCloud(wordsArray);
+        }
+
+        /* 
+            @name:    frequencycount
+            @author:  Alex Seeto
+            @created: Mar 08, 2015
+            @purpose: returns array of words from tweets with associated frequency
+            @param:    
+            @reqfile: plugins/underscore.min.js
+            @return:  array
+            @errors:  
+            @modhist: 
+        */
+        $scope.frequencycount = function(){
+            // Initiate text variable
+            var text = "";
+            
+            // Loop through all tweets
+            for (var i = 0; i < $scope.tweets.length; i++){
+                var row = "";
+                
+                // Set initiated variables parsed from json response
+                message = $scope.tweets[i]["text"];
+
+                // Convert message to encoded String
+                message = message.replace(/[!,?.":;]/g,' ');
+                
+                // Separate data with commas
+                text += message;
+            }
+
+            // Split text into array of words
+            var split = text.split(" ");
+
+            // Group same words and sort by frequency
+            var res =
+            _.chain(split)
+                .without('',' ','a','A','an','An','and','any','Any','are','Are','as','As',
+                         'that','That','The','the','this','This','of','for','For','to',
+                         'with','is','in','on','our','Our', 'RT', '&amp', '//t', 'http', 'I\'m', 'I')
+                .groupBy( function(word){return word;} )
+                .sortBy(  function(word){ return word.length; } )
+                .value();
+
+            // Initiate array for each word to be stored with associated frequency
+            var wordsArray = [];
+
+            $.each( res, function( index, word ){
+               // Object containing each word and word frequency count
+               var wordObject = {};
+               wordObject.text = word[0].toString();
+               wordObject.size = word.length;
+               // Creating array of word objects to return
+               wordsArray.push(wordObject);
+            });
+
+            // Return array of word objects
+            return wordsArray;
+        }
+   
+        /* 
+            @name:    calculateCloud
+            @author:  Alex Seeto
+            @created: Mar 09, 2015
+            @purpose: makes necessary calculations before starting drawCloud
+            @param:   data  - array of word objects
+            @reqfile: plugins/d3.js
+            @return:  
+            @errors:  
+            @modhist: 
+        */     
+        $scope.calculateCloud = function(data){
+            // Scale for font size
+            var sizeScale = d3.scale.linear()
+                            .domain([0, 50])
+                            .range([10, 95]);
+
+            // Start cloud calculations
+            d3.layout.cloud()
+            .size([800, 300]) 
+            .words(data) 
+            .rotate(function() { return ~~(Math.random()*2) * 90;}) // 0 or 90deg 
+            .fontSize(function(d) { return sizeScale(d.size); }) 
+            .on('end', $scope.drawCloud)
+            .start();
+        }
+        
+        /* 
+            @name:    drawCloud
+            @author:  Alex Seeto
+            @created: Mar 09, 2015
+            @purpose: appends svg object to #cloud div
+            @param:   words - array of word objects
+            @reqfile: plugins/d3.js
+            @reqfile: plugins/d3.layout.cloud.js
+            @return:  
+            @errors:  
+            @modhist: 
+        */
+        $scope.drawCloud = function(words){
+            var fill = d3.scale.category20();
+            d3.select('svg').remove();
+            d3.select("#cloud").append("svg")
+                              .attr("width", 800)
+                              .attr("height", 300)
+                              .append("g")
+                              // Center g Element within Canvas (halve sizes from calculateCloud)
+                              .attr("transform", "translate(400,150)")
+                              .selectAll("text")
+                              .data(words)
+                              .enter().append("text")
+                              .style("font-size", function(d) { return d.size + "px"; })
+                              .style("font-family", "Impact")
+                              .style("fill", function(d, i) { return fill(i); })
+                              .attr("text-anchor", "middle")
+                              .attr("transform", function(d) {
+                                  return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                              })
+                              .text(function(d) { return d.text; });
+        }
+
+        /* 
+            @name:    downloadCloud
+            @author:  Alex Seeto
+            @created: Mar 09, 2015
+            @purpose: Converts canvas context to PNG, creates temp link to download
+            @param:   
+            @reqfile: 
+            @return:  
+            @errors:  
+            @modhist: 
+        */
+        $scope.downloadCloud = function(){
+            // Check search has been performed
+            if ($('#cloud').children().length == 0){        
+                alert("Please generate a word cloud before downloading!");
+                return;
+            }
+            var svg = document.querySelector("svg");
+            var svgData = new XMLSerializer().serializeToString( svg );
+             
+            var canvas = document.createElement("canvas");
+            canvas.width = "800"; 
+            canvas.height = "300";
+            var ctx = canvas.getContext("2d");
+            var img = document.createElement("img");
+            img.setAttribute("src", "data:image/svg+xml;base64," + btoa( unescape(encodeURIComponent(svgData)) ) );
+
+            img.onload = function() {
+                ctx.drawImage( img, 0, 0 );
+                var url = canvas.toDataURL( "image/png" );
+                // Generate a temp <a /> tag
+                var link = document.createElement("a");    
+                link.href = url;
+                
+                // Set the visibility hidden so it will not affect web-layout
+                link.style = "visibility:hidden";
+                link.download = "flockcloud.png";
+                
+                // Append the anchor tag and remove it after automatic click
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
         }
 
         /* 
