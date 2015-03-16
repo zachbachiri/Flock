@@ -1,3 +1,9 @@
+/*
+    @author:  Zach Bachiri
+    @created: Jan 26, 2015
+    @group:   #11
+    @purpose: Styling for Flock view
+*/
 html, body {
   margin: 0;
   padding: 0;
@@ -64,20 +70,20 @@ html, body {
           color: #55acee; }
         .left_column .search_wrap .search .parameters .show_hide_search:hover {
           color: #3E7EAE; }
-        .left_column .search_wrap .search .parameters #result_type {
-          margin-bottom: 15px;
-          display: block;
-          width: 45%;
-          height: 40px;
-          background: -webkit-linear-gradient(white, #f7f7f7);
-          /* For Safari 5.1 to 6.0 */
-          background: -o-linear-gradient(white, #f7f7f7);
-          /* For Opera 11.1 to 12.0 */
-          background: -moz-linear-gradient(white, #f7f7f7);
-          /* For Firefox 3.6 to 15 */
-          background: linear-gradient(white, #f7f7f7);
-          border: solid 2px #f0f0f0;
-          border-radius: 3px; }
+      .left_column .search_wrap .search .selection {
+        margin-bottom: 30px;
+        display: block;
+        width: 45%;
+        height: 40px;
+        background: -webkit-linear-gradient(white, #f7f7f7);
+        /* For Safari 5.1 to 6.0 */
+        background: -o-linear-gradient(white, #f7f7f7);
+        /* For Opera 11.1 to 12.0 */
+        background: -moz-linear-gradient(white, #f7f7f7);
+        /* For Firefox 3.6 to 15 */
+        background: linear-gradient(white, #f7f7f7);
+        border: solid 2px #f0f0f0;
+        border-radius: 3px; }
     .left_column .search_wrap .download {
       padding: 35px 0 35px 0;
       background-color: #55acee;

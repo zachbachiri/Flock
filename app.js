@@ -31,6 +31,10 @@
         $scope.last_query = [];
         $scope.load_more_copy = "View More Tweets";
         $scope.have_searched = false;
+        $scope.count_options = [];
+        for (i = 1; i <= 100; i++) {
+            $scope.count_options.push(i);
+        }
 
         // Result Types Array
         $scope.result_types = [{
@@ -99,7 +103,7 @@
             query_parameters.q = form_parameters.q;
             
             // Tweets returned
-            query_parameters.count = 100;
+            query_parameters.count = form_parameters.count;
 
             // Language
             query_parameters.lang =  "en";
@@ -147,12 +151,12 @@
                 "search_tweets",
                 $scope.last_query,
                 function (reply){
+                    console.log(reply.statuses);
                     reply.statuses.forEach(function(x){
                         if(!contains_tweet($scope.tweets, x)){ //doesn't work, need to find if array contains
                             $scope.tweets.push(x);
                         }
                     })
-                    console.log("done");
                     $scope.load_more_copy = "View More Tweets";
                     $scope.$apply();
                 }
@@ -197,7 +201,6 @@
                 params,
                 function (reply){
                     $scope.tweets = reply.statuses;
-                    $scope.show_loading = !$scope.show_loading;
                     $scope.$apply();
                     $scope.show_loading = false;
                 }
