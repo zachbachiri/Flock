@@ -1,3 +1,9 @@
+/*
+    @author:  Zach Bachiri
+    @created: Jan 26, 2015
+    @group:   #11
+    @purpose: Styling for Flock view
+*/
 html, body {
   margin: 0;
   padding: 0;
@@ -64,8 +70,8 @@ html, body {
           color: #55acee; }
         .left_column .search_wrap .search .parameters .show_hide_search:hover {
           color: #3E7EAE; }
-        .left_column .search_wrap .search .parameters #result_type {
-          margin-bottom: 15px;
+        .left_column .search_wrap .search .selection {
+          margin-bottom: 30px;
           display: block;
           width: 45%;
           height: 40px;

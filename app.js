@@ -8,7 +8,7 @@ var app = angular.module('twitterTool', ['ui.router', 'appControllers']);
 
 app.config(function($stateProvider, $urlRouterProvider) {
 
-    $urlRouterProvider.otherwise('/login');
+    $urlRouterProvider.otherwise('/search');
 
     $stateProvider
     // LOGIN STATE
