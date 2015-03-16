@@ -1,0 +1,35 @@
+
+<div class="logo_container">
+    <img src="styles/images/logo.png" class="logo">
+</div>
+<div class="button_container">
+    <img ng-click="twitter_sign_in()" src="styles/images/twitter-sign-in.png">
+    <img ng-click="guest_sign_in()" src="styles/images/guest-sign-in.png">
+</div>
+<div class="footer"></div>
+<style>
+    .logo {
+    width: 350px;
+    }
+
+    img {
+    padding-left: 1em;
+    padding-right: 1em;
+    }
+
+    .button_container, .logo_container {
+    display: block;
+    padding-top: 3em;
+    padding-bottom: 3em;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
+    }
+    .footer {
+    background-color: #55ACEE;
+    width: 100%;
+    height: 20%;
+    position: fixed;
+    bottom: 0;
+    }
+</style>
