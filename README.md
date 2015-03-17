@@ -48,5 +48,8 @@ Tool for advanced twitter search
 - To run the tests, go to the root directory of the project and type 'npm install'. This should install all the dependencies needed for testing. Then you can type 'npm test'. This will start a server, open a window in Chrome, and the terminal should display how many tests passed. If you keep the server running and add more unit tests later, then all the tests will be re-run.
 - The /test/karma.conf.js file is a configuration file for running the tests. NOTE: If you are testing code that uses new dependencies or code that is in a new file, then add the files/dependencies to the 'files' array in the karma.conf.js file
 
-
+## Running Locally
+- Make sure you have python installed on your computer.
+- In your terminal, change directories to the flock repo and type 'python -m SimpleHTTPServer 8000' if your terminal uses python2 or type 'python -m http.server 8000' if your terminal uses python3.
+- Go to http://localhost:8000 and the flock app should load. You can actually replace 8000 to whichever port number you want to use.
 
