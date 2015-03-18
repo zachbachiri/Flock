@@ -1,15 +1,33 @@
-var appControllers = angular.module('appControllers', ['masonry', 'ngDialog']);
+var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'ui.router']);
 
-app.controller('LoginController', function($scope){
+    // For Twitter application-authenticated service calls
+    var cb = new Codebird;
+    cb.setConsumerKey("pEaf5TgKTpz0Tf1M9uyqZSysQ", "dTV7OuEkgauN8syVrOT5T9XzK8CnXpSvjMEELlZshz1aqdsAVW");
+    cb.setToken("3029162194-GAze2tNS3Y4rPvIwvXZ1j813hZriXKWNpWjo3dd", "ndsckIxbSpvDuTZGdmzP4pGac6fsBjfQAVkL5EoTzpd3M");
+    //var flock_server_url = "http://localhost:5000";
+    var flock_server_url = "https://flock-backend.herokuapp.com/";
+    var sessionId = '';
 
-    var flock_server_url = "http://localhost:5000";
-    //var flock_server_url = "https://flock-backend.herokuapp.com/";
+/*
+    @author:  Jimmy Ly
+    @created: Mar 16, 2015
+    @purpose: Initiate Login Controller
+    @param:   $scope - object required for angular usage
+    @return:  void
+*/
+app.controller('LoginController', function($scope, $state){
 
+    /*
+        @name:    twitter_sign_in
+        @author:  Jimmy Ly
+        @created: Mar 16, 2015
+        @purpose: Requests query tokens from backend and redirects to Twitter sign in
+        @return:  void
+    */
     $scope.twitter_sign_in = function(){
         $.ajax({
-            url: flock_server_url,
+            url: flock_server_url + "/requestToken",
             success: function(response){
-
             },
             error: function(error){
                 console.log(error);
@@ -19,10 +37,38 @@ app.controller('LoginController', function($scope){
 
 });
 
-// For Twitter application-authenticated service calls
-var cb = new Codebird;
-cb.setConsumerKey("pEaf5TgKTpz0Tf1M9uyqZSysQ", "dTV7OuEkgauN8syVrOT5T9XzK8CnXpSvjMEELlZshz1aqdsAVW");
-cb.setToken("3029162194-GAze2tNS3Y4rPvIwvXZ1j813hZriXKWNpWjo3dd", "ndsckIxbSpvDuTZGdmzP4pGac6fsBjfQAVkL5EoTzpd3M");
+/*
+    @author:  Jimmy Ly
+    @created: Mar 16, 2015
+    @purpose: Initiate Redirect Controller
+    @param:   $scope - object required for angular usage
+    @return:  void
+*/
+app.controller('RedirectController', function($scope){
+
+    // TODO: If an error occurs or if the query params are not found, redirect to search page as guest?
+
+    var query_params = $location.search();
+
+    // check to make sure the current page's URL contains the oauth token and verifier from Twitter
+    if (_.has(query_params, 'oauth_token') && _.has(query_params, 'oauth_verifier')){
+        // url for
+        var request_url = flock_server_url + "/accessToken?" +
+                          "oauth_token=" + query_params.oauth_token + "&" +
+                          "oauth_verifier=" + query_params.oauth_verifier;
+        $.ajax({
+            url: request_url,
+            success: function(response){
+                sessionId = response.sessionId;
+                $state.go('search');
+            },
+            error: function(error){
+
+            }
+        });
+    }
+
+});
 
 /*
     @author:  Zach Bachiri

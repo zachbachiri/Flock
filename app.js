@@ -17,11 +17,18 @@ app.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: 'partials/login.html',
             controller: 'LoginController'
         })
+    // REDIRECT STATE
+        .state('redirect', {
+            url: '/redirect',
+            templateUrl: 'partials/redirect.html',
+            controller: 'RedirectController'
+        })
     // SEARCH STATE
         .state('search', {
             url: '/search',
             templateUrl: 'partials/search.html',
             controller: 'MainController'
         });
+
 
 });
