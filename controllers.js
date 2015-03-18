@@ -5,7 +5,7 @@ var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'u
     cb.setConsumerKey("pEaf5TgKTpz0Tf1M9uyqZSysQ", "dTV7OuEkgauN8syVrOT5T9XzK8CnXpSvjMEELlZshz1aqdsAVW");
     cb.setToken("3029162194-GAze2tNS3Y4rPvIwvXZ1j813hZriXKWNpWjo3dd", "ndsckIxbSpvDuTZGdmzP4pGac6fsBjfQAVkL5EoTzpd3M");
     //var flock_server_url = "http://localhost:5000";
-    var flock_server_url = "https://flock-backend.herokuapp.com/";
+    var flock_server_url = "https://flock-backend.herokuapp.com";
     var sessionId = '';
 
 /*
