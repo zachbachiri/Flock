@@ -44,7 +44,7 @@ app.controller('LoginController', function($scope, $state){
     @param:   $scope - object required for angular usage
     @return:  void
 */
-app.controller('RedirectController', function($scope){
+app.controller('RedirectController', function($scope, $location){
 
     // TODO: If an error occurs or if the query params are not found, redirect to search page as guest?
 
