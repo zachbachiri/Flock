@@ -28,6 +28,7 @@ app.controller('LoginController', function($scope, $state){
         $.ajax({
             url: flock_server_url + "/requestToken",
             success: function(response){
+                window.location.href = response;
             },
             error: function(error){
                 console.log(error);
