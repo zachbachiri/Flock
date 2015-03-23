@@ -51,9 +51,11 @@
             <p class="profile_tweet">{{ tweet.text }}</p>
 
                 <span ng-if="tweet.entities.media">
+
                     <a ng-href="{{ tweet.entities.media[0].expanded_url }}" target="_blank">
                         <img class="profile_media" style="max-width:100%;" ng-src="{{ tweet.entities.media[0].media_url }}">
                     </a>
+                    
                 </span>
 
                 <span ng-if="tweet.retweeted_status">
