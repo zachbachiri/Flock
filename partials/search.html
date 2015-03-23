@@ -45,7 +45,7 @@
 
     <div class="container" ng-hide="show_visualize || show_loading" masonry='{ "transitionDuration" : "0.1s" , "itemSelector" : ".tweet", "gutter" : 25}'>
         <div masonry-tile ng-repeat="tweet in tweets" class="tweet">
-            <a ng-href="https://twitter.com/{{ tweet.user.screen_name}}"><img ng-src="{{ tweet.user.profile_image_url_https }}" class="profile_image"></a>
+            <a ng-href="https://twitter.com/{{ tweet.user.screen_name}}" target="_blank"><img ng-src="{{ tweet.user.profile_image_url_https }}" class="profile_image"></a>
             <a ng-href="https://twitter.com/{{ tweet.user.screen_name}}" target="_blank"><span class="profile_name">{{ tweet.user.name }}</span></a><br>
             <span class="profile_screen_name">@{{ tweet.user.screen_name }}</span>
             <p class="profile_tweet">{{ tweet.text }}</p>
