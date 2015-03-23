@@ -216,7 +216,6 @@ app.controller('MainController', function($scope, $q, ngDialog){
             "search_tweets",
             $scope.last_query,
             function (reply){
-            console.log(reply.statuses);
                 reply.statuses.forEach(function(x){
                     if(!contains_tweet($scope.tweets, x)){
                         $scope.tweets.push(x);
@@ -243,7 +242,6 @@ app.controller('MainController', function($scope, $q, ngDialog){
         var contains = false;
         tweets.forEach(function(x){
             if(x.id_str === tweet.id_str){
-                console.log('equal')
                 contains = true;
             }
         });

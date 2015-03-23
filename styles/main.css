@@ -121,7 +121,7 @@ html, body {
     margin-left: auto;
     margin-right: auto; }
     .right_column .container .tweet {
-      border-radius: 3px;
+      border-radius: 1px;
       background-color: white;
       width: 42%;
       padding: 3%;
