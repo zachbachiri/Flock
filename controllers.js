@@ -265,6 +265,7 @@ app.controller('MainController', function($scope, $q, ngDialog){
             params,
             function (reply){
                 $scope.tweets = reply.statuses;
+                console.log(reply.statuses);
                 $scope.show_loading = false;
                 $scope.$apply();
             }
