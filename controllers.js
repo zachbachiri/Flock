@@ -218,7 +218,7 @@ app.controller('MainController', function($scope, $q, ngDialog){
             function (reply){
             console.log(reply.statuses);
                 reply.statuses.forEach(function(x){
-                    if(!contains_tweet($scope.tweets, x)){ //doesn't work, need to find if array contains
+                    if(!contains_tweet($scope.tweets, x)){
                         $scope.tweets.push(x);
                     }
                 })
@@ -240,12 +240,14 @@ app.controller('MainController', function($scope, $q, ngDialog){
         @modhist:
     */
     var contains_tweet = function(tweets, tweet){
+        var contains = false;
         tweets.forEach(function(x){
-            if(x.id == tweet.id){
-                return true;
+            if(x.id_str === tweet.id_str){
+                console.log('equal')
+                contains = true;
             }
         });
-        return false;
+        return contains;
     }
 
     /*
@@ -266,7 +268,6 @@ app.controller('MainController', function($scope, $q, ngDialog){
             params,
             function (reply){
                 $scope.tweets = reply.statuses;
-                console.log(reply.statuses);
                 $scope.show_loading = false;
                 $scope.$apply();
             }
