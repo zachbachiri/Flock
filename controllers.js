@@ -62,10 +62,11 @@ app.controller('RedirectController', function($scope, $location){
         key_value_pair = query_params[i].split("=");
         oauth_params[key_value_pair[0]] = key_value_pair[1];
     }
-
+    console.log(oauth_params);
     // check to make sure the current page's URL contains the oauth token and verifier from Twitter
     if (_.has(oauth_params, 'oauth_token') && _.has(oauth_params, 'oauth_verifier')){
-        // url for
+        console.log('Making call to backend for access tokens');
+        // url for backend access token request endpoint
         var request_url = flock_server_url + "/accessToken?" +
                           "oauth_token=" + oauth_params.oauth_token + "&" +
                           "oauth_verifier=" + oauth_params.oauth_verifier;
