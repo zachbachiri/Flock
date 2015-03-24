@@ -4,8 +4,8 @@ var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'u
     var cb = new Codebird;
     cb.setConsumerKey("pEaf5TgKTpz0Tf1M9uyqZSysQ", "dTV7OuEkgauN8syVrOT5T9XzK8CnXpSvjMEELlZshz1aqdsAVW");
     cb.setToken("3029162194-GAze2tNS3Y4rPvIwvXZ1j813hZriXKWNpWjo3dd", "ndsckIxbSpvDuTZGdmzP4pGac6fsBjfQAVkL5EoTzpd3M");
-    var flock_server_url = "http://localhost:5000";
-    //var flock_server_url = "https://flock-backend.herokuapp.com";
+    //var flock_server_url = "http://localhost:5000";
+    var flock_server_url = "https://flock-backend.herokuapp.com";
     var sessionId = '';
 
 /*
@@ -62,10 +62,11 @@ app.controller('RedirectController', function($scope, $location){
         key_value_pair = query_params[i].split("=");
         oauth_params[key_value_pair[0]] = key_value_pair[1];
     }
-
+    console.log(oauth_params);
     // check to make sure the current page's URL contains the oauth token and verifier from Twitter
     if (_.has(oauth_params, 'oauth_token') && _.has(oauth_params, 'oauth_verifier')){
-        // url for
+        console.log('Making call to backend for access tokens');
+        // url for backend access token request endpoint
         var request_url = flock_server_url + "/accessToken?" +
                           "oauth_token=" + oauth_params.oauth_token + "&" +
                           "oauth_verifier=" + oauth_params.oauth_verifier;
