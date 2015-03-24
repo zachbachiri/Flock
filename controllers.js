@@ -49,14 +49,26 @@ app.controller('RedirectController', function($scope, $location){
 
     // TODO: If an error occurs or if the query params are not found, redirect to search page as guest?
 
-    var query_params = $location.search();
+    // parse oauth query parameters from current URL provided by Twitter
+    var current_url = $location.absUrl();
+    var url_params = current_url.split("?")[1];
+    var query_params = url_params.split("#")[0].split("&");
+
+    var oauth_params = {};
+    var key_value_pair = [];
+
+    // store oauth query parameters with a JSON object
+    for (var i = 0; i < query_params.length; i++) {
+        key_value_pair = query_params[i].split("=");
+        oauth_params[key_value_pair[0]] = key_value_pair[1];
+    }
 
     // check to make sure the current page's URL contains the oauth token and verifier from Twitter
-    if (_.has(query_params, 'oauth_token') && _.has(query_params, 'oauth_verifier')){
+    if (_.has(oauth_params, 'oauth_token') && _.has(oauth_params, 'oauth_verifier')){
         // url for
         var request_url = flock_server_url + "/accessToken?" +
-                          "oauth_token=" + query_params.oauth_token + "&" +
-                          "oauth_verifier=" + query_params.oauth_verifier;
+                          "oauth_token=" + oauth_params.oauth_token + "&" +
+                          "oauth_verifier=" + oauth_params.oauth_verifier;
         $.ajax({
             url: request_url,
             success: function(response){
