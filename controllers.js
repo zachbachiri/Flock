@@ -525,7 +525,7 @@ app.controller('MainController', function($scope, $q, ngDialog){
 
         // Split text into array of words
         var split = text.split(" ");
-        console.log(_.chain(split));
+        
         // Group same words and sort by frequency
         var res =
         _.chain(split)
