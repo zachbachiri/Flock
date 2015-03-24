@@ -134,6 +134,9 @@ app.controller('MainController', function($scope, $q, ngDialog){
         isChecked: true
     }];
 
+    // Default sensitivity for search
+    $scope.sensitive = true;
+
     /*
         @name:    query
         @author:  Zach Bachiri
@@ -207,7 +210,7 @@ app.controller('MainController', function($scope, $q, ngDialog){
         @reqfile:
         @return:  void
         @errors:
-        @modhist:
+        @modhist: Mar 24 : Alex Seeto : Add filtering out of possibly sensitive tweets
     */
     $scope.load_more = function(){
         // Change 'View More Tweets' button display value
@@ -216,11 +219,23 @@ app.controller('MainController', function($scope, $q, ngDialog){
             "search_tweets",
             $scope.last_query,
             function (reply){
-                reply.statuses.forEach(function(x){
+                // If true, filter out possibily sensitive tweets, then remove dupes
+                if($scope.sensitive){
+                    reply.statuses.forEach(function(x){
+                        // Push tweet if "possibly_sensitive" is false
+                        if(!x.possibly_sensitive){
+                            // Push tweet if array does not already contain it
+                            if(!contains_tweet($scope.tweets, x)){
+                                $scope.tweets.push(x);
+                            }
+                        }
+                    });
+                // Otherwise, just filter out dupes
+                } else {
                     if(!contains_tweet($scope.tweets, x)){
                         $scope.tweets.push(x);
                     }
-                })
+                }
                 $scope.load_more_copy = "View More Tweets";
                 $scope.$apply();
             }
@@ -257,7 +272,7 @@ app.controller('MainController', function($scope, $q, ngDialog){
         @reqfile:
         @return:  void
         @errors:
-        @modhist:
+        @modhist: Mar 24 : Alex Seeto : Add filtering out of possibly sensitive tweets
     */
     var twitterCall = function(params){
         $scope.last_query = params;
@@ -265,7 +280,17 @@ app.controller('MainController', function($scope, $q, ngDialog){
             "search_tweets",
             params,
             function (reply){
-                $scope.tweets = reply.statuses;
+                // If true, filter out possibily sensitive tweets
+                if($scope.sensitive){
+                    reply.statuses.forEach(function(x){
+                        // Push tweet if "possibly_sensitive" is false
+                        if(!x.possibly_sensitive){
+                            $scope.tweets.push(x);
+                        }
+                    });
+                }else{
+                    $scope.tweets = reply.statuses;
+                }
                 $scope.show_loading = false;
                 $scope.$apply();
             }
@@ -500,7 +525,7 @@ app.controller('MainController', function($scope, $q, ngDialog){
 
         // Split text into array of words
         var split = text.split(" ");
-
+        console.log(_.chain(split));
         // Group same words and sort by frequency
         var res =
         _.chain(split)
