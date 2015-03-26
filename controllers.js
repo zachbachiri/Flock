@@ -17,6 +17,23 @@ var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'u
 */
 app.controller('LoginController', function($scope, $state){
 
+    if (sessionStorage.sessionId != null){
+        $.ajax({
+            data: { session_id: sessionStorage.sessionId },
+            url: flock_server_url + "/checkSession",
+            success: function(response){
+                if (response === "session found"){
+                    $state.go('search');
+                } else {
+                    delete sessionStorage.sessionId;
+                }
+            },
+            error: function(error){
+                console.log(error);
+            }
+        });
+    }
+
     /*
         @name:    twitter_sign_in
         @author:  Jimmy Ly
@@ -28,7 +45,21 @@ app.controller('LoginController', function($scope, $state){
         $.ajax({
             url: flock_server_url + "/requestToken",
             success: function(response){
-                window.location.href = response;
+                sessionStorage.sessionId = response[0];
+                window.location.href = response[1];
+            },
+            error: function(error){
+                console.log(error);
+            }
+        });
+    };
+
+    $scope.guest_sign_in = function(){
+        $.ajax({
+            url: flock_server_url + "/guestSession",
+            success: function(response){
+                sessionStorage.sessionId = response;
+                $state.go('search');
             },
             error: function(error){
                 console.log(error);
@@ -45,7 +76,7 @@ app.controller('LoginController', function($scope, $state){
     @param:   $scope - object required for angular usage
     @return:  void
 */
-app.controller('RedirectController', function($scope, $location){
+app.controller('RedirectController', function($scope, $location, $state){
 
     // TODO: If an error occurs or if the query params are not found, redirect to search page as guest?
 
@@ -65,16 +96,17 @@ app.controller('RedirectController', function($scope, $location){
     console.log(oauth_params);
     // check to make sure the current page's URL contains the oauth token and verifier from Twitter
     if (_.has(oauth_params, 'oauth_token') && _.has(oauth_params, 'oauth_verifier')){
+        // set session id in data to send to backend
+        oauth_params.session_id = sessionStorage.sessionId;
         console.log('Making call to backend for access tokens');
         // url for backend access token request endpoint
-        var request_url = flock_server_url + "/accessToken?" +
-                          "oauth_token=" + oauth_params.oauth_token + "&" +
-                          "oauth_verifier=" + oauth_params.oauth_verifier;
+        var request_url = flock_server_url + "/accessToken";
         $.ajax({
+            data: oauth_params,
             url: request_url,
             success: function(response){
-                sessionId = response.sessionId;
-                $state.go('search');
+                console.log(current_url);
+                window.location.href = current_url.split("?")[0] + "#/search";
             },
             error: function(error){
 
@@ -93,7 +125,26 @@ app.controller('RedirectController', function($scope, $location){
     @param:   ngDialog - ngDialog object
     @return:  void
 */
-app.controller('MainController', function($scope, $q, ngDialog){
+app.controller('MainController', function($scope, $q, $state, ngDialog){
+
+    if (sessionStorage.sessionId != null){
+        $.ajax({
+            data: { session_id: sessionStorage.sessionId },
+            url: flock_server_url + "/checkSession",
+            success: function(response){
+                if (response === "session not found"){
+                    delete sessionStorage.sessionId;
+                    $state.go('login');
+                }
+            },
+            error: function(error){
+                console.log(error);
+            }
+        });
+    } else {
+        $state.go('login');
+    }
+
     // Set default variable values
     $scope.tweets = [];
     $scope.show_loading = false;
@@ -228,10 +279,10 @@ app.controller('MainController', function($scope, $q, ngDialog){
     $scope.load_more = function(){
         // Change 'View More Tweets' button display value
         $scope.load_more_copy = "...";
-        cb.__call(
-            "search_tweets",
-            $scope.last_query,
-            function (reply){
+        $.ajax({
+            data: $scope.last_query,
+            url: flock_server_url + "/tweets",
+            success: function(reply){
                 // If true, filter out possibily sensitive tweets, then remove dupes
                 if($scope.sensitive){
                     reply.statuses.forEach(function(x){
@@ -251,8 +302,11 @@ app.controller('MainController', function($scope, $q, ngDialog){
                 }
                 $scope.load_more_copy = "View More Tweets";
                 $scope.$apply();
+            },
+            error: function(error){
+                console.log(error);
             }
-        );
+        });
     }
 
     /*
@@ -288,7 +342,31 @@ app.controller('MainController', function($scope, $q, ngDialog){
         @modhist: Mar 24 : Alex Seeto : Add filtering out of possibly sensitive tweets
     */
     var twitterCall = function(params){
+        params.session_id = sessionStorage.sessionId;
         $scope.last_query = params;
+        $.ajax({
+            data: params,
+            url: flock_server_url + "/tweets",
+            success: function(reply){
+                // If true, filter out possibily sensitive tweets
+                if($scope.sensitive){
+                    reply.statuses.forEach(function(x){
+                        // Push tweet if "possibly_sensitive" is false
+                        if(!x.possibly_sensitive){
+                            $scope.tweets.push(x);
+                        }
+                    });
+                }else{
+                    $scope.tweets = reply.statuses;
+                }
+                $scope.show_loading = false;
+                $scope.$apply();
+            },
+            error: function(error){
+                console.log(error);
+            }
+        });
+        /*
         cb.__call(
             "search_tweets",
             params,
@@ -307,7 +385,7 @@ app.controller('MainController', function($scope, $q, ngDialog){
                 $scope.show_loading = false;
                 $scope.$apply();
             }
-        );
+        );*/
     };
 
     /*
