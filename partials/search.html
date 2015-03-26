@@ -14,9 +14,9 @@
 
                 <span class="show_hide_search" ng-hide="show_advanced_search" ng-click="toggle_advanced_search()">Advanced Search</span>
 
+                <p ng-show="show_advanced_search"><input id="sensitive" type="checkbox" ng-model="sensitive">&nbsp;Filter Out Sensitive Links</p>
                 <p class="parameters_title" ng-show="show_advanced_search">Results Type</p>
                 <div id="advanced_search" ng-show="show_advanced_search">
-                    <p><input id="sensitive" type="checkbox" ng-model="sensitive">&nbsp;Filter Out Sensitive Links</p>
                     <select class="selection" ng-model="parameters.result_type" ng-init="parameters.result_type = result_types[2].value" ng-options="option.value as option.name for option in result_types">
                     </select>
 
@@ -84,5 +84,8 @@
     </div>
     <div class="container" ng-show="show_loading">
         <img class="loading_gif" src="styles/images/ajax-loader.gif">
+    </div>
+    <div class="container" ng-show="!have_searched">
+        <h1 style="color:#DADADA">Search by user, hashtag or keywords </h1>
     </div>
 </div>

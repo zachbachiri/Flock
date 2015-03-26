@@ -73,8 +73,8 @@ html, body {
       .left_column .search_wrap .search .selection {
         margin-bottom: 30px;
         display: block;
-        width: 45%;
-        height: 40px;
+        width: 40%;
+        height: 35px;
         background: -webkit-linear-gradient(white, #f7f7f7);
         /* For Safari 5.1 to 6.0 */
         background: -o-linear-gradient(white, #f7f7f7);
@@ -126,8 +126,9 @@ html, body {
       width: 42%;
       padding: 3%;
       margin-bottom: 25px;
-      box-shadow: 2px 2px 3px #E0E0E0;
-      font-size: .9em; }
+      box-shadow: 1px 1px 3px #E0E0E0;
+      font-size: .95em;
+      line-height: 1.35; }
       .right_column .container .tweet a {
         color: #4c4c4c; }
       .right_column .container .tweet .profile_image {
@@ -147,7 +148,7 @@ html, body {
         margin-top: 2px; }
       .right_column .container .tweet .profile_tweet {
         clear: both;
-        margin-top: 15px; }
+        margin-top: 25px; }
       .right_column .container .tweet .profile_media {
         max-width: 100%;
         margin-bottom: 15px; }
