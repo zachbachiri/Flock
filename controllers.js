@@ -4,8 +4,8 @@ var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'u
     var cb = new Codebird;
     cb.setConsumerKey("pEaf5TgKTpz0Tf1M9uyqZSysQ", "dTV7OuEkgauN8syVrOT5T9XzK8CnXpSvjMEELlZshz1aqdsAVW");
     cb.setToken("3029162194-GAze2tNS3Y4rPvIwvXZ1j813hZriXKWNpWjo3dd", "ndsckIxbSpvDuTZGdmzP4pGac6fsBjfQAVkL5EoTzpd3M");
-    //var flock_server_url = "http://localhost:5000";
-    var flock_server_url = "https://flock-backend.herokuapp.com";
+    var flock_server_url = "http://localhost:5000";
+    //var flock_server_url = "https://flock-backend.herokuapp.com";
     var sessionId = '';
 
 /*
@@ -17,15 +17,15 @@ var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'u
 */
 app.controller('LoginController', function($scope, $state){
 
-    if (sessionStorage.sessionId != null){
+    if (sessionStorage.getItem('sessionId') != null){
         $.ajax({
-            data: { session_id: sessionStorage.sessionId },
+            data: { session_id: sessionStorage.getItem('sessionId') },
             url: flock_server_url + "/checkSession",
             success: function(response){
                 if (response === "session found"){
                     $state.go('search');
                 } else {
-                    delete sessionStorage.sessionId;
+                    sessionStorage.clear();
                 }
             },
             error: function(error){
@@ -45,7 +45,7 @@ app.controller('LoginController', function($scope, $state){
         $.ajax({
             url: flock_server_url + "/requestToken",
             success: function(response){
-                sessionStorage.sessionId = response[0];
+                sessionStorage.setItem('sessionId', response[0]);
                 window.location.href = response[1];
             },
             error: function(error){
@@ -58,7 +58,10 @@ app.controller('LoginController', function($scope, $state){
         $.ajax({
             url: flock_server_url + "/guestSession",
             success: function(response){
-                sessionStorage.sessionId = response;
+                sessionStorage.setItem('sessionId', response.sessionId);
+                sessionStorage.setItem('screen_name', response.screen_name);
+                sessionStorage.setItem('profile_image_url', response.profile_image_url);
+                sessionStorage.setItem('fromLogin', true);
                 $state.go('search');
             },
             error: function(error){
@@ -93,19 +96,18 @@ app.controller('RedirectController', function($scope, $location, $state){
         key_value_pair = query_params[i].split("=");
         oauth_params[key_value_pair[0]] = key_value_pair[1];
     }
-    console.log(oauth_params);
     // check to make sure the current page's URL contains the oauth token and verifier from Twitter
     if (_.has(oauth_params, 'oauth_token') && _.has(oauth_params, 'oauth_verifier')){
         // set session id in data to send to backend
-        oauth_params.session_id = sessionStorage.sessionId;
-        console.log('Making call to backend for access tokens');
+        oauth_params.session_id = sessionStorage.getItem('sessionId');
         // url for backend access token request endpoint
         var request_url = flock_server_url + "/accessToken";
         $.ajax({
             data: oauth_params,
             url: request_url,
             success: function(response){
-                console.log(current_url);
+                sessionStorage.setItem('screen_name', '@' + response.screen_name);
+                sessionStorage.setItem('profile_image_url', response.profile_image_url);
                 window.location.href = current_url.split("?")[0] + "#/search";
             },
             error: function(error){
@@ -127,13 +129,13 @@ app.controller('RedirectController', function($scope, $location, $state){
 */
 app.controller('MainController', function($scope, $q, $state, ngDialog){
 
-    if (sessionStorage.sessionId != null){
+    if (sessionStorage.getItem('sessionId') != null && !sessionStorage.getItem('fromLogin')){
         $.ajax({
-            data: { session_id: sessionStorage.sessionId },
+            data: { session_id: sessionStorage.getItem('sessionId') },
             url: flock_server_url + "/checkSession",
             success: function(response){
                 if (response === "session not found"){
-                    delete sessionStorage.sessionId;
+                    sessionStorage.clear();
                     $state.go('login');
                 }
             },
@@ -141,9 +143,14 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 console.log(error);
             }
         });
-    } else {
+    } else if (!sessionStorage.fromLogin){
+        sessionStorage.removeItem('fromLogin');
         $state.go('login');
     }
+    sessionStorage.removeItem('fromLogin');
+    $scope.screen_name = sessionStorage.getItem('screen_name');
+    $scope.profile_image_url = sessionStorage.getItem('profile_image_url');
+
 
     // Set default variable values
     $scope.tweets = [];
@@ -781,5 +788,10 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     */
     $scope.toggle_advanced_search = function(){
         $scope.show_advanced_search = !$scope.show_advanced_search;
+    }
+
+    $scope.logout = function(){
+        sessionStorage.clear();
+        $state.go('login');
     }
 });
