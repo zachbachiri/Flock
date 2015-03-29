@@ -188,24 +188,16 @@ html,body{
 			.profile_tweet{
 				clear: both;
 				margin-top: 25px;
+				margin-bottom: 5px;
 			}
 			.profile_media{
 				max-width: 100%;
-				margin-bottom: 15px;
-			}
-			.retweet_count{
-				background-image: url('images/retweet.png');
-				margin-right: 15px;
-			}
-			.favorite_count{
-				background-image: url('images/favorite.png');
+				margin-bottom: 5px;
 			}
 			.favorite_count, .retweet_count{
-				color: #8899a6;
-				background-repeat: no-repeat;
-				background-position: left center;
-				padding-left: 25px;
-				font-size: .9em;
+				color: #707070;
+				font-size: .7em;
+				margin-right: 10px;
 				float: left;
 			}
 			.view_tweet{
@@ -218,6 +210,13 @@ html,body{
 			.view_tweet:hover{
 				color: $twitter-hover;
 			}
+			.count{
+				font-size: 1.2em;
+			}
+            .retweets_favorites{
+            	border-top: 1px solid #e8e8e8;
+            	padding-top: 10px;
+            }
 		}
 		.loading_gif{
 			width: 250px;

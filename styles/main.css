@@ -148,21 +148,15 @@ html, body {
         margin-top: 2px; }
       .right_column .container .tweet .profile_tweet {
         clear: both;
-        margin-top: 25px; }
+        margin-top: 25px;
+        margin-bottom: 5px; }
       .right_column .container .tweet .profile_media {
         max-width: 100%;
-        margin-bottom: 15px; }
-      .right_column .container .tweet .retweet_count {
-        background-image: url("images/retweet.png");
-        margin-right: 15px; }
-      .right_column .container .tweet .favorite_count {
-        background-image: url("images/favorite.png"); }
+        margin-bottom: 5px; }
       .right_column .container .tweet .favorite_count, .right_column .container .tweet .retweet_count {
-        color: #8899a6;
-        background-repeat: no-repeat;
-        background-position: left center;
-        padding-left: 25px;
-        font-size: .9em;
+        color: #707070;
+        font-size: .7em;
+        margin-right: 10px;
         float: left; }
       .right_column .container .tweet .view_tweet {
         text-align: right;
@@ -172,6 +166,11 @@ html, body {
         font-size: .9em; }
       .right_column .container .tweet .view_tweet:hover {
         color: #0084b4; }
+      .right_column .container .tweet .count {
+        font-size: 1.2em; }
+      .right_column .container .tweet .retweets_favorites {
+        border-top: 1px solid #e8e8e8;
+        padding-top: 10px; }
     .right_column .container .loading_gif {
       width: 250px;
       height: 250px;
