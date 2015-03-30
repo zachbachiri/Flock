@@ -297,6 +297,8 @@ app.controller('MainController', function($scope, $q, ngDialog){
             function (reply){
                 // If true, filter out possibily sensitive tweets
                 if($scope.sensitive){
+                    //HAVE TO SET TWEETS TO BE EMPTY ARRAY FIRST
+                    $scope.tweets = [];
                     reply.statuses.forEach(function(x){
                         // Push tweet if "possibly_sensitive" is false
                         if(!x.possibly_sensitive){
