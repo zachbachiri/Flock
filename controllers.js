@@ -1,9 +1,5 @@
 var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'ui.router']);
 
-    // For Twitter application-authenticated service calls
-    var cb = new Codebird;
-    cb.setConsumerKey("pEaf5TgKTpz0Tf1M9uyqZSysQ", "dTV7OuEkgauN8syVrOT5T9XzK8CnXpSvjMEELlZshz1aqdsAVW");
-    cb.setToken("3029162194-GAze2tNS3Y4rPvIwvXZ1j813hZriXKWNpWjo3dd", "ndsckIxbSpvDuTZGdmzP4pGac6fsBjfQAVkL5EoTzpd3M");
     //var flock_server_url = "http://localhost:5000";
     var flock_server_url = "https://flock-backend.herokuapp.com";
     var sessionId = '';
@@ -13,9 +9,36 @@ var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'u
     @created: Mar 16, 2015
     @purpose: Initiate Login Controller
     @param:   $scope - object required for angular usage
+              $state - object required for redirecting user to other states/pages
     @return:  void
 */
 app.controller('LoginController', function($scope, $state){
+
+    // Upon visiting the login page, check if the user is already logged in.
+    // If so, sessionStorage should contain a 'sessionId' value that hasn't
+    // expired. Make a call to the flock backend to check that the sessionId
+    // is valid if present.
+    if (sessionStorage.getItem('sessionId') != null){
+        $.ajax({
+            data: { session_id: sessionStorage.getItem('sessionId') },
+            url: flock_server_url + "/checkSession",
+            success: function(response){
+                // If the session is found, then go directly to the search page
+                if (response === "session found"){
+                    $state.go('search');
+                // Otherwise clear the expired session information from the browser
+                } else {
+                    sessionStorage.clear();
+                }
+            },
+            error: function(error){
+                // If an error occurs, then clear the current session information
+                // and have the user login again
+                sessionStorage.clear();
+                console.log(error);
+            }
+        });
+    }
 
     /*
         @name:    twitter_sign_in
@@ -28,10 +51,45 @@ app.controller('LoginController', function($scope, $state){
         $.ajax({
             url: flock_server_url + "/requestToken",
             success: function(response){
-                window.location.href = response;
+                // Set the sessionId provided by the backend to the sessionStorage
+                // and redirect the user to the Twitter sign in page
+                sessionStorage.setItem('sessionId', response[0]);
+                window.location.href = response[1];
             },
             error: function(error){
-                console.log(error);
+                alert('Sorry, there is an error with the login server. ' +
+                      'Please check back soon!');
+            }
+        });
+    };
+
+    /*
+        @name:    guest_sign_in
+        @author:  Jimmy Ly
+        @created: Mar 16, 2015
+        @purpose: Set the default Guest session information, including the
+                  sessionId as the guest sessionId, screen_name as 'Guest',
+                  profile_image_url as the default Twitter profile image,
+                  and fromLogin = true to prevent search page from initially
+                  redirecting back to login page
+        @return:  void
+    */
+    $scope.guest_sign_in = function(){
+        // make a call to the flock backend to retrieve the Guest session information
+        $.ajax({
+            url: flock_server_url + "/guestSession",
+            success: function(response){
+                // Set default Guest session information as described in @purpose
+                sessionStorage.setItem('sessionId', response.sessionId);
+                sessionStorage.setItem('screen_name', response.screen_name);
+                sessionStorage.setItem('profile_image_url', response.profile_image_url);
+                sessionStorage.setItem('fromLogin', true);
+                // Bring the user to the search page
+                $state.go('search');
+            },
+            error: function(error){
+                alert('Sorry, there is an error with the login server. ' +
+                      'Please check back soon!');
             }
         });
     };
@@ -43,45 +101,67 @@ app.controller('LoginController', function($scope, $state){
     @created: Mar 16, 2015
     @purpose: Initiate Redirect Controller
     @param:   $scope - object required for angular usage
+              $location - object required for obtaining current URL
     @return:  void
 */
 app.controller('RedirectController', function($scope, $location){
 
+    /*
+        @name:    redirect_error
+        @author:  Jimmy Ly
+        @created: Mar 16, 2015
+        @purpose: Notify the user that an error has occurred during the redirect process
+                  then bring the user back to the login page. Also clear current session
+                  information
+        @return:  void
+    */
+    $scope.redirect_error = function(){
+        alert('Sorry, there is an error with the login server. ' +
+              'Please try logging in as a Guest and check back soon!');
+        sessionStorage.clear();
+        window.location.href = current_url.split("?")[0] + "#/login";
+    }
     // TODO: If an error occurs or if the query params are not found, redirect to search page as guest?
 
     // parse oauth query parameters from current URL provided by Twitter
+    // i.e. http://www.northeastern.edu/flock/?oauth_token=...&oauth_verifier=...#/redirect
     var current_url = $location.absUrl();
+    // i.e. oauth_token=...&oauth_verifier=...#/redirect
     var url_params = current_url.split("?")[1];
+    // i.e [oauth_token=..., oauth_verifier=...]
     var query_params = url_params.split("#")[0].split("&");
 
     var oauth_params = {};
     var key_value_pair = [];
 
-    // store oauth query parameters with a JSON object
+    // store oauth query parameters with a JSON object oauth_params
     for (var i = 0; i < query_params.length; i++) {
         key_value_pair = query_params[i].split("=");
         oauth_params[key_value_pair[0]] = key_value_pair[1];
     }
-    console.log(oauth_params);
     // check to make sure the current page's URL contains the oauth token and verifier from Twitter
     if (_.has(oauth_params, 'oauth_token') && _.has(oauth_params, 'oauth_verifier')){
-        console.log('Making call to backend for access tokens');
+        // set session id in data to send to backend
+        oauth_params.session_id = sessionStorage.getItem('sessionId');
         // url for backend access token request endpoint
-        var request_url = flock_server_url + "/accessToken?" +
-                          "oauth_token=" + oauth_params.oauth_token + "&" +
-                          "oauth_verifier=" + oauth_params.oauth_verifier;
+        var request_url = flock_server_url + "/accessToken";
         $.ajax({
+            data: oauth_params,
             url: request_url,
             success: function(response){
-                sessionId = response.sessionId;
-                $state.go('search');
+                // Set returned screen_name and profile_image_url for current user
+                // in sessionStorage and redirect user to search page
+                sessionStorage.setItem('screen_name', '@' + response.screen_name);
+                sessionStorage.setItem('profile_image_url', response.profile_image_url);
+                window.location.href = current_url.split("?")[0] + "#/search";
             },
             error: function(error){
-
+                $scope.redirect_error();
             }
         });
+    } else {
+        $scope.redirect_error();
     }
-
 });
 
 /*
@@ -93,7 +173,39 @@ app.controller('RedirectController', function($scope, $location){
     @param:   ngDialog - ngDialog object
     @return:  void
 */
-app.controller('MainController', function($scope, $q, ngDialog){
+app.controller('MainController', function($scope, $q, $state, ngDialog){
+
+    // Upon visiting the search page, check if the user is already logged in.
+    // If the user is a Guest, then make sure they were just redirected from
+    // the login page. Otherwise, remove the current session information and
+    // bring the user back to the login page.
+    if (sessionStorage.getItem('sessionId') != null && !sessionStorage.getItem('fromLogin')){
+        $.ajax({
+            data: { session_id: sessionStorage.getItem('sessionId') },
+            url: flock_server_url + "/checkSession",
+            success: function(response){
+                // If the session id is invalid, then clear the current session information
+                // and redirect the user to the login screen
+                if (response === "session not found"){
+                    sessionStorage.clear();
+                    $state.go('login');
+                }
+            },
+            error: function(error){
+                sessionStorage.clear();
+                $state.go('login');
+            }
+        });
+    } else if (!sessionStorage.fromLogin){
+        sessionStorage.clear();
+        $state.go('login');
+    }
+    // Remove 'fromLogin' item from sessionStorage so that next time Guest visitor
+    // will be redirected to login page to encourage signing in through Twitter
+    // to reduce rate limit issue
+    sessionStorage.removeItem('fromLogin');
+
+
     // Set default variable values
     $scope.tweets = [];
     $scope.show_loading = false;
@@ -104,6 +216,8 @@ app.controller('MainController', function($scope, $q, ngDialog){
     $scope.load_more_copy = "View More Tweets";
     $scope.have_searched = false;
     $scope.have_visualized = false;
+    $scope.screen_name = sessionStorage.getItem('screen_name');
+    $scope.profile_image_url = sessionStorage.getItem('profile_image_url');
     $scope.count_options = [];
     for (i = 1; i <= 100; i++) {
         $scope.count_options.push(i);
@@ -226,14 +340,28 @@ app.controller('MainController', function($scope, $q, ngDialog){
         @return:  void
         @errors:
         @modhist: Mar 24 : Alex Seeto : Add filtering out of possibly sensitive tweets
+                  Mar 28 : Jimmy Ly : Add error handling if session expires
+                  Mar 30 : Jimmy Ly : Add warning for user if reaching rate limit
     */
     $scope.load_more = function(){
         // Change 'View More Tweets' button display value
         $scope.load_more_copy = "...";
-        cb.__call(
-            "search_tweets",
-            $scope.last_query,
-            function (reply){
+        $.ajax({
+            data: $scope.last_query,
+            url: flock_server_url + "/tweets",
+            success: function(reply){
+                // set rate limit information to be displayed
+                $scope.rate_limit = reply.rate_limit;
+                $scope.rate_limit_remaining = reply.rate_limit_remaining;
+                var resetDate = new Date(parseInt(reply.rate_limit_reset) * 1000);
+                var hourOffset = resetDate.getTimezoneOffset() / 60;
+                resetDate.setHours(resetDate.getHours() - hourOffset);
+                $scope.rate_limit_reset = resetDate.toLocaleString();
+                // warn user if 10 or 20 searches remaining
+                if ($scope.rate_limit_remaining <= 20 && $scope.rate_limit_remaining % 10 === 0){
+                    alert('Warning: only ' + $scope.rate_limit_remaining + ' searches remaining ' +
+                          'before ' + $scope.rate_limit_reset + '.');
+                }
                 // If true, filter out possibily sensitive tweets, then remove dupes
                 if($scope.sensitive){
                     reply.statuses.forEach(function(x){
@@ -253,8 +381,11 @@ app.controller('MainController', function($scope, $q, ngDialog){
                 }
                 $scope.load_more_copy = "View More Tweets";
                 $scope.$apply();
+            },
+            error: function(error){
+                $scope.sessionExpired(error);
             }
-        );
+        });
     }
 
     /*
@@ -288,13 +419,28 @@ app.controller('MainController', function($scope, $q, ngDialog){
         @return:  void
         @errors:
         @modhist: Mar 24 : Alex Seeto : Add filtering out of possibly sensitive tweets
+                  Mar 30 : Jimmy Ly : Add warning for user if reaching rate limit
     */
     var twitterCall = function(params){
+        params.session_id = sessionStorage.sessionId;
         $scope.last_query = params;
-        cb.__call(
-            "search_tweets",
-            params,
-            function (reply){
+        $.ajax({
+            data: params,
+            url: flock_server_url + "/tweets",
+            success: function(reply){
+                // set rate limit information to be displayed
+                $scope.rate_limit = reply.rate_limit;
+                $scope.rate_limit_remaining = reply.rate_limit_remaining;
+                var resetDate = new Date(parseInt(reply.rate_limit_reset) * 1000);
+                var hourOffset = resetDate.getTimezoneOffset() / 60;
+                resetDate.setHours(resetDate.getHours() - hourOffset);
+                // warn user if 10 or 20 searches remaining
+                $scope.rate_limit_reset = resetDate.toLocaleString();
+                if ($scope.rate_limit_remaining < 20 && $scope.rate_limit_remaining % 10 === 0){
+                    alert('Warning: only ' + $scope.rate_limit_remaining + ' searches remaining ' +
+                          'before ' + $scope.rate_limit_reset + '.');
+                }
+
                 // If true, filter out possibily sensitive tweets
                 if($scope.sensitive){
                     //HAVE TO SET TWEETS TO BE EMPTY ARRAY FIRST
@@ -310,8 +456,11 @@ app.controller('MainController', function($scope, $q, ngDialog){
                 }
                 $scope.show_loading = false;
                 $scope.$apply();
+            },
+            error: function(error){
+                $scope.sessionExpired(error);
             }
-        );
+        });
     };
 
     /*
@@ -757,5 +906,20 @@ app.controller('MainController', function($scope, $q, ngDialog){
     */
     $scope.toggle_advanced_search = function(){
         $scope.show_advanced_search = !$scope.show_advanced_search;
+    }
+
+    $scope.sessionExpired = function(error){
+        if (error.status === 403){
+            alert('Sorry, your session has expired. Please login again.');
+            sessionStorage.clear();
+            $state.go('login');
+        } else {
+            console.log(error);
+        }
+    }
+
+    $scope.logout = function(){
+        sessionStorage.clear();
+        $state.go('login');
     }
 });
