@@ -76,13 +76,13 @@
 
     <button id="load_more" ng-hide="show_loading || show_visualize || !have_searched" ng-click="load_more()">{{ load_more_copy }}</button>
 
-    <div class="container" ng-show="show_visualize">
-        <h1>Visualize</h1>
-        <h3>Word Cloud</h3>
-        <div id="cloud" style="border:1px dashed gray; width: 800px; height: 300px;"></div>
+    <div class="container visualize_container" ng-show="show_visualize">
+        <h1>Word Cloud</h1>
+        <div id="cloud" style="border:1px solid #cacaca; width: 800px; height: 300px;"></div>
         <br />
-        <button type="button" ng-click="buildCloud()">Generate Word Cloud</button>
         <button type="button" ng-click="downloadCloud()">Download Word Cloud</button>
+        <h1>Hashtag Histogram</h1>
+        <div id="hastag_histogram"></div>
     </div>
     <div class="container" ng-show="show_loading">
         <img class="loading_gif" src="styles/images/ajax-loader.gif">

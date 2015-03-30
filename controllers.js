@@ -103,6 +103,7 @@ app.controller('MainController', function($scope, $q, ngDialog){
     $scope.last_query = [];
     $scope.load_more_copy = "View More Tweets";
     $scope.have_searched = false;
+    $scope.have_visualized = false;
     $scope.count_options = [];
     for (i = 1; i <= 100; i++) {
         $scope.count_options.push(i);
@@ -166,12 +167,11 @@ app.controller('MainController', function($scope, $q, ngDialog){
     */
     $scope.query = function(form_parameters){
         // Return to tweets view if visualize view was displayed
-        if ($scope.show_visualize){
-            $scope.visualize();
-        }
-
+        $scope.show_visualize = false;
+        $scope.visualize_copy = "Visualize";
         $scope.show_loading = true;
         $scope.have_searched = true;
+        $scope.have_visualized = false;
         if (form_parameters.q == ""){
             return;
         }
@@ -478,12 +478,61 @@ app.controller('MainController', function($scope, $q, ngDialog){
     */
     $scope.visualize = function(){
         $scope.show_visualize = !$scope.show_visualize;
-        if($scope.visualize_copy == "Visualize"){
+        if($scope.show_visualize){
             $scope.visualize_copy = "Tweets";
+            if(!$scope.have_visualized){
+                buildCloud();
+                build_hashtag_graph();
+            }
+            $scope.have_visualized = true;
         } else {
             $scope.visualize_copy = "Visualize";
         }
+
     }
+
+
+    /*
+        @name:    buid_hashtag_graph
+        @author:  Zach Bachiri
+        @created: Mar 29, 2015
+        @purpose: builds histogram for different number of hashtags
+        @param:
+        @reqfile:
+        @return:
+        @errors:
+        @modhist:
+    */
+    build_hashtag_graph = function(){
+
+        var data = [];
+        var max = 1;
+        $scope.tweets.forEach(function(x){
+            x.entities.hashtags.forEach(function(y){
+                var hashtag = angular.lowercase(y.text);
+                if(data[hashtag]){
+                    data[hashtag] = data[hashtag] + 1;
+                } else {
+                    data[hashtag] = 1;
+                }
+                if (data[hashtag] > max){
+                    max = data[hashtag];
+                }
+            });
+        });
+
+        for (var k in data){
+            if(data[k] > 1){
+                $('#hastag_histogram').append("<p style='color:#4C4C4C;margin-bottom:3px;margin-top:15px;'>#"
+                                              +k+" - "+data[k]
+                                              +"</p>"
+                                              +"<div class='graph_bar' style='width:"
+                                              +((data[k]/max)*75)
+                                              +"%;'></div>");
+            }
+        }
+    }
+
 
     /*
         @name:    wordcloud
@@ -496,7 +545,7 @@ app.controller('MainController', function($scope, $q, ngDialog){
         @errors:
         @modhist:
     */
-    $scope.buildCloud = function(){
+    buildCloud = function(){
         // Check search has been performed
         if ($scope.tweets.length == 0){
             alert("Please perform a search before building a word cloud!");
@@ -586,6 +635,7 @@ app.controller('MainController', function($scope, $q, ngDialog){
         d3.layout.cloud()
         .size([800, 300])
         .words(data)
+        .padding(1)
         .rotate(function() { return ~~(Math.random()*2) * 90;}) // 0 or 90deg
         .fontSize(function(d) { return sizeScale(d.size); })
         .on('end', $scope.drawCloud)

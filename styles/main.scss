@@ -241,6 +241,18 @@ html,body{
 		font-size: 1.5em;
 		margin-bottom: 25px;
 	}
+	#hastag_histogram{
+		clear: both;
+		margin-bottom: 50px;
+		border:1px solid #cacaca;
+		padding: 15px;
+		.graph_bar{
+			height: 30px;
+			clear: both;
+			background-color: #cacaca;
+			display: block;
+		}
+	}
 }
 
 .login_wrap{
