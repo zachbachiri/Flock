@@ -339,6 +339,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         @errors:
         @modhist: Mar 24 : Alex Seeto : Add filtering out of possibly sensitive tweets
                   Mar 28 : Jimmy Ly : Add error handling if session expires
+                  Mar 30 : Jimmy Ly : Add warning for user if reaching rate limit
     */
     $scope.load_more = function(){
         // Change 'View More Tweets' button display value
@@ -347,6 +348,18 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             data: $scope.last_query,
             url: flock_server_url + "/tweets",
             success: function(reply){
+                // set rate limit information to be displayed
+                $scope.rate_limit = reply.rate_limit;
+                $scope.rate_limit_remaining = reply.rate_limit_remaining;
+                var resetDate = new Date(parseInt(reply.rate_limit_reset) * 1000);
+                var hourOffset = resetDate.getTimezoneOffset() / 60;
+                resetDate.setHours(resetDate.getHours() - hourOffset);
+                $scope.rate_limit_reset = resetDate.toLocaleString();
+                // warn user if 10 or 20 searches remaining
+                if ($scope.rate_limit_remaining <= 20 && $scope.rate_limit_remaining % 10 === 0){
+                    alert('Warning: only ' + $scope.rate_limit_remaining + ' searches remaining ' +
+                          'before ' + $scope.rate_limit_reset + '.');
+                }
                 // If true, filter out possibily sensitive tweets, then remove dupes
                 if($scope.sensitive){
                     reply.statuses.forEach(function(x){
@@ -404,6 +417,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         @return:  void
         @errors:
         @modhist: Mar 24 : Alex Seeto : Add filtering out of possibly sensitive tweets
+                  Mar 30 : Jimmy Ly : Add warning for user if reaching rate limit
     */
     var twitterCall = function(params){
         params.session_id = sessionStorage.sessionId;
@@ -412,6 +426,19 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             data: params,
             url: flock_server_url + "/tweets",
             success: function(reply){
+                // set rate limit information to be displayed
+                $scope.rate_limit = reply.rate_limit;
+                $scope.rate_limit_remaining = reply.rate_limit_remaining;
+                var resetDate = new Date(parseInt(reply.rate_limit_reset) * 1000);
+                var hourOffset = resetDate.getTimezoneOffset() / 60;
+                resetDate.setHours(resetDate.getHours() - hourOffset);
+                // warn user if 10 or 20 searches remaining
+                $scope.rate_limit_reset = resetDate.toLocaleString();
+                if ($scope.rate_limit_remaining < 20 && $scope.rate_limit_remaining % 10 === 0){
+                    alert('Warning: only ' + $scope.rate_limit_remaining + ' searches remaining ' +
+                          'before ' + $scope.rate_limit_reset + '.');
+                }
+
                 // If true, filter out possibily sensitive tweets
                 if($scope.sensitive){
                     $scope.tweets = [];
