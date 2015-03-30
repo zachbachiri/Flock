@@ -192,6 +192,8 @@ app.controller('MainController', function($scope, $q, ngDialog){
         // Geocode (defaulted)
         query_parameters.geocode = "";
 
+        query_parameters.result_type = form_parameters.result_type;
+
         // If a location input is entered
         if(form_parameters.loc != null && form_parameters.loc != "" && geocoder){
             // Convert location input to geolocation
