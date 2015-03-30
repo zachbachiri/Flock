@@ -4,6 +4,12 @@ var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'u
     var flock_server_url = "https://flock-backend.herokuapp.com";
     var sessionId = '';
 
+    // Array of stop words
+    var stopWords = '';
+    $.get("stopwords_en.txt", function(data) {
+        stopWords = data.split('\n');
+    });
+
 /*
     @author:  Jimmy Ly
     @created: Mar 16, 2015
@@ -705,12 +711,12 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             return;
         }
         // Initiate text variable
-        var wordsArray = $scope.frequencycount();
+        var wordsArray = $scope.buildWordArray();
         $scope.calculateCloud(wordsArray);
     }
 
     /*
-        @name:    frequencycount
+        @name:    buildWordArray
         @author:  Alex Seeto
         @created: Mar 08, 2015
         @purpose: returns array of words from tweets with associated frequency
@@ -720,7 +726,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         @errors:
         @modhist:
     */
-    $scope.frequencycount = function(){
+    $scope.buildWordArray = function(){
         // Initiate text variable
         var text = "";
 
@@ -732,23 +738,38 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             message = $scope.tweets[i]["text"];
 
             // Convert message to encoded String
-            message = message.replace(/[!,?.":;]/g,' ');
+            message = message.replace(/[!,\[\]?.":;\n\s]/g,'|||');
 
             // Separate data with commas
             text += message;
         }
 
+        // For every stop word
+        for(var i=0; i<stopWords.length; i++){
+            // Adjust stopWords array to remove extra character from each string
+            stopWords[i] = stopWords[i].slice(0, stopWords[i].length-1);
+            // Convert each string to uppercase
+            stopWords[i] = stopWords[i].toUpperCase();
+        }
+
         // Split text into array of words
-        var split = text.split(" ");
-        
+        var split = text.split("|||");
+
+        // For every text word
+        for(var i=0; i<split.length; i++){
+            // Convert each string to uppercase
+            split[i] = split[i].toUpperCase();
+        }
+
+        // Filter out stop words from message array
+        var filtered = _.difference(split, stopWords);
+
         // Group same words and sort by frequency
-        var res =
-        _.chain(split)
-            .without('',' ','a','A','an','An','and','any','Any','are','Are','as','As',
-                     'that','That','The','the','this','This','of','for','For','to',
-                     'with','is','in','on','our','Our', 'RT', '&amp', '//t', 'http', 'I\'m', 'I')
-            .groupBy( function(word){return word;} )
-            .sortBy(  function(word){ return word.length; } )
+        var res = 
+        _.chain(filtered)
+            .without('',' ','HTTP','//T','RT')
+            .groupBy(function(word){return word;})
+            .sortBy(function(word){return word.length;})
             .value();
 
         // Initiate array for each word to be stored with associated frequency
@@ -789,7 +810,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         .size([800, 300])
         .words(data)
         .padding(1)
-        .rotate(function() { return ~~(Math.random()*2) * 90;}) // 0 or 90deg
+        .rotate(function() { return 0}) // 0 or 90deg
         .fontSize(function(d) { return sizeScale(d.size); })
         .on('end', $scope.drawCloud)
         .start();
