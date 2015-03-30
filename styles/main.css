@@ -169,7 +169,6 @@ html, body {
       .right_column .container .tweet .count {
         font-size: 1.2em; }
       .right_column .container .tweet .retweets_favorites {
-        border-top: 1px solid #e8e8e8;
         padding-top: 10px; }
     .right_column .container .loading_gif {
       width: 250px;
