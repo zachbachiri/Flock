@@ -59,16 +59,18 @@
                     
                 </span>
 
-                <span ng-if="tweet.retweeted_status">
-                    <span class="retweet_count">{{ tweet.retweeted_status.retweet_count }}</span>
-                    <span class="favorite_count">{{ tweet.retweeted_status.favorite_count }}</span>
-                </span>
+                <div class="retweets_favorites">
+                    <span ng-if="tweet.retweeted_status">
+                        <span class="retweet_count"><strong class="count">{{ tweet.retweeted_status.retweet_count }}</strong> RETWEETS</span>
+                        <span class="favorite_count"><strong class="count">{{ tweet.retweeted_status.favorite_count }}</strong> FAVORITES</span>
+                    </span>
 
-                <span ng-if="tweet.retweeted_status == null">
-                    <span class="retweet_count">{{ tweet.retweet_count }}</span>
-                    <span class="favorite_count">{{ tweet.favorite_count }}</span>
-                </span>
-                <a ng-href="https://twitter.com/{{ tweet.user.screen_name }}/status/{{ tweet.id_str }}/" class="view_tweet" target="_blank">View tweet</a>
+                    <span ng-if="tweet.retweeted_status == null">
+                        <span class="retweet_count"><strong class="count">{{ tweet.retweet_count }}</strong> RETWEETS</span>
+                        <span class="favorite_count"><strong class="count">{{ tweet.favorite_count }}</strong> FAVORITES</span>
+                    </span>
+                    <a ng-href="https://twitter.com/{{ tweet.user.screen_name }}/status/{{ tweet.id_str }}/" class="view_tweet" target="_blank">View tweet</a>
+                </div>
         </div>
     </div>
 
