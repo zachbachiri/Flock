@@ -680,9 +680,12 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             });
         });
 
+        $('.graph_bar').remove();
+        $('.graph_title').remove();
+
         for (var k in data){
             if(data[k] > 1){
-                $('#hastag_histogram').append("<p style='color:#4C4C4C;margin-bottom:3px;margin-top:15px;'>#"
+                $('#hastag_histogram').append("<p class='graph_title' style='color:#4C4C4C;margin-bottom:3px;margin-top:15px;'>#"
                                               +k+" - "+data[k]
                                               +"</p>"
                                               +"<div class='graph_bar' style='width:"

@@ -32,7 +32,6 @@
 
                 <!-- TODO: Style logout -->
                 <br><br>
-                <span>Logged in as {{ screen_name }}. <a style="text-decoration: none; color: #55ACEE" href="#/login" ng-click="logout()">Logout</a></span>
 
             </form>
         </div>
@@ -94,4 +93,7 @@
     <div class="container" ng-show="!have_searched">
         <h1 style="color:#DADADA">Search by user, hashtag or keywords </h1>
     </div>
+</div>
+<div id="login_info">
+    <span>Logged in as {{ screen_name }}. <a href="#/login" ng-click="logout()">Logout</a></span>
 </div>

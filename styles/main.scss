@@ -18,8 +18,24 @@ html,body{
 	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+a{
+	color: $twitter-blue;
+	text-decoration: none;
+}
+
 .page_wrap{
 	height: 100%;
+	position: relative;
+	#login_info{
+		position: absolute;
+		bottom: 20px;
+		right: 20px;
+		background-color: white;
+		padding: 10px;
+		border: 1px solid $background-grey;
+		span{
+		}
+	}
 }
 .page_wrap:after{
 	visibility: hidden;
