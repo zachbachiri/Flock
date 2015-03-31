@@ -1,4 +1,4 @@
-var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'ui.router']);
+var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'ui.router', 'ui.directives']);
 
     //var flock_server_url = "http://localhost:5000";
     var flock_server_url = "https://flock-backend.herokuapp.com";
@@ -270,6 +270,13 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     // Default sensitivity for search
     $scope.sensitive = true;
 
+    // Default date options
+    $scope.dateOptions = { 
+        dateFormat: 'yy-mm-dd', 
+        minDate: '-7', 
+        maxDate: '0D' 
+    }
+
     /*
         @name:    query
         @author:  Zach Bachiri
@@ -291,7 +298,10 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         $scope.show_loading = true;
         $scope.have_searched = true;
         $scope.have_visualized = false;
-        if (form_parameters.q == ""){
+        if (form_parameters.q == "" || typeof form_parameters.q === 'undefined'){
+            $scope.show_loading = false;
+            $scope.have_searched = false;
+            $scope.errorDialog("Please make sure to enter a search term before searching.");
             return;
         }
 
@@ -312,6 +322,14 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         query_parameters.geocode = "";
 
         query_parameters.result_type = form_parameters.result_type;
+        
+        // Date Filters
+        if(form_parameters.since){
+            query_parameters.since = $.datepicker.formatDate('yy-mm-dd', new Date(form_parameters.since));
+        }
+        if(form_parameters.until){
+            query_parameters.until = $.datepicker.formatDate('yy-mm-dd', new Date(form_parameters.until))
+        }
 
         // If a location input is entered
         if(form_parameters.loc != null && form_parameters.loc != "" && geocoder){
