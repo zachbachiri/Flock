@@ -63,8 +63,8 @@ app.controller('LoginController', function($scope, $state){
                 window.location.href = response[1];
             },
             error: function(error){
-                alert('Sorry, there is an error with the login server. ' +
-                      'Please check back soon!');
+                errorDialog('Sorry, there is an error with the login server. ' +
+                            'Please check back soon!');
             }
         });
     };
@@ -94,8 +94,8 @@ app.controller('LoginController', function($scope, $state){
                 $state.go('search');
             },
             error: function(error){
-                alert('Sorry, there is an error with the login server. ' +
-                      'Please check back soon!');
+                errorDialog('Sorry, there is an error with the login server. ' +
+                            'Please check back soon!');
             }
         });
     };
@@ -122,8 +122,8 @@ app.controller('RedirectController', function($scope, $location){
         @return:  void
     */
     $scope.redirect_error = function(){
-        alert('Sorry, there is an error with the login server. ' +
-              'Please try logging in as a Guest and check back soon!');
+        errorDialog('Sorry, there is an error with the login server. ' +
+                    'Please try logging in as a Guest and check back soon!');
         sessionStorage.clear();
         window.location.href = current_url.split("?")[0] + "#/login";
     }
@@ -210,7 +210,6 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     // will be redirected to login page to encourage signing in through Twitter
     // to reduce rate limit issue
     sessionStorage.removeItem('fromLogin');
-
 
     // Set default variable values
     $scope.tweets = [];
@@ -365,8 +364,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 $scope.rate_limit_reset = resetDate.toLocaleString();
                 // warn user if 10 or 20 searches remaining
                 if ($scope.rate_limit_remaining <= 20 && $scope.rate_limit_remaining % 10 === 0){
-                    alert('Warning: only ' + $scope.rate_limit_remaining + ' searches remaining ' +
-                          'before ' + $scope.rate_limit_reset + '.');
+                    $scope.warningDialog('Only ' + $scope.rate_limit_remaining + ' searches remaining ' +
+                                         'before ' + $scope.rate_limit_reset + '.');
                 }
                 // If true, filter out possibily sensitive tweets, then remove dupes
                 if($scope.sensitive){
@@ -443,8 +442,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 // warn user if 10 or 20 searches remaining
                 $scope.rate_limit_reset = resetDate.toLocaleString();
                 if ($scope.rate_limit_remaining < 20 && $scope.rate_limit_remaining % 10 === 0){
-                    alert('Warning: only ' + $scope.rate_limit_remaining + ' searches remaining ' +
-                          'before ' + $scope.rate_limit_reset + '.');
+                    $scope.warningDialog('Only ' + $scope.rate_limit_remaining + ' searches remaining ' +
+                                         'before ' + $scope.rate_limit_reset + '.');
                 }
 
                 // If true, filter out possibily sensitive tweets
@@ -460,6 +459,15 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 }else{
                     $scope.tweets = reply.statuses;
                 }
+
+                // Change to default display if no tweets found, give error message
+                if ($scope.tweets.length == 0){
+                    $scope.show_loading = false;
+                    $scope.have_searched = false;
+                    $scope.errorDialog("Sorry, no tweets were found for your search term.");
+                    return;
+                }
+
                 $scope.show_loading = false;
                 $scope.$apply();
             },
@@ -470,20 +478,62 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     };
 
     /*
-        @name:    showNgDialog
+        @name:    errorDialog
         @author:  Alex Seeto
-        @created: Feb 28, 2015
-        @purpose: Show ngDialog box for selecting columns for download
+        @created: Mar 30, 2015
+        @purpose: Open ngDialog box containing given error message
         @param:
         @reqfile: plugins/ngDialog.js
         @return:  void
         @errors:
         @modhist:
     */
-    $scope.showNgDialog = function() {
+    $scope.errorDialog = function(msg) {
+        ngDialog.open({
+            template: '<div><h3>ERROR</h3>' +
+                          '<p>' + msg + '</p>' +
+                      '</div>',
+            plain: true,
+            scope: $scope
+        });
+    }
+
+    /*
+        @name:    warningDialog
+        @author:  Alex Seeto
+        @created: Mar 30, 2015
+        @purpose: Open ngDialog box containing given warning message
+        @param:
+        @reqfile: plugins/ngDialog.js
+        @return:  void
+        @errors:
+        @modhist:
+    */
+    $scope.warningDialog = function(msg) {
+        ngDialog.open({
+            template: '<div><h3>WARNING</h3>' +
+                          '<p>' + msg + '</p>' +
+                      '</div>',
+            plain: true,
+            scope: $scope
+        });
+    }
+
+    /*
+        @name:    downloadDialog
+        @author:  Alex Seeto
+        @created: Feb 28, 2015
+        @purpose: Open ngDialog box for selecting columns for download
+        @param:
+        @reqfile: plugins/ngDialog.js
+        @return:  void
+        @errors:
+        @modhist:
+    */
+    $scope.downloadDialog = function() {
         // Check search has been performed
         if ($scope.tweets.length == 0){
-            alert("Please perform a search before downloading!");
+            $scope.errorDialog("Please perform a search before downloading!");
             return;
         }
         ngDialog.open({
@@ -600,7 +650,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
 
         // Check CSV data exists
         if (CSV == ''){
-            alert("Invalid data");
+            $scope.errorDialog("The CSV file does not contain any data.");
             return;
         }
 
@@ -640,6 +690,11 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         if($scope.show_visualize){
             $scope.visualize_copy = "Tweets";
             if(!$scope.have_visualized){
+                // Check search has been performed
+                if ($scope.tweets.length == 0){
+                    $scope.errorDialog("Please perform a search before visualizing!");
+                    return;
+                }
                 buildCloud();
                 build_hashtag_graph();
             }
@@ -648,74 +703,6 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             $scope.visualize_copy = "Visualize";
         }
 
-    }
-
-
-    /*
-        @name:    buid_hashtag_graph
-        @author:  Zach Bachiri
-        @created: Mar 29, 2015
-        @purpose: builds histogram for different number of hashtags
-        @param:
-        @reqfile:
-        @return:
-        @errors:
-        @modhist:
-    */
-    build_hashtag_graph = function(){
-
-        var data = [];
-        var max = 1;
-        $scope.tweets.forEach(function(x){
-            x.entities.hashtags.forEach(function(y){
-                var hashtag = angular.lowercase(y.text);
-                if(data[hashtag]){
-                    data[hashtag] = data[hashtag] + 1;
-                } else {
-                    data[hashtag] = 1;
-                }
-                if (data[hashtag] > max){
-                    max = data[hashtag];
-                }
-            });
-        });
-
-        $('.graph_bar').remove();
-        $('.graph_title').remove();
-
-        for (var k in data){
-            if(data[k] > 1){
-                $('#hastag_histogram').append("<p class='graph_title' style='color:#4C4C4C;margin-bottom:3px;margin-top:15px;'>#"
-                                              +k+" - "+data[k]
-                                              +"</p>"
-                                              +"<div class='graph_bar' style='width:"
-                                              +((data[k]/max)*75)
-                                              +"%;'></div>");
-            }
-        }
-    }
-
-
-    /*
-        @name:    wordcloud
-        @author:  Alex Seeto
-        @created: Mar 09, 2015
-        @purpose: passes array of words into calculateCloud
-        @param:
-        @reqfile:
-        @return:
-        @errors:
-        @modhist:
-    */
-    buildCloud = function(){
-        // Check search has been performed
-        if ($scope.tweets.length == 0){
-            alert("Please perform a search before building a word cloud!");
-            return;
-        }
-        // Initiate text variable
-        var wordsArray = $scope.buildWordArray();
-        $scope.calculateCloud(wordsArray);
     }
 
     /*
@@ -792,6 +779,68 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     }
 
     /*
+        @name:    buid_hashtag_graph
+        @author:  Zach Bachiri
+        @created: Mar 29, 2015
+        @purpose: builds histogram for different number of hashtags
+        @param:
+        @reqfile:
+        @return:
+        @errors:
+        @modhist:
+    */
+    build_hashtag_graph = function(){
+
+        var data = [];
+        var max = 1;
+        $scope.tweets.forEach(function(x){
+            x.entities.hashtags.forEach(function(y){
+                var hashtag = angular.lowercase(y.text);
+                if(data[hashtag]){
+                    data[hashtag] = data[hashtag] + 1;
+                } else {
+                    data[hashtag] = 1;
+                }
+                if (data[hashtag] > max){
+                    max = data[hashtag];
+                }
+            });
+        });
+
+        $('.graph_bar').remove();
+        $('.graph_title').remove();
+
+        for (var k in data){
+            if(data[k] > 1){
+                $('#hastag_histogram').append("<p class='graph_title' style='color:#4C4C4C;margin-bottom:3px;margin-top:15px;'>#"
+                                              +k+" - "+data[k]
+                                              +"</p>"
+                                              +"<div class='graph_bar' style='width:"
+                                              +((data[k]/max)*75)
+                                              +"%;'></div>");
+            }
+        }
+    }
+
+
+    /*
+        @name:    wordcloud
+        @author:  Alex Seeto
+        @created: Mar 09, 2015
+        @purpose: passes array of words into calculateCloud
+        @param:
+        @reqfile:
+        @return:
+        @errors:
+        @modhist:
+    */
+    buildCloud = function(){
+        // Initiate text variable
+        var wordsArray = $scope.buildWordArray();
+        $scope.calculateCloud(wordsArray);
+    }
+
+    /*
         @name:    calculateCloud
         @author:  Alex Seeto
         @created: Mar 09, 2015
@@ -806,16 +855,17 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         // Scale for font size
         var sizeScale = d3.scale.linear()
                         .domain([0, 50])
-                        .range([10, 95]);
+                        .range([10, 60]);
 
         // Start cloud calculations
         d3.layout.cloud()
         .size([800, 300])
         .words(data)
-        .padding(1)
-        .rotate(function() { return 0}) // 0 or 90deg
-        .fontSize(function(d) { return sizeScale(d.size); })
+        .padding(5)
+        .rotate(function() { return 0})
+        .fontSize(function(d) { return sizeScale(+d.size); })
         .on('end', $scope.drawCloud)
+        .text(function(d) { return d.text; })
         .start();
     }
 
@@ -832,6 +882,10 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         @modhist:
     */
     $scope.drawCloud = function(words){
+        // Scale for font size
+        var sizeScale = d3.scale.linear()
+                        .domain([0, 50])
+                        .range([10, 95]);
         var fill = d3.scale.category20();
         d3.select('svg').remove();
         d3.select("#cloud").append("svg")
@@ -843,7 +897,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                           .selectAll("text")
                           .data(words)
                           .enter().append("text")
-                          .style("font-size", function(d) { return d.size + "px"; })
+                          .style("font-size", function(d) { return (d.size-4) + "px"; })
                           .style("font-family", "Impact")
                           .style("fill", function(d, i) { return fill(i); })
                           .attr("text-anchor", "middle")
@@ -867,7 +921,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     $scope.downloadCloud = function(){
         // Check search has been performed
         if ($('#cloud').children().length == 0){
-            alert("Please generate a word cloud before downloading!");
+            $scope.errorDialog("Please generate a word cloud before downloading!");
             return;
         }
         var svg = document.querySelector("svg");
@@ -934,7 +988,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
 
     $scope.sessionExpired = function(error){
         if (error.status === 403){
-            alert('Sorry, your session has expired. Please login again.');
+            errorDialog('Sorry, your session has expired. Please login again.');
             sessionStorage.clear();
             $state.go('login');
         } else {
