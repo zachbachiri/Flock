@@ -223,10 +223,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     $scope.have_visualized = false;
     $scope.screen_name = sessionStorage.getItem('screen_name');
     $scope.profile_image_url = sessionStorage.getItem('profile_image_url');
-    $scope.count_options = [];
-    for (i = 1; i <= 100; i++) {
-        $scope.count_options.push(i);
-    }
+    $scope.count_options = [10, 25, 50, 75, 100];
 
     // Result Types Array
     $scope.result_types = [{
