@@ -10,10 +10,12 @@
                 <input id="query_text" class="text_box" type="text" ng-model="parameters.q" value="" placeholder="Search @user, #hashtag or Keyword"/>
                 <p class="parameters_title">Location</p>
                 <input id="loc_text" class="text_box" type="text" ng-keyup="autosuggest()" ng-model="parameters.loc" value="" placeholder="Boston, MA"/>
-                <input id="since" class="text_box" type="text" ng-model="parameters.since" ui-date="dateOptions" value="" placeholder="Select Start Date">
-                <input id="until" class="text_box" type="text" ng-model="parameters.until" ui-date="dateOptions" value="" placeholder="Select End Date">
 
                 <span class="show_hide_search" ng-hide="show_advanced_search" ng-click="toggle_advanced_search()">Advanced Search</span>
+
+                <p class="parameters_title" ng-show="show_advanced_search">Date</p>
+                <input id="since" class="text_box" type="text" ng-model="parameters.since" ui-date="dateOptions" value="" placeholder="Select Start Date" ng-show="show_advanced_search">
+                <input id="until" class="text_box" type="text" ng-model="parameters.until" ui-date="dateOptions" value="" placeholder="Select End Date" ng-show="show_advanced_search">
 
                 <p ng-show="show_advanced_search"><input id="sensitive" type="checkbox" ng-model="sensitive">&nbsp;Filter Out Sensitive Links</p>
                 <p class="parameters_title" ng-show="show_advanced_search">Results Type</p>
