@@ -48,6 +48,12 @@ Tool for advanced twitter search
 - To run the tests, go to the root directory of the project and type 'npm install'. This should install all the dependencies needed for testing. Then you can type 'npm test'. This will start a server, open a window in Chrome, and the terminal should display how many tests passed. If you keep the server running and add more unit tests later, then all the tests will be re-run.
 - The /test/karma.conf.js file is a configuration file for running the tests. NOTE: If you are testing code that uses new dependencies or code that is in a new file, then add the files/dependencies to the 'files' array in the karma.conf.js file
 
+##Casper Testing
+- first install casperjs on your machine(http://docs.casperjs.org/en/latest/installation.html)
+- cd the directory with test script
+- in command line, run casperjs test sample.js
+- you can either test with zachbachiri.com/Flock, northeastern.edu/flock or localhost:8000 if you are running locally
+
 ## Running Locally
 - Make sure you have python installed on your computer.
 - In your terminal, change directories to the flock repo and type 'python -m SimpleHTTPServer 8000' if your terminal uses python2 or type 'python -m http.server 8000' if your terminal uses python3.
