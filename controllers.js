@@ -238,37 +238,20 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     }];
 
     // CSV Column Names Array
-    $scope.column_names = [{
-        infoMapId: 9,
-        name: 'Username',
-        value: 'username',
-        isChecked: true
-    }, {
-        infoMapId: 10,
-        name: 'Country',
-        value: 'country',
-        isChecked: true
-    }, {
-        infoMapId: 11,
-        name: 'Location',
-        value: 'location',
-        isChecked: true
-    }, {
-        infoMapId: 12,
-        name: 'Timestamp',
-        value: 'timestamp',
-        isChecked: true
-    }, {
-        infoMapId: 13,
-        name: 'Message',
-        value: 'message',
-        isChecked: true
-    }, {
-        infoMapId: 14,
-        name: 'Media',
-        value: 'media',
-        isChecked: true
-    }];
+    $scope.column_names = [
+        { infoMapId: 9,  name: 'Username',        value: 'username',  isChecked: true },
+        { infoMapId: 10, name: 'Country',         value: 'country',   isChecked: true },
+        { infoMapId: 11, name: 'Location',        value: 'location',  isChecked: true }, 
+        { infoMapId: 12, name: 'Timestamp',       value: 'timestamp', isChecked: true }, 
+        { infoMapId: 13, name: 'Message',         value: 'message',   isChecked: true }, 
+        { infoMapId: 14, name: 'Media',           value: 'media',     isChecked: true }, 
+        { infoMapId: 15, name: 'Favorited',       value: 'favorited', isChecked: true }, 
+        { infoMapId: 16, name: 'Favorite Count',  value: 'favcount',  isChecked: true }, 
+        { infoMapId: 17, name: 'Replied To',      value: 'replyto',   isChecked: true }, 
+        { infoMapId: 18, name: 'Total Followers', value: 'followers', isChecked: true }, 
+        { infoMapId: 19, name: 'Total Friends',   value: 'friends',   isChecked: true },
+        { infoMapId: 19, name: 'Total Favorites', value: 'favorites', isChecked: true }
+    ];
 
     // Default sensitivity for search
     $scope.sensitive = true;
@@ -580,13 +563,13 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         ngDialog.open({
             template: '<div><h3>Select Columns to Download </h3>' +
                           '<div ng-repeat="elem in column_names">' +
-                          '<input type="checkbox" ng-model="elem.isChecked" id="check-box-{{$index}}" />' +
-                          '&nbsp;<span class="infoDesc" ng-click="infoDialog(elem.infoMapId)"><img src="styles/images/info.png"></span>' +
-                          '&nbsp;<label ng-bind="elem.name" for="check-box-{{$index}}"></label>' +
+                              '<input type="checkbox" ng-model="elem.isChecked" id="check-box-{{$index}}" />' +
+                              '&nbsp;<span class="infoDesc" ng-click="infoDialog(elem.infoMapId)"><img src="styles/images/info.png"></span>' +
+                              '&nbsp;<label ng-bind="elem.name" for="check-box-{{$index}}"></label>' +
                           '</div>' +
                           '<br />' +
                           '<div>' +
-                          '<button id="download" type="button" ng-disabled="!isChecked()" ng-click="download()">Download</button>' +
+                              '<button id="download" type="button" ng-disabled="!isChecked()" ng-click="download()">Download</button>' +
                           '</div>' +
                       '</div>',
             plain: true,
@@ -623,7 +606,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         @reqfile:
         @return:  void
         @errors:
-        @modhist:
+        @modhist: Apr 07 : Alex Seeto : Added more metadata to download, fixed message column text cleaning
     */
     $scope.download = function() {
         // Initiate final CSV string
@@ -638,6 +621,12 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         var timestamp = '';
         var message   = '';
         var media     = '';
+        var favorited = '';
+        var favcount  = '';
+        var repliedto = '';
+        var followers = '';
+        var friends   = '';
+        var favorites = '';
 
         // Boolean checks for selected columns
         var checkedUsername = $scope.column_names[0].isChecked;
@@ -646,12 +635,18 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         var checkedTimestamp = $scope.column_names[3].isChecked;
         var checkedMessage = $scope.column_names[4].isChecked;
         var checkedMedia = $scope.column_names[5].isChecked;
+        var checkedFavorited = $scope.column_names[6].isChecked;
+        var checkedFavCount = $scope.column_names[7].isChecked;
+        var checkedRepliedTo = $scope.column_names[8].isChecked;
+        var checkedTotalFollowers = $scope.column_names[9].isChecked;
+        var checkedTotalFriends = $scope.column_names[10].isChecked;
+        var checkedTotalFavorites = $scope.column_names[11].isChecked;
 
         // Create string of CSV column headers separated by commas
         for(var e in $scope.column_names) {
             var checkBox = $scope.column_names[e];
             if(checkBox.isChecked)
-            row+=checkBox.name + ",";
+            row+="\"" + checkBox.name + "\",";
         }
 
         // Remove last comma from String
@@ -670,21 +665,34 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             timestamp = $scope.tweets[i]["created_at"];
             message   = $scope.tweets[i]["text"];
             media     = $scope.tweets[i]["entities"]["media"];
+            favorited = $scope.tweets[i]["favorited"];
+            favcount  = $scope.tweets[i]["favorite_count"];
+            repliedto = $scope.tweets[i]["in_reply_to_screen_name"];
+            followers = $scope.tweets[i]["user"]["followers_count"];
+            friends   = $scope.tweets[i]["user"]["friends_count"];
+            favorites = $scope.tweets[i]["user"]["favourites_count"];
 
             // Boolean checks for possible null or undefined variables
             var placeCheck = place === null;
             var mediaCheck = typeof media == "undefined";
+            var replyCheck = repliedto === null;
 
             // Convert message to encoded String
-            message = escape(message);
+            message = message.replace(/\n/g, " ").replace(/\"/g,"\"");
 
-            // Separate data with commas
-            (checkedUsername)   ?     row += '"' + username + '",' : "";
-            (checkedCountry)    ?     row += '"' + (placeCheck ? "Not Available" : place["country_code"]) + '",' : "";
-            (checkedLocation)   ?     row += '"' + (placeCheck ? "Not Available" : place["full_name"]) + '",' : "";
-            (checkedTimestamp)  ?     row += '"' + timestamp + '",' : "";
-            (checkedMessage)    ?     row += '"' + message + '",' : "";
-            (checkedMedia)      ?     row += '"' + (mediaCheck ? "Not Available" : media[0]["url"]) + '",' : "";
+            // Separate data with commas, only include data if column's checkbox has been checked
+            (checkedUsername)       ? row += '"' + username + '",' : "";
+            (checkedCountry)        ? row += '"' + (placeCheck ? "Not Available" : place["country_code"]) + '",' : "";
+            (checkedLocation)       ? row += '"' + (placeCheck ? "Not Available" : place["full_name"]) + '",' : "";
+            (checkedTimestamp)      ? row += '"' + timestamp + '",' : "";
+            (checkedMessage)        ? row += '"' + message + '",' : "";
+            (checkedMedia)          ? row += '"' + (mediaCheck ? "Not Available" : media[0]["url"]) + '",' : "";
+            (checkedFavorited)      ? row += '"' + favorited + '",' : "";
+            (checkedFavCount)       ? row += '"' + favcount + '",' : "";
+            (checkedRepliedTo)      ? row += '"' + (replyCheck ? "Not Available" : repliedto) + '",' : "";
+            (checkedTotalFollowers) ? row += '"' + followers + '",' : "";
+            (checkedTotalFriends)   ? row += '"' + friends + '",' : "";
+            (checkedTotalFavorites) ? row += '"' + favorites + '",' : "";
 
             // Add a line break after each row of data
             CSV += row + '\r\n';
