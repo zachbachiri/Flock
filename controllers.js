@@ -239,26 +239,32 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
 
     // CSV Column Names Array
     $scope.column_names = [{
+        infoMapId: 9,
         name: 'Username',
         value: 'username',
         isChecked: true
     }, {
+        infoMapId: 10,
         name: 'Country',
         value: 'country',
         isChecked: true
     }, {
+        infoMapId: 11,
         name: 'Location',
         value: 'location',
         isChecked: true
     }, {
+        infoMapId: 12,
         name: 'Timestamp',
         value: 'timestamp',
         isChecked: true
     }, {
+        infoMapId: 13,
         name: 'Message',
         value: 'message',
         isChecked: true
     }, {
+        infoMapId: 14,
         name: 'Media',
         value: 'media',
         isChecked: true
@@ -272,6 +278,26 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         dateFormat: 'yy-mm-dd', 
         minDate: '-7', 
         maxDate: '0D' 
+    }
+
+
+    /*
+        @name:    infoDialog
+        @author:  Alexander Seeto
+        @created: Apr 05, 2015
+        @purpose: opens ngDialog and displays info for given string case
+        @param:   s - case string
+        @reqfile: plugins/infoMap.js
+        @return:  
+        @errors:
+        @modhist: 
+    */
+    $scope.infoDialog = function(id){
+        ngDialog.open({
+            template: '<div><h3>'+ infoMap[id].title +'</h3><p>' + infoMap[id].msg + '</p></div>',
+            plain: true,
+            scope: $scope
+        });
     }
 
     /*
@@ -555,6 +581,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             template: '<div><h3>Select Columns to Download </h3>' +
                           '<div ng-repeat="elem in column_names">' +
                           '<input type="checkbox" ng-model="elem.isChecked" id="check-box-{{$index}}" />' +
+                          '&nbsp;<span class="infoDesc" ng-click="infoDialog(elem.infoMapId)"><img src="styles/images/info.png"></span>' +
                           '&nbsp;<label ng-bind="elem.name" for="check-box-{{$index}}"></label>' +
                           '</div>' +
                           '<br />' +

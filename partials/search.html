@@ -6,32 +6,58 @@
             <img src="styles/images/logo.png" class="logo">
 
             <form validate class="parameters">
-                <p class="parameters_title">Search tweets</p>
+
+                <p class="parameters_title">
+                    Search tweets
+                    <span class="infoDesc" ng-click="infoDialog(0)"><img src="styles/images/info.png"></span>
+                </p>
                 <input id="query_text" class="text_box" type="text" ng-model="parameters.q" value="" placeholder="Search @user, #hashtag or Keyword"/>
-                <p class="parameters_title">Location</p>
+                <p class="parameters_title">
+                    Location
+                    <span class="infoDesc" ng-click="infoDialog(1)"><img src="styles/images/info.png"></span>
+                </p>
                 <input id="loc_text" class="text_box" type="text" ng-keyup="autosuggest()" ng-model="parameters.loc" value="" placeholder="Boston, MA"/>
 
                 <span class="show_hide_search" ng-hide="show_advanced_search" ng-click="toggle_advanced_search()">Advanced Search</span>
+                <span class="show_hide_search" ng-show="show_advanced_search" ng-click="toggle_advanced_search()">Hide Advanced Search</span>
 
-                <p class="parameters_title" ng-show="show_advanced_search">Date</p>
-                <input id="since" class="text_box" type="text" ng-model="parameters.since" ui-date="dateOptions" value="" placeholder="Select Start Date" ng-show="show_advanced_search">
-                <input id="until" class="text_box" type="text" ng-model="parameters.until" ui-date="dateOptions" value="" placeholder="Select End Date" ng-show="show_advanced_search">
-
-                <p ng-show="show_advanced_search"><input id="sensitive" type="checkbox" ng-model="sensitive">&nbsp;Filter Out Sensitive Links</p>
-                <p class="parameters_title" ng-show="show_advanced_search">Results Type</p>
                 <div id="advanced_search" ng-show="show_advanced_search">
+                    <p class="parameters_title" ng-show="show_advanced_search">
+                        Date
+                        <span class="infoDesc" ng-click="infoDialog(2)"><img src="styles/images/info.png"></span>
+                    </p>
+                    <input id="since" class="text_box" type="text" ng-model="parameters.since" ui-date="dateOptions" value="" placeholder="Select Start Date" ng-show="show_advanced_search">
+                    <input id="until" class="text_box" type="text" ng-model="parameters.until" ui-date="dateOptions" value="" placeholder="Select End Date" ng-show="show_advanced_search">
+                    
+                    <p class="parameters_title" ng-show="show_advanced_search">
+                        Sensitivity Filter
+                        <span class="infoDesc" ng-click="infoDialog(3)"><img src="styles/images/info.png"></span>
+                    </p>
+                    <p ng-show="show_advanced_search"><input id="sensitive" type="checkbox" ng-model="sensitive">
+                        &nbsp;Filter "Sensitive" Tweets
+                    </p>
+                    
+                    <p class="parameters_title" ng-show="show_advanced_search">
+                        Results Type
+                        <span class="infoDesc" ng-click="infoDialog(4)"><img src="styles/images/info.png"></span>
+                    </p>
                     <select class="selection" ng-model="parameters.result_type" ng-init="parameters.result_type = result_types[2].value" ng-options="option.value as option.name for option in result_types">
                     </select>
 
-                    <p class="parameters_title" ng-show="show_advanced_search"># of tweets</p>
+                    <p class="parameters_title" ng-show="show_advanced_search">
+                        # Of Tweets
+                        <span class="infoDesc" ng-click="infoDialog(5)"><img src="styles/images/info.png"></span>
+                    </p>
                     <select class="selection" ng-model="parameters.count" ng-init="parameters.count = count_options[4]" ng-options="o for o in count_options">
                     </select>
                 </div>
 
-                <span class="show_hide_search" ng-show="show_advanced_search" ng-click="toggle_advanced_search()">Hide Advanced Search</span>
-
-
                 <input id="query_submit" type="submit" ng-click="query(parameters)" value="Search"/>
+
+                <p>
+                    Tweet Count <span class="infoDesc" ng-click="infoDialog(6)"><img src="styles/images/info.png"></span>
+                    : {{ tweets.length }}
+                </p>
 
                 <!-- TODO: Style logout -->
                 <br><br>
@@ -83,11 +109,11 @@
     <button id="load_more" ng-hide="show_loading || show_visualize || !have_searched" ng-click="load_more()">{{ load_more_copy }}</button>
 
     <div class="container visualize_container" ng-show="show_visualize">
-        <h1>Word Cloud</h1>
+        <h1>Word Cloud <span class="infoDesc" ng-click="infoDialog(7)"><img src="styles/images/info.png"></span></h1>
         <div id="cloud" style="border:1px solid #cacaca; width: 800px; height: 300px;"></div>
         <br />
         <button type="button" ng-click="downloadCloud()">Download Word Cloud</button>
-        <h1>Hashtag Histogram</h1>
+        <h1>Hashtag Histogram <span class="infoDesc" ng-click="infoDialog(8)"><img src="styles/images/info.png"></span></h1>
         <div id="hastag_histogram"></div>
     </div>
     <div class="container" ng-show="show_loading">
