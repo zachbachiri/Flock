@@ -310,7 +310,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             $scope.errorDialog("Please make sure to enter a search term before searching.");
             return;
         }
-
+        console.log(form_parameters);
         // Initializes Google Maps API geocoder
         var geocoder = new google.maps.Geocoder();
         var query_parameters = {};
@@ -342,6 +342,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             // Convert location input to geolocation
             geocoder.geocode( { 'address': form_parameters.loc}, function(results, status){
             if (status == google.maps.GeocoderStatus.OK){
+                console.log(form_parameters.loc);
+                console.log(results);
                 var locData = results[0].geometry.location;
 
                 // Set new geocode based off of location input
@@ -678,7 +680,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             var replyCheck = repliedto === null;
 
             // Convert message to encoded String
-            message = message.replace(/\n/g, " ").replace(/\"/g,"\"");
+            message = message.replace('\n', ' ').replace('"','""');
 
             // Separate data with commas, only include data if column's checkbox has been checked
             (checkedUsername)       ? row += '"' + username + '",' : "";
@@ -1005,7 +1007,9 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         var place;
         var autocomplete = new google.maps.places.Autocomplete(loc_text);
         google.maps.event.addListener(autocomplete, 'place_changed', function (){
-            place = autocomplete.getPlace();
+            place = autocomplete.getPlace().formatted_address;
+            $("#loc_text").html(place);
+            $("#loc_text").trigger('input');
         });
     }
 
