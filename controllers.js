@@ -895,7 +895,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     */
     $scope.calculateCloud = function(data){
         // Scale for font size
-        var sizeScale = d3.scale.linear().domain([0, 50]).range([10, 60]);
+        var sizeScale = d3.scale.linear().domain([0, 50]).range([10, 50]);
 
         // Start cloud calculations
         d3.layout.cloud()
@@ -923,7 +923,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     */
     $scope.drawCloud = function(words){
         // Scale for font size
-        var sizeScale = d3.scale.linear().domain([0, 50]).range([10, 60]);
+        var sizeScale = d3.scale.linear().domain([0, 50]).range([10, 50]);
 
         d3.select('svg').remove();
         d3.select("#cloud").append("svg")
