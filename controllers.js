@@ -784,21 +784,13 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             text += message;
         }
 
-        // For every stop word
-        for(var i=0; i<stopWords.length; i++){
-            // Adjust stopWords array to remove extra character from each string
-            stopWords[i] = stopWords[i].slice(0, stopWords[i].length-1);
-            // Convert each string to uppercase
-            stopWords[i] = stopWords[i].toUpperCase();
-        }
-
         // Split text into array of words
         var split = text.split("|||");
 
         // For every text word
         for(var i=0; i<split.length; i++){
-            // Convert each string to uppercase
-            split[i] = split[i].toUpperCase();
+            // Convert each string to lowercase
+            split[i] = split[i].toLowerCase();
         }
 
         // Filter out stop words from message array
@@ -807,7 +799,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         // Group same words and sort by frequency
         var res = 
         _.chain(filtered)
-            .without('',' ','HTTP','//T','RT')
+            .without('')
             .groupBy(function(word){return word;})
             .sortBy(function(word){return word.length;})
             .value();
@@ -903,17 +895,15 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     */
     $scope.calculateCloud = function(data){
         // Scale for font size
-        var sizeScale = d3.scale.linear()
-                        .domain([0, 50])
-                        .range([10, 60]);
+        var sizeScale = d3.scale.linear().domain([0, 50]).range([10, 60]);
 
         // Start cloud calculations
         d3.layout.cloud()
         .size([800, 300])
         .words(data)
-        .padding(5)
+        .padding(1)
         .rotate(function() { return 0})
-        .fontSize(function(d) { return sizeScale(+d.size); })
+        .fontSize(function(d) { return sizeScale(d.size+20); })
         .on('end', $scope.drawCloud)
         .text(function(d) { return d.text; })
         .start();
@@ -933,10 +923,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     */
     $scope.drawCloud = function(words){
         // Scale for font size
-        var sizeScale = d3.scale.linear()
-                        .domain([0, 50])
-                        .range([10, 95]);
-        var fill = d3.scale.category20();
+        var sizeScale = d3.scale.linear().domain([0, 50]).range([10, 60]);
+
         d3.select('svg').remove();
         d3.select("#cloud").append("svg")
                           .attr("width", 800)
@@ -947,9 +935,9 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                           .selectAll("text")
                           .data(words)
                           .enter().append("text")
-                          .style("font-size", function(d) { return (d.size-4) + "px"; })
-                          .style("font-family", "Impact")
-                          .style("fill", function(d, i) { return fill(i); })
+                          .style("font-size", function(d) { return sizeScale(d.size-20) + "px"; })
+                          .style("font-family", "Lucida Grande")
+                          .style("fill", function(d, i) { i })
                           .attr("text-anchor", "middle")
                           .attr("transform", function(d) {
                               return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
