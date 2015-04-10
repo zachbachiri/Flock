@@ -349,7 +349,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                                            ',' +
                                            String(locData.lng()) +
                                            ',' +
-                                           '1000mi';
+                                           '50mi';
                 // Make request with parameters
                 twitterCall(query_parameters);
             }
