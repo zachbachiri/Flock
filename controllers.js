@@ -310,7 +310,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             $scope.errorDialog("Please make sure to enter a search term before searching.");
             return;
         }
-        console.log(form_parameters);
+
         // Initializes Google Maps API geocoder
         var geocoder = new google.maps.Geocoder();
         var query_parameters = {};
@@ -342,8 +342,6 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             // Convert location input to geolocation
             geocoder.geocode( { 'address': form_parameters.loc}, function(results, status){
             if (status == google.maps.GeocoderStatus.OK){
-                console.log(form_parameters.loc);
-                console.log(results);
                 var locData = results[0].geometry.location;
 
                 // Set new geocode based off of location input
@@ -566,7 +564,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             template: '<div><h3>Select Columns to Download </h3>' +
                           '<div ng-repeat="elem in column_names">' +
                               '<input type="checkbox" ng-model="elem.isChecked" id="check-box-{{$index}}" />' +
-                              '&nbsp;<span class="infoDesc" ng-click="infoDialog(elem.infoMapId)"><img src="styles/images/info.png"></span>' +
+                              '&nbsp;<span class="info_desc" ng-click="infoDialog(elem.infoMapId)">(+)</span>' +
                               '&nbsp;<label ng-bind="elem.name" for="check-box-{{$index}}"></label>' +
                           '</div>' +
                           '<br />' +
@@ -739,6 +737,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     */
     $scope.visualize = function(){
         $scope.show_visualize = !$scope.show_visualize;
+        $scope.have_searched = !$scope.have_searched;
         if($scope.show_visualize){
             $scope.visualize_copy = "Tweets";
             if(!$scope.have_visualized){
@@ -754,7 +753,23 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         } else {
             $scope.visualize_copy = "Visualize";
         }
+    }
 
+    /*
+        @name:    revisualize
+        @author:  Alex Seeto
+        @created: Apr 10, 2015
+        @purpose: Initiates default variables before executing visualize function
+        @param:
+        @reqfile:
+        @return:  void
+        @errors:
+        @modhist:
+    */
+    $scope.revisualize = function(){
+        $scope.show_visualize = !$scope.show_visualize;
+        $scope.have_searched = !$scope.have_searched;
+        $scope.visualize();
     }
 
     /*
@@ -835,6 +850,9 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     */
     build_hashtag_graph = function(){
 
+        // Clear div content
+        $('#hastag_histogram').empty();
+        
         var data = [];
         var max = 1;
         $scope.tweets.forEach(function(x){
@@ -854,6 +872,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         $('.graph_bar').remove();
         $('.graph_title').remove();
 
+        // Append hashtag and bar for any hashtags with frequency greater than 1
         for (var k in data){
             if(data[k] > 1){
                 $('#hastag_histogram').append("<p class='graph_title' style='color:#4C4C4C;margin-bottom:3px;margin-top:15px;'>#"
@@ -864,6 +883,11 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                                               +"%;'></div>");
             }
         }
+
+        // If no hashtags are found, add message
+        if($('#hastag_histogram').is(':empty')){
+            $('#hastag_histogram').text("No hashtags were found that occurred more than once within search results.");
+        } 
     }
 
 
@@ -1009,7 +1033,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         google.maps.event.addListener(autocomplete, 'place_changed', function (){
             place = autocomplete.getPlace().formatted_address;
             $("#loc_text").html(place);
-            $("#loc_text").trigger('input');
+            $("#loc_text").trigger('input').trigger('change').trigger('keydown');;
         });
     }
 

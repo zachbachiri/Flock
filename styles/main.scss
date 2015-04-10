@@ -46,6 +46,11 @@ a{
 	height: 0;
 }
 
+.info_desc{
+	cursor: pointer;
+	color: #ccc;
+}
+
 .left_column{
 	margin: 0;
 	padding: 0;
@@ -267,6 +272,31 @@ a{
 			clear: both;
 			background-color: #cacaca;
 			display: block;
+		}
+	}
+	#revisualize{
+		button{
+			display: block;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 20px;
+			padding-top: 13px;
+			padding-bottom: 10px;
+			min-width: 250px;
+			color: white;
+			border: none;
+			border-radius: 3px;
+			background-color: $twitter-blue;
+
+			font-size: 1.7em;
+			
+		}
+		button:hover{
+			color: $twitter-blue;
+			background-color: white;
+		}
+		button:last-child{
+			margin-bottom: 0;
 		}
 	}
 }
