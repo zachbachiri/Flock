@@ -737,7 +737,6 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     */
     $scope.visualize = function(){
         $scope.show_visualize = !$scope.show_visualize;
-        $scope.have_searched = !$scope.have_searched;
         if($scope.show_visualize){
             $scope.visualize_copy = "Tweets";
             if(!$scope.have_visualized){
@@ -768,7 +767,6 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     */
     $scope.revisualize = function(){
         $scope.show_visualize = !$scope.show_visualize;
-        $scope.have_searched = !$scope.have_searched;
         $scope.visualize();
     }
 
