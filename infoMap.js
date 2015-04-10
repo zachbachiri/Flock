@@ -22,7 +22,7 @@ var infoMap = [
     { title: '# Of Tweets',         msg: 'The number of tweets to return per search, up to a maximum of 100. Defaults to 15.' },
     { title: 'Tweet Count',         msg: 'The number of tweets that were returned from the search.' },
     { title: 'Word Cloud',          msg: 'Cloud of words associating font size with frequency of words appearing in search results.' },
-    { title: 'Hashtag Histogram',   msg: 'Bar graph of hashtags and associated frequencies found in search results.' },
+    { title: 'Hashtag Histogram',   msg: 'Bar graph of hashtags and associated frequencies found in search results. Only hashtags with frequencies greater than one are displayed.' },
     { title: 'Username',            msg: 'Provides the author of tweet\'s username.' },
     { title: 'Country',             msg: 'Provides the tweet\'s country of origin of tweet.' },
     { title: 'Location',            msg: 'Provides the tweet\'s City & State of origin.' },

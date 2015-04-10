@@ -310,7 +310,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             $scope.errorDialog("Please make sure to enter a search term before searching.");
             return;
         }
-        console.log(form_parameters);
+
         // Initializes Google Maps API geocoder
         var geocoder = new google.maps.Geocoder();
         var query_parameters = {};
@@ -342,8 +342,6 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             // Convert location input to geolocation
             geocoder.geocode( { 'address': form_parameters.loc}, function(results, status){
             if (status == google.maps.GeocoderStatus.OK){
-                console.log(form_parameters.loc);
-                console.log(results);
                 var locData = results[0].geometry.location;
 
                 // Set new geocode based off of location input
@@ -835,6 +833,9 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     */
     build_hashtag_graph = function(){
 
+        // Clear div content
+        $('#hastag_histogram').empty();
+        
         var data = [];
         var max = 1;
         $scope.tweets.forEach(function(x){
@@ -854,6 +855,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         $('.graph_bar').remove();
         $('.graph_title').remove();
 
+        // Append hashtag and bar for any hashtags with frequency greater than 1
         for (var k in data){
             if(data[k] > 1){
                 $('#hastag_histogram').append("<p class='graph_title' style='color:#4C4C4C;margin-bottom:3px;margin-top:15px;'>#"
@@ -864,6 +866,11 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                                               +"%;'></div>");
             }
         }
+
+        // If no hashtags are found, add message
+        if($('#hastag_histogram').is(':empty')){
+            $('#hastag_histogram').text("No hashtags were found that occurred more than once within search results.");
+        } 
     }
 
 
