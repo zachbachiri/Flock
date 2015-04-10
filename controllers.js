@@ -737,6 +737,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     */
     $scope.visualize = function(){
         $scope.show_visualize = !$scope.show_visualize;
+        $scope.have_searched = !$scope.have_searched;
         if($scope.show_visualize){
             $scope.visualize_copy = "Tweets";
             if(!$scope.have_visualized){
@@ -752,7 +753,23 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         } else {
             $scope.visualize_copy = "Visualize";
         }
+    }
 
+    /*
+        @name:    revisualize
+        @author:  Alex Seeto
+        @created: Apr 10, 2015
+        @purpose: Initiates default variables before executing visualize function
+        @param:
+        @reqfile:
+        @return:  void
+        @errors:
+        @modhist:
+    */
+    $scope.revisualize = function(){
+        $scope.show_visualize = !$scope.show_visualize;
+        $scope.have_searched = !$scope.have_searched;
+        $scope.visualize();
     }
 
     /*
