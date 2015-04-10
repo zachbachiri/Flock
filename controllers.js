@@ -351,7 +351,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                                            ',' +
                                            String(locData.lng()) +
                                            ',' +
-                                           '50mi';
+                                           '1000mi';
                 // Make request with parameters
                 twitterCall(query_parameters);
             }
@@ -566,7 +566,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             template: '<div><h3>Select Columns to Download </h3>' +
                           '<div ng-repeat="elem in column_names">' +
                               '<input type="checkbox" ng-model="elem.isChecked" id="check-box-{{$index}}" />' +
-                              '&nbsp;<span class="infoDesc" ng-click="infoDialog(elem.infoMapId)"><img src="styles/images/info.png"></span>' +
+                              '&nbsp;<span class="info_desc" ng-click="infoDialog(elem.infoMapId)">(+)</span>' +
                               '&nbsp;<label ng-bind="elem.name" for="check-box-{{$index}}"></label>' +
                           '</div>' +
                           '<br />' +
@@ -1009,7 +1009,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         google.maps.event.addListener(autocomplete, 'place_changed', function (){
             place = autocomplete.getPlace().formatted_address;
             $("#loc_text").html(place);
-            $("#loc_text").trigger('input');
+            $("#loc_text").trigger('input').trigger('change').trigger('keydown');;
         });
     }
 
