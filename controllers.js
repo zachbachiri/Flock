@@ -63,7 +63,7 @@ app.controller('LoginController', function($scope, $state){
                 window.location.href = response[1];
             },
             error: function(error){
-                errorDialog('Sorry, there is an error with the login server. ' +
+                $scope.errorDialog('Sorry, there is an error with the login server. ' +
                             'Please check back soon!');
             }
         });
@@ -94,7 +94,7 @@ app.controller('LoginController', function($scope, $state){
                 $state.go('search');
             },
             error: function(error){
-                errorDialog('Sorry, there is an error with the login server. ' +
+                $scope.errorDialog('Sorry, there is an error with the login server. ' +
                             'Please check back soon!');
             }
         });
@@ -122,12 +122,11 @@ app.controller('RedirectController', function($scope, $location){
         @return:  void
     */
     $scope.redirect_error = function(){
-        errorDialog('Sorry, there is an error with the login server. ' +
+        $scope.errorDialog('Sorry, there is an error with the login server. ' +
                     'Please try logging in as a Guest and check back soon!');
         sessionStorage.clear();
         window.location.href = current_url.split("?")[0] + "#/login";
     }
-    // TODO: If an error occurs or if the query params are not found, redirect to search page as guest?
 
     // parse oauth query parameters from current URL provided by Twitter
     // i.e. http://www.northeastern.edu/flock/?oauth_token=...&oauth_verifier=...#/redirect
@@ -224,6 +223,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     $scope.screen_name = sessionStorage.getItem('screen_name');
     $scope.profile_image_url = sessionStorage.getItem('profile_image_url');
     $scope.count_options = [10, 25, 50, 75, 100];
+    $scope.sensitive = true;
 
     // Result Types Array
     $scope.result_types = [{
@@ -252,9 +252,6 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         { infoMapId: 19, name: 'Total Friends',   value: 'friends',   isChecked: true },
         { infoMapId: 19, name: 'Total Favorites', value: 'favorites', isChecked: true }
     ];
-
-    // Default sensitivity for search
-    $scope.sensitive = true;
 
     // Default date options
     $scope.dateOptions = { 
@@ -678,7 +675,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             var replyCheck = repliedto === null;
 
             // Convert message to encoded String
-            message = message.replace('\n', ' ').replace('"','""');
+            message = message.replace(/\n/g, ' ').replace(/"/g,'""');
 
             // Separate data with commas, only include data if column's checkbox has been checked
             (checkedUsername)       ? row += '"' + username + '",' : "";
@@ -1052,7 +1049,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
 
     $scope.sessionExpired = function(error){
         if (error.status === 403){
-            errorDialog('Sorry, your session has expired. Please login again.');
+            $scope.errorDialog('Sorry, your session has expired. Please login again.');
             sessionStorage.clear();
             $state.go('login');
         } else {
