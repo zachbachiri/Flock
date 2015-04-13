@@ -369,7 +369,6 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                                            String(locData.lng()) +
                                            ',' +
                                            form_parameters.radius + 'mi';
-                console.log(query_parameters.geocode);
                 // Make request with parameters
                 twitterCall(query_parameters);
             }
@@ -803,6 +802,9 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         @modhist:
     */
     build_heatmap = function(){
+        $("#heatmap").remove();
+        $("#heatmap_wrap").append("<div id='heatmap' style='width:100%;height:400px;'></div>");
+
         var heatmapData = [];
 
         $scope.tweets.forEach(function(x){
@@ -811,20 +813,26 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 heatmapData.push(obj);
             }
         });
-        console.log(heatmapData);
 
         if(heatmapData.length > 0) {
             var center = heatmapData[0].location;
             map = new google.maps.Map(document.getElementById('heatmap'), {
               center: center,
-              zoom: 1,
+              zoom: 2,
               mapTypeId: google.maps.MapTypeId.ROADMAP
             });
 
-            var heatmap = new google.maps.visualization.HeatmapLayer({
-              data: heatmapData
+            google.maps.event.addListenerOnce(map, 'idle', function() {
+                google.maps.event.trigger(map, 'resize');
+                center = heatmapData[0].location;
+                map.setCenter(center);
             });
-            heatmap.setMap(map);
+
+            var heatmap = new google.maps.visualization.HeatmapLayer({
+              data: heatmapData,
+              map: map,
+              radius: 15
+            });
         } else {
             $("#heatmap").css("display", "none");
         }
