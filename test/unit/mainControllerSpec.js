@@ -10,13 +10,8 @@
 // Test suite for the MainController
 describe('MainController', function() {
 
-    // Load the main app module before each spec
-    //beforeEach(module('twitterTool'));
-
-    /* ------------------------------------------ */
-
-     beforeEach(function() {
-        var $rootScope, $state, $injector, myServiceMock, state = 'myState';
+    var $rootScope, $state, $injector;
+    beforeEach(function() {
 
         module('twitterTool');
 
@@ -27,17 +22,16 @@ describe('MainController', function() {
 
           // We need add the template entry into the templateCache if we ever
           // specify a templateUrl
+          $templateCache.put('partials/search.html', '');
           $templateCache.put('partials/login.html', '');
         })
+
+        // Start at the search page
+        $state.go('search');
       });
 
-    it('should test redirect to login page without session', inject(function($controller, $state) {
-        expect($state.href('login')).toBe('/login');
-    }));
-
-    /* ------------------------------------------ */
-
-    // Test the state of the application before making a query
+    // On page load, the default variable settings are correctly set to empty,
+    // default HTML text (i.e. View More Tweets and Visualize),  or false respectively.
     it('should test initialization of variables', inject(function($controller) {
         var scope = {},
             ctrl = $controller('MainController', { $scope: scope });
@@ -54,6 +48,7 @@ describe('MainController', function() {
         expect(scope.have_visualized).toBe(false);
         expect(scope.count_options).toEqual([10, 25, 50, 75, 100]);
 
+        // Test the initial result types value
         var expected_result_types = [{
             name: 'Popular',
             value: 'popular'
@@ -67,6 +62,7 @@ describe('MainController', function() {
 
         expect(scope.result_types).toEqual(expected_result_types);
 
+        // Test the initial date variable value
         var expected_date_options = {
             dateFormat: 'yy-mm-dd',
             minDate: '-7',
@@ -74,9 +70,30 @@ describe('MainController', function() {
         }
 
         expect(scope.dateOptions).toEqual(expected_date_options);
+
+        var expected_column_names = [
+            { infoMapId: 9,  name: 'Username',        value: 'username',  isChecked: true },
+            { infoMapId: 10, name: 'Country',         value: 'country',   isChecked: true },
+            { infoMapId: 11, name: 'Location',        value: 'location',  isChecked: true },
+            { infoMapId: 12, name: 'Timestamp',       value: 'timestamp', isChecked: true },
+            { infoMapId: 13, name: 'Message',         value: 'message',   isChecked: true },
+            { infoMapId: 14, name: 'Media',           value: 'media',     isChecked: true },
+            { infoMapId: 15, name: 'Favorited',       value: 'favorited', isChecked: true },
+            { infoMapId: 16, name: 'Favorite Count',  value: 'favcount',  isChecked: true },
+            { infoMapId: 17, name: 'Replied To',      value: 'replyto',   isChecked: true },
+            { infoMapId: 18, name: 'Total Followers', value: 'followers', isChecked: true },
+            { infoMapId: 19, name: 'Total Friends',   value: 'friends',   isChecked: true },
+            { infoMapId: 20, name: 'Total Favorites', value: 'favorites', isChecked: true }
+        ];
+
+        expect(scope.column_names).toEqual(expected_column_names);
+
     }));
 
-    // Test the state of the application when making a query
+    // Created dummy “form_parameters” to be passed into $scope.query() and ensured
+    // that parameters are being set correctly (i.e. when checking last executed query,
+    // we found that the search term is correctly be set as the q attribute of the object
+    // and also that the loading block toggles to become visible.
     it('should test variables when making queries', inject(function($controller) {
         var scope = {},
             ctrl = $controller('MainController', { $scope: scope });
@@ -87,8 +104,8 @@ describe('MainController', function() {
             result_type: "popular",
             count: 100
         };
-
         scope.query(form_parameters);
+
         expect(scope.show_visualize).toBe(false);
         expect(scope.visualize_copy).toBe("Visualize");
         expect(scope.show_loading).toBe(true);
@@ -102,7 +119,8 @@ describe('MainController', function() {
         expect(scope.tweets.length).toBe(0);
     }));
 
-    // Test the advanced search toggle function
+    // Advanced Search options are first hidden and successfully toggles
+    // $scope.show_advanced_search boolean when $scope.toggle_advanced_search() is executed.
     it('should test the advanced search toggle', inject(function($controller) {
         var scope = {},
             ctrl = $controller('MainController', { $scope: scope });
@@ -114,13 +132,124 @@ describe('MainController', function() {
         expect(scope.show_advanced_search).toBe(false);
 
     }));
+
+    // Test both the visualize and revisualize functions. The visualization
+    // variables should change after calling visualize, but should not after
+    // a call to revisualize
+    it('should test the visualize function', inject(function($controller) {
+        var scope = {},
+            ctrl = $controller('MainController', { $scope: scope });
+
+        // Set a sample tweet in the controller
+        scope.tweets = [{
+                           "text":"Test Tweet 1",
+                           "user":{
+                               "name":"Test User1",
+                               "screen_name":"TestUser1",
+                               "profile_image_url_https":"https:\/\/abs.twimg.com\/sticky\/default_profile_images\/default_profile_6_normal.png",
+                           },
+                           "entities":{
+                               "hashtags": ["foo", "bar"]
+                           }
+                       }];
+
+        // Test the initial state of the visualization variables
+        expect(scope.show_visualize).toBe(false);
+        expect(scope.visualize_copy).toBe('Visualize');
+
+        // Test that once a search has been made, then the visualization view will display when toggled
+        scope.visualize();
+        expect(scope.show_visualize).toBe(true);
+        expect(scope.visualize_copy).toBe('Tweets');
+        expect(scope.have_visualized).toBe(true);
+
+        // Test that the visualize variables will maintain the same values after calling revisualize
+        scope.revisualize();
+        expect(scope.show_visualize).toBe(true);
+        expect(scope.visualize_copy).toBe('Tweets');
+        expect(scope.have_visualized).toBe(true);
+    }));
+
+    // Test the isChecked function such that if any of the columns in column_names is checked,
+    // then isChecked returns true. After unchecking all of the columns, isChecked should
+    // return false
+    it('should test the isChecked function', inject(function($controller) {
+        var scope = {},
+            ctrl = $controller('MainController', { $scope: scope });
+
+        scope.column_names = [
+            { infoMapId: 9,  name: 'Username',        value: 'username',  isChecked: true },
+            { infoMapId: 10, name: 'Country',         value: 'country',   isChecked: true },
+            { infoMapId: 11, name: 'Location',        value: 'location',  isChecked: true },
+            { infoMapId: 12, name: 'Timestamp',       value: 'timestamp', isChecked: true },
+            { infoMapId: 13, name: 'Message',         value: 'message',   isChecked: true },
+            { infoMapId: 14, name: 'Media',           value: 'media',     isChecked: true },
+            { infoMapId: 15, name: 'Favorited',       value: 'favorited', isChecked: true },
+            { infoMapId: 16, name: 'Favorite Count',  value: 'favcount',  isChecked: true },
+            { infoMapId: 17, name: 'Replied To',      value: 'replyto',   isChecked: true },
+            { infoMapId: 18, name: 'Total Followers', value: 'followers', isChecked: true },
+            { infoMapId: 19, name: 'Total Friends',   value: 'friends',   isChecked: true },
+            { infoMapId: 20, name: 'Total Favorites', value: 'favorites', isChecked: true }
+        ];
+
+        // Test that isChecked is true, then uncheck a column until all are unchecked
+        for (var e in scope.column_names) {
+            expect(scope.isChecked()).toBe(true);
+            scope.column_names[e].isChecked = false;
+        }
+        // Now that all columns are false, Test that isChecked is false
+        expect(scope.isChecked()).toBe(false);
+    }));
+
+    // Test that the logout function will redirect the user from the search page to
+    // the login page
+    it('should test the logout function', inject(function($controller, $state) {
+        var scope = {},
+            ctrl = $controller('MainController', { $scope: scope });
+
+        $state.go('search');
+        $rootScope.$digest();
+        expect($state.is('search')).toBe(true);
+        scope.logout();
+        $rootScope.$digest();
+        expect($state.is('login')).toBe(true);
+    }));
 });
 
+// Test Suite for the LoginController
 describe('LoginController', function() {
 
+   var $rootScope, $state, $injector;
+
     // Load the main app module before each spec
-    beforeEach(module('twitterTool'));
+    beforeEach(function() {
 
-    it('should test that the default state is the login page')
+        module('twitterTool');
 
+        inject(function(_$rootScope_, _$state_, _$injector_, $templateCache) {
+            $rootScope = _$rootScope_;
+            $state = _$state_;
+            $injector = _$injector_;
+
+            // We need add the template entry into the templateCache if we ever
+            // specify a templateUrl
+            $templateCache.put('partials/search.html', '');
+            $templateCache.put('partials/login.html', '');
+        })
+
+        // Begin at the login page
+        $state.go('login');
+        $rootScope.$digest();
+    });
+
+    // Test that the guest_sign_in function keeps user at the login screen on error
+    it('should test the guest_sign_in function', inject(function($controller, $state) {
+        var scope = {},
+            ctrl = $controller('LoginController', { $scope: scope });
+
+        expect($state.is('login')).toBe(true);
+        scope.guest_sign_in();
+        $rootScope.$digest();
+        expect($state.is('login')).toBe(true); // since tester cannot make cross domain requests
+    }));
 });

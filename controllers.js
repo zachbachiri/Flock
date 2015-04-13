@@ -201,6 +201,9 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 $state.go('login');
             }
         });
+    // If the user visits the page with a saved Guest session id but did not
+    // come directly from the login page, then redirect the user to the login
+    // page to encourage user logins through Twitter and reduce rate limit issue
     } else if (!sessionStorage.fromLogin){
         sessionStorage.clear();
         $state.go('login');
@@ -242,16 +245,16 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     $scope.column_names = [
         { infoMapId: 9,  name: 'Username',        value: 'username',  isChecked: true },
         { infoMapId: 10, name: 'Country',         value: 'country',   isChecked: true },
-        { infoMapId: 11, name: 'Location',        value: 'location',  isChecked: true }, 
-        { infoMapId: 12, name: 'Timestamp',       value: 'timestamp', isChecked: true }, 
-        { infoMapId: 13, name: 'Message',         value: 'message',   isChecked: true }, 
-        { infoMapId: 14, name: 'Media',           value: 'media',     isChecked: true }, 
-        { infoMapId: 15, name: 'Favorited',       value: 'favorited', isChecked: true }, 
-        { infoMapId: 16, name: 'Favorite Count',  value: 'favcount',  isChecked: true }, 
-        { infoMapId: 17, name: 'Replied To',      value: 'replyto',   isChecked: true }, 
-        { infoMapId: 18, name: 'Total Followers', value: 'followers', isChecked: true }, 
+        { infoMapId: 11, name: 'Location',        value: 'location',  isChecked: true },
+        { infoMapId: 12, name: 'Timestamp',       value: 'timestamp', isChecked: true },
+        { infoMapId: 13, name: 'Message',         value: 'message',   isChecked: true },
+        { infoMapId: 14, name: 'Media',           value: 'media',     isChecked: true },
+        { infoMapId: 15, name: 'Favorited',       value: 'favorited', isChecked: true },
+        { infoMapId: 16, name: 'Favorite Count',  value: 'favcount',  isChecked: true },
+        { infoMapId: 17, name: 'Replied To',      value: 'replyto',   isChecked: true },
+        { infoMapId: 18, name: 'Total Followers', value: 'followers', isChecked: true },
         { infoMapId: 19, name: 'Total Friends',   value: 'friends',   isChecked: true },
-        { infoMapId: 19, name: 'Total Favorites', value: 'favorites', isChecked: true }
+        { infoMapId: 20, name: 'Total Favorites', value: 'favorites', isChecked: true }
     ];
 
     // Default date options
@@ -405,8 +408,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 var hourOffset = resetDate.getTimezoneOffset() / 60;
                 resetDate.setHours(resetDate.getHours() - hourOffset);
                 $scope.rate_limit_reset = resetDate.toLocaleString();
-                // warn user if 10 or 20 searches remaining
-                if ($scope.rate_limit_remaining <= 20 && $scope.rate_limit_remaining % 10 === 0){
+                // warn user if 5, 10, 15, or 20 searches remaining
+                if ($scope.rate_limit_remaining <= 20 && $scope.rate_limit_remaining % 5 === 0){
                     $scope.warningDialog('Only ' + $scope.rate_limit_remaining + ' searches remaining ' +
                                          'before ' + $scope.rate_limit_reset + '.');
                 }
@@ -482,9 +485,17 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 var resetDate = new Date(parseInt(reply.rate_limit_reset) * 1000);
                 var hourOffset = resetDate.getTimezoneOffset() / 60;
                 resetDate.setHours(resetDate.getHours() - hourOffset);
-                // warn user if 10 or 20 searches remaining
                 $scope.rate_limit_reset = resetDate.toLocaleString();
-                if ($scope.rate_limit_remaining < 20 && $scope.rate_limit_remaining % 10 === 0){
+                // notify user if rate limit has been reached
+                if (_.isString(reply) && reply.indexOf('"code":88') > -1){
+                    $scope.errorDialog('Sorry, you have reached the Twitter API rate limit. The number of ' +
+                                       'allotted searches resets every 15 minutes so try again soon!');
+                    $scope.show_loading = false;
+                    $scope.have_searched = false;
+                    return;
+                }
+                // warn user if 10 or 20 searches remaining
+                else if ($scope.rate_limit_remaining < 20 && $scope.rate_limit_remaining % 10 === 0){
                     $scope.warningDialog('Only ' + $scope.rate_limit_remaining + ' searches remaining ' +
                                          'before ' + $scope.rate_limit_reset + '.');
                 }
@@ -1132,6 +1143,15 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         $scope.show_advanced_search = !$scope.show_advanced_search;
     }
 
+    /*
+        @name:    sessionExpired
+        @author   Jimmy Ly
+        @created  Mar 16, 2015
+        @purpose: Handles error where user's session has expired. Displays error message,
+                  clears saved session id, and redirects user to login page
+        @return:  void
+        @modhist:
+    */
     $scope.sessionExpired = function(error){
         if (error.status === 403){
             $scope.errorDialog('Sorry, your session has expired. Please login again.');
@@ -1142,6 +1162,14 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         }
     }
 
+    /*
+        @name:    logout
+        @author   Jimmy Ly
+        @created  Mar 16, 2015
+        @purpose: Logs out the user by clearing saved session id and redirecting to login page
+        @return:  void
+        @modhist:
+    */
     $scope.logout = function(){
         sessionStorage.clear();
         $state.go('login');
