@@ -32,31 +32,31 @@ describe('Directives', function(){
                                    "screen_name":"TestUser1",
                                    "profile_image_url_https":"https:\/\/abs.twimg.com\/sticky\/default_profile_images\/default_profile_6_normal.png",
                                }
-                           }
+                           };
 
         $rootScope.tweet = sample_tweet;
 
-        // sample_tweet user picture
+        // Test that the correct profile image is displayed based on the sample tweet
         element = $compile('<img ng-src="{{ tweet.user.profile_image_url_https }}" class="profile_image">')($rootScope);
         $rootScope.$digest();
         expect(element.attr('src')).toBe("https:\/\/abs.twimg.com\/sticky\/default_profile_images\/default_profile_6_normal.png");
 
-        // sample_tweet user name
+        // Test that the correct username is displayed based on the sample tweet
         element = $compile('<span class="profile_name">{{ tweet.user.name }}</span>')($rootScope);
         $rootScope.$digest();
         expect(element.html()).toBe("Test User1");
 
-        // sample_tweet user screen name
+        // Test that the correct screen name is displayed based on the sample tweet
         element = $compile('<span class="profile_screen_name">@{{ tweet.user.screen_name }}</span>')($rootScope);
         $rootScope.$digest();
         expect(element.html()).toBe("@TestUser1");
 
-        // sample_tweet user tweet
+        // Test that the correct tweet message contents are displayed based on the sample tweet
         element = $compile('<p class="profile_tweet">{{ tweet.text }}</p>')($rootScope);
         $rootScope.$digest();
         expect(element.html()).toBe("Test Tweet 1");
 
-        // sample_tweet without attached picture
+        // Test that if the tweet does not contain an image, then an image div is not created for the Masonry brick
         var media_template = '<div>' +
                                 '<span ng-if="tweet.entities.media">' +
                                     '<img class="profile_media" style="max-width:100%;" ng-src="{{ tweet.entities.media[0].media_url }}">' +
@@ -67,7 +67,7 @@ describe('Directives', function(){
         var img = element.find('img');
         expect(img.length).toBe(0);
 
-        // sample_tweet with attached picture
+        // Test that if the tweet does contain an image, then an image div with the correct src url is in the Masonry brick
         $rootScope.tweet.entities = {}
         $rootScope.tweet.entities.media = [{ "media_url":"http:\/\/pbs.twimg.com\/media\/B_HMH5CXIAEwPtM.jpg" }];
         element = $compile(media_template)($rootScope);
@@ -76,7 +76,8 @@ describe('Directives', function(){
         expect(img.length).toBe(1);
         expect(element.html()).toContain("http:\/\/pbs.twimg.com\/media\/B_HMH5CXIAEwPtM.jpg");
 
-        // sample_tweet that isn't a retweet
+        // Test that if a tweet is not a retweet, then then the brick will not have a
+        // 'retweeted status' retweet count or favorite count
         $rootScope.tweet.retweet_count = 3;
         $rootScope.tweet.favorite_count = 5;
         $rootScope.tweet.retweeted_status = null;
@@ -96,6 +97,8 @@ describe('Directives', function(){
         var favorite_count = element.find('.favorite_count');
         expect(favorite_count.length).toBe(0);
 
+        // Test that if a tweet is not a retweet, then the brick will have a normal
+        // retweet count and favorite count
         var no_retweet_template = '<div>' +
                                       '<span ng-if="tweet.retweeted_status == null">' +
                                           '<span class="retweet_count">{{ tweet.retweet_count }}</span>' +
@@ -112,7 +115,7 @@ describe('Directives', function(){
         expect(favorite_count.length).toBe(1);
         expect(favorite_count.html()).toBe('5');
 
-        // sample_tweet that is a retweet
+        // Test that if a tweet is a retweet, then the brick will have an appropriate retweet count and favorite count
         $rootScope.tweet.retweeted_status = {
                                                 retweet_count: 7,
                                                 favorite_count: 20
@@ -131,15 +134,17 @@ describe('Directives', function(){
 
     // Test the View More Tweets button
     it('should test the "View More Tweets" view', function(){
-        // simulate initial state of variables
+        // Simulate initial state of variables
         $rootScope.show_loading = false;
         $rootScope.show_visualize = false;
         $rootScope.have_searched = false;
         $rootScope.load_more_copy = "View More Tweets";
-        var view_more_template = '<button id="load_more" ng-hide="show_loading || show_visualize || !have_searched" ng-click="load_more()">{{ load_more_copy }}</button>';
 
+        var view_more_template = '<button id="load_more" ng-hide="show_loading || show_visualize || !have_searched" ng-click="load_more()">{{ load_more_copy }}</button>';
         element = $compile(view_more_template)($rootScope);
         $rootScope.$digest();
+
+        // Test that the View More Tweets button is initially hidden
         expect(element.hasClass('ng-hide')).toBe(true);
         expect(element.html()).toBe('View More Tweets');
 
@@ -147,21 +152,27 @@ describe('Directives', function(){
         $rootScope.show_loading = true;
         element = $compile(view_more_template)($rootScope);
         $rootScope.$digest();
+
+        // Test that the View More Tweets button is still hidden
         expect(element.hasClass('ng-hide')).toBe(true);
         expect(element.html()).toBe('View More Tweets');
 
-        // simulate tweet results returning
+        // Simulate tweet results returning
         $rootScope.show_loading = false;
         $rootScope.have_searched = true;
         element = $compile(view_more_template)($rootScope);
         $rootScope.$digest();
+
+        // Test that the View More Tweets button is no longer hidden
         expect(element.hasClass('ng-hide')).toBe(false);
         expect(element.html()).toBe('View More Tweets');
 
-        // simulate tweet user clicking View More Tweets button
+        // Simulate tweet user clicking View More Tweets button
         $rootScope.load_more_copy = "...";
         element = $compile(view_more_template)($rootScope);
         $rootScope.$digest();
+
+        // Test that the View More Tweets button now displays "..."
         expect(element.hasClass('ng-hide')).toBe(false);
         expect(element.html()).toBe('...');
     });
@@ -173,10 +184,12 @@ describe('Directives', function(){
                                     '<h1>Visualize</h1>' +
                                 '</div>';
 
+        // Test that the visualize page is initially hidden
         element = $compile(visualize_template)($rootScope);
         $rootScope.$digest();
         expect(element.hasClass('ng-hide')).toBe(true);
 
+        // Test that the visualize page is displayed after clicking Visualize
         $rootScope.show_visualize = true;
         element = $compile(visualize_template)($rootScope);
         $rootScope.$digest();
@@ -190,10 +203,12 @@ describe('Directives', function(){
                                    '<img class="loading_gif" src="/styles/images/ajax-loader.gif">' +
                                '</div>';
 
+        // Test that the Loading Spinner is initially hidden
         element = $compile(loading_template)($rootScope);
         $rootScope.$digest();
         expect(element.hasClass('ng-hide')).toBe(true);
 
+        // Test that the Loading Spinner is shown when show_loading is true, i.e. when making a search
         $rootScope.show_loading = true;
         element = $compile(loading_template)($rootScope);
         $rootScope.$digest();
