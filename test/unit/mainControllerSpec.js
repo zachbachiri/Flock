@@ -261,7 +261,6 @@ describe('LoginController', function() {
 
           scope.guest_sign_in();
           $rootScope.$digest();
-          console.log($state.current);
       }));
 
 });
