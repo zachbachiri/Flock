@@ -11,7 +11,6 @@
 describe('MainController', function() {
 
     var $rootScope, $state, $injector;
-
     beforeEach(function() {
 
         module('twitterTool');
@@ -27,6 +26,7 @@ describe('MainController', function() {
           $templateCache.put('partials/login.html', '');
         })
 
+        // Start at the search page
         $state.go('search');
       });
 
