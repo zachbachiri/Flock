@@ -223,6 +223,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     $scope.screen_name = sessionStorage.getItem('screen_name');
     $scope.profile_image_url = sessionStorage.getItem('profile_image_url');
     $scope.count_options = [10, 25, 50, 75, 100];
+    $scope.radius_options = [1, 5, 15, 50, 100, 500, 1000];
     $scope.sensitive = true;
 
     // Result Types Array
@@ -272,9 +273,30 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         @errors:
         @modhist: 
     */
-    $scope.infoDialog = function(id){
+    $scope.infoDialog = function(){
         ngDialog.open({
-            template: '<div><h3>'+ infoMap[id].title +'</h3><p>' + infoMap[id].msg + '</p></div>',
+            template: '<div><h1>Helpful Information</h1><h3>'+ infoMap[0].title +'</h3><p>' + infoMap[0].msg + '</p>' 
+                        + '<h3>'+ infoMap[1].title +'</h3><p>' + infoMap[1].msg + '</p>'
+                        + '<h3>'+ infoMap[2].title +'</h3><p>' + infoMap[2].msg + '</p>'
+                        + '<h3>'+ infoMap[3].title +'</h3><p>' + infoMap[3].msg + '</p>'
+                        + '<h3>'+ infoMap[4].title +'</h3><p>' + infoMap[4].msg + '</p>'
+                        + '<h3>'+ infoMap[5].title +'</h3><p>' + infoMap[5].msg + '</p>'
+                        + '<h3>'+ infoMap[6].title +'</h3><p>' + infoMap[6].msg + '</p>'
+                        + '<h3>'+ infoMap[7].title +'</h3><p>' + infoMap[7].msg + '</p>'
+                        + '<h3>'+ infoMap[8].title +'</h3><p>' + infoMap[8].msg + '</p>'
+                        + '<h3>'+ infoMap[9].title +'</h3><p>' + infoMap[9].msg + '</p>'
+                        + '<h3>'+ infoMap[10].title +'</h3><p>' + infoMap[10].msg + '</p>'
+                        + '<h3>'+ infoMap[11].title +'</h3><p>' + infoMap[11].msg + '</p>'
+                        + '<h3>'+ infoMap[12].title +'</h3><p>' + infoMap[12].msg + '</p>'
+                        + '<h3>'+ infoMap[13].title +'</h3><p>' + infoMap[13].msg + '</p>'
+                        + '<h3>'+ infoMap[14].title +'</h3><p>' + infoMap[14].msg + '</p>'
+                        + '<h3>'+ infoMap[15].title +'</h3><p>' + infoMap[15].msg + '</p>'
+                        + '<h3>'+ infoMap[16].title +'</h3><p>' + infoMap[16].msg + '</p>'
+                        + '<h3>'+ infoMap[17].title +'</h3><p>' + infoMap[17].msg + '</p>'
+                        + '<h3>'+ infoMap[18].title +'</h3><p>' + infoMap[18].msg + '</p>'
+                        + '<h3>'+ infoMap[19].title +'</h3><p>' + infoMap[19].msg + '</p>'
+                        + '<h3>'+ infoMap[20].title +'</h3><p>' + infoMap[20].msg + '</p>'
+                        + '</div>',
             plain: true,
             scope: $scope
         });
@@ -346,7 +368,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                                            ',' +
                                            String(locData.lng()) +
                                            ',' +
-                                           '50mi';
+                                           form_parameters.radius + 'mi';
+                console.log(query_parameters.geocode);
                 // Make request with parameters
                 twitterCall(query_parameters);
             }
@@ -468,7 +491,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 }
 
                 // If true, filter out possibily sensitive tweets
-                if($scope.sensitive){
+                if($scope.sensitive && reply.statuses){
                     //HAVE TO SET TWEETS TO BE EMPTY ARRAY FIRST
                     $scope.tweets = [];
                     reply.statuses.forEach(function(x){
@@ -744,6 +767,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 }
                 buildCloud();
                 build_hashtag_graph();
+                build_heatmap();
             }
             $scope.have_visualized = true;
         } else {
@@ -765,6 +789,45 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     $scope.revisualize = function(){
         $scope.show_visualize = !$scope.show_visualize;
         $scope.visualize();
+    }
+
+    /*
+        @name:    build_heatmap
+        @author:  Zach Bachiri
+        @created: Apr 12, 2015
+        @purpose: Builds heatmap on top of google maps
+        @param:
+        @reqfile:
+        @return:  void
+        @errors:
+        @modhist:
+    */
+    build_heatmap = function(){
+        var heatmapData = [];
+
+        $scope.tweets.forEach(function(x){
+            if(x.geo){
+                var obj = {location: new google.maps.LatLng(x.geo.coordinates[0], x.geo.coordinates[1]), weight: 3};
+                heatmapData.push(obj);
+            }
+        });
+        console.log(heatmapData);
+
+        if(heatmapData.length > 0) {
+            var center = heatmapData[0].location;
+            map = new google.maps.Map(document.getElementById('heatmap'), {
+              center: center,
+              zoom: 1,
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+
+            var heatmap = new google.maps.visualization.HeatmapLayer({
+              data: heatmapData
+            });
+            heatmap.setMap(map);
+        } else {
+            $("#heatmap").css("display", "none");
+        }
     }
 
     /*
@@ -846,7 +909,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     build_hashtag_graph = function(){
 
         // Clear div content
-        $('#hastag_histogram').empty();
+        $('#hashtag_histogram').empty();
         
         var data = [];
         var max = 1;
@@ -867,21 +930,35 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         $('.graph_bar').remove();
         $('.graph_title').remove();
 
-        // Append hashtag and bar for any hashtags with frequency greater than 1
-        for (var k in data){
-            if(data[k] > 1){
-                $('#hastag_histogram').append("<p class='graph_title' style='color:#4C4C4C;margin-bottom:3px;margin-top:15px;'>#"
-                                              +k+" - "+data[k]
+        var tuples = [];
+
+        for (var key in data) tuples.push([key, data[key]]);
+
+        tuples.sort(function(a, b) {
+            a = a[1];
+            b = b[1];
+
+            return a < b ? -1 : (a > b ? 1 : 0);
+        });
+
+        for (var i = 0; i < tuples.length; i++) {
+            var key = tuples[i][0];
+            var value = tuples[i][1];
+            if(value > 1){
+                $('#hashtag_histogram').append("<p class='graph_title' style='color:#4C4C4C;margin-bottom:3px;margin-top:15px;'>#"
+                                              +key+" - "+value
                                               +"</p>"
                                               +"<div class='graph_bar' style='width:"
-                                              +((data[k]/max)*75)
+                                              +((value/max)*75)
                                               +"%;'></div>");
             }
+
+            // do something with key and value
         }
 
         // If no hashtags are found, add message
-        if($('#hastag_histogram').is(':empty')){
-            $('#hastag_histogram').text("No hashtags were found that occurred more than once within search results.");
+        if($('#hashtag_histogram').is(':empty')){
+            $('#hashtag_histogram').text("No hashtags were found that occurred more than once within search results.");
         } 
     }
 
