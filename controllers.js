@@ -583,12 +583,11 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             template: '<div><h3>Select Columns to Download </h3>' +
                           '<div ng-repeat="elem in column_names">' +
                               '<input type="checkbox" ng-model="elem.isChecked" id="check-box-{{$index}}" />' +
-                              '&nbsp;<span class="info_desc" ng-click="infoDialog(elem.infoMapId)">(+)</span>' +
                               '&nbsp;<label ng-bind="elem.name" for="check-box-{{$index}}"></label>' +
                           '</div>' +
                           '<br />' +
                           '<div>' +
-                              '<button id="download" type="button" ng-disabled="!isChecked()" ng-click="download()">Download</button>' +
+                              '<button id="dialog_download" type="button" ng-disabled="!isChecked()" ng-click="download()">Download</button>' +
                           '</div>' +
                       '</div>',
             plain: true,
@@ -762,6 +761,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 // Check search has been performed
                 if ($scope.tweets.length == 0){
                     $scope.errorDialog("Please perform a search before visualizing!");
+                    $scope.show_visualize = false;
                     return;
                 }
                 buildCloud();
