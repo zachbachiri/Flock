@@ -409,8 +409,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 var hourOffset = resetDate.getTimezoneOffset() / 60;
                 resetDate.setHours(resetDate.getHours() - hourOffset);
                 $scope.rate_limit_reset = resetDate.toLocaleString();
-                // warn user if 10 or 20 searches remaining
-                if ($scope.rate_limit_remaining <= 20 && $scope.rate_limit_remaining % 10 === 0){
+                // warn user if 5, 10, 15, or 20 searches remaining
+                if ($scope.rate_limit_remaining <= 20 && $scope.rate_limit_remaining % 5 === 0){
                     $scope.warningDialog('Only ' + $scope.rate_limit_remaining + ' searches remaining ' +
                                          'before ' + $scope.rate_limit_reset + '.');
                 }
