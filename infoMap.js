@@ -23,6 +23,9 @@ var infoMap = [
     { title: 'Tweet Count',         msg: 'The number of tweets that were returned from the search.' },
     { title: 'Word Cloud',          msg: 'Cloud of words associating font size with frequency of words appearing in search results.' },
     { title: 'Hashtag Histogram',   msg: 'Bar graph of hashtags and associated frequencies found in search results. Only hashtags with frequencies greater than one are displayed.' },
+    { title: 'Heatmap',             msg: 'World map with highlighted sections designating tweet origins from the current search results. ' +
+                                         'Please note only some tweets have location data available if a location filter has not been specified, ' + 
+                                         'so some tweets may not appear in this map.' },
     { title: 'Username',            msg: 'Provides the author of tweet\'s username.' },
     { title: 'Country',             msg: 'Provides the tweet\'s country of origin of tweet.' },
     { title: 'Location',            msg: 'Provides the tweet\'s City & State of origin.' },
@@ -34,5 +37,5 @@ var infoMap = [
     { title: 'Replied To',          msg: 'Provides the username of person that tweet is replying to (if any).' },
     { title: 'Total Followers',     msg: 'Provides the number of users following the author of tweet at time of tweet.' },
     { title: 'Total Friends',       msg: 'Provides the number of users that the author of tweet had followed at the time of tweet.' },
-    { title: 'Total Favorites',     msg: 'Provides the number of tweets that the author of tweet had favorited at the time of tweet.' },
+    { title: 'Total Favorites',     msg: 'Provides the number of tweets that the author of tweet had favorited at the time of tweet.' }
 ]
