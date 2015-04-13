@@ -1,5 +1,5 @@
 var infoMap = [
-    { title: 'Search',              msg: 'Enter a term representing a user, hashtag, or keywords.' },
+    { title: 'Search Tweets',              msg: 'Enter a term representing a user, hashtag, or keywords.' },
     { title: 'Location',            msg: 'The location here is used and translated to its latitude and longitude.' +
                                          '<ul>' +
                                          '<li>lat:  The latitude of the location this tweet refers to. ' +

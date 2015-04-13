@@ -48,7 +48,9 @@ a{
 
 .info_desc{
 	cursor: pointer;
-	color: #ccc;
+	color: #55ACEE;
+	display: block;
+	margin-bottom: 10px;
 }
 
 .left_column{
@@ -262,42 +264,36 @@ a{
 		font-size: 1.5em;
 		margin-bottom: 25px;
 	}
-	#hastag_histogram{
+	#hashtag_histogram{
 		clear: both;
 		margin-bottom: 50px;
 		border:1px solid #cacaca;
 		padding: 15px;
+		max-height: 420px;
+		overflow: scroll;
 		.graph_bar{
 			height: 30px;
 			clear: both;
-			background-color: #cacaca;
+			background-color: $twitter-blue;
 			display: block;
 		}
 	}
-	#revisualize{
-		button{
-			display: block;
-			margin-left: auto;
-			margin-right: auto;
-			margin-bottom: 20px;
-			padding-top: 13px;
-			padding-bottom: 10px;
-			min-width: 250px;
-			color: white;
-			border: none;
-			border-radius: 3px;
-			background-color: $twitter-blue;
 
-			font-size: 1.7em;
-			
-		}
-		button:hover{
-			color: $twitter-blue;
-			background-color: white;
-		}
-		button:last-child{
-			margin-bottom: 0;
-		}
+	#revisualize{
+		margin-bottom: 50px;
+		margin-top: 50px;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 20px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		min-width: 150px;
+		color: white;
+		border: none;
+		border-radius: 3px;
+		background-color: $twitter-blue;
+		font-size: 1em;
 	}
 }
 

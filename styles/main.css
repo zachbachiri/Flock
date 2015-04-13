@@ -8,11 +8,11 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  color: #4C4C4C;
+  color: #4c4c4c;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 
 a {
-  color: #55ACEE;
+  color: #55acee;
   text-decoration: none; }
 
 .page_wrap {
@@ -24,7 +24,7 @@ a {
     right: 20px;
     background-color: white;
     padding: 10px;
-    border: 1px solid #F0F0F0; }
+    border: 1px solid #f0f0f0; }
 
 .page_wrap:after {
   visibility: hidden;
@@ -36,7 +36,9 @@ a {
 
 .info_desc {
   cursor: pointer;
-  color: #ccc; }
+  color: #55ACEE;
+  display: block;
+  margin-bottom: 10px; }
 
 .left_column {
   margin: 0;
@@ -62,10 +64,10 @@ a {
           height: 40px;
           border-radius: 8px;
           margin-bottom: 15px;
-          border: solid 2px #F0F0F0; }
+          border: solid 2px #f0f0f0; }
         .left_column .search_wrap .search .parameters #query_submit {
           border: none;
-          background-color: #55ACEE;
+          background-color: #55acee;
           background-image: url("images/twitter_icon.png");
           background-position: 40px 10px;
           background-size: 25px;
@@ -83,7 +85,7 @@ a {
           font-size: .9em;
           display: block;
           cursor: pointer;
-          color: #55ACEE; }
+          color: #55acee; }
         .left_column .search_wrap .search .parameters .show_hide_search:hover {
           color: #3E7EAE; }
       .left_column .search_wrap .search .selection {
@@ -98,11 +100,11 @@ a {
         background: -moz-linear-gradient(white, #f7f7f7);
         /* For Firefox 3.6 to 15 */
         background: linear-gradient(white, #f7f7f7);
-        border: solid 2px #F0F0F0;
+        border: solid 2px #f0f0f0;
         border-radius: 3px; }
     .left_column .search_wrap .download {
       padding: 35px 0 35px 0;
-      background-color: #55ACEE;
+      background-color: #55acee;
       position: absolute;
       bottom: 0;
       width: 100%; }
@@ -114,13 +116,13 @@ a {
         padding-top: 13px;
         padding-bottom: 10px;
         min-width: 250px;
-        color: #55ACEE;
+        color: #55acee;
         border: none;
         border-radius: 3px;
         background-color: white;
         font-size: 1.7em; }
       .left_column .search_wrap .download button:hover {
-        background-color: #F0F0F0; }
+        background-color: #f0f0f0; }
       .left_column .search_wrap .download button:last-child {
         margin-bottom: 0; }
 
@@ -129,7 +131,7 @@ a {
   width: 70%;
   height: 100%;
   float: left;
-  background-color: #F0F0F0;
+  background-color: #f0f0f0;
   overflow: scroll; }
   .right_column .container {
     width: 95%;
@@ -146,7 +148,7 @@ a {
       font-size: .95em;
       line-height: 1.35; }
       .right_column .container .tweet a {
-        color: #4C4C4C; }
+        color: #4c4c4c; }
       .right_column .container .tweet .profile_image {
         float: left;
         border-radius: 6px; }
@@ -155,7 +157,7 @@ a {
         font-weight: bold;
         padding-left: 15px; }
       .right_column .container .tweet .profile_name:hover {
-        color: #0084B4;
+        color: #0084b4;
         text-decoration: underline; }
       .right_column .container .tweet .profile_screen_name {
         display: inline-block;
@@ -177,11 +179,11 @@ a {
       .right_column .container .tweet .view_tweet {
         text-align: right;
         text-decoration: none;
-        color: #55ACEE;
+        color: #55acee;
         float: right;
         font-size: .9em; }
       .right_column .container .tweet .view_tweet:hover {
-        color: #0084B4; }
+        color: #0084b4; }
       .right_column .container .tweet .count {
         font-size: 1.2em; }
       .right_column .container .tweet .retweets_favorites {
@@ -204,37 +206,36 @@ a {
     color: white;
     border: none;
     border-radius: 3px;
-    background-color: #55ACEE;
+    background-color: #55acee;
     font-size: 1.5em;
     margin-bottom: 25px; }
-  .right_column #hastag_histogram {
+  .right_column #hashtag_histogram {
     clear: both;
     margin-bottom: 50px;
     border: 1px solid #cacaca;
-    padding: 15px; }
-    .right_column #hastag_histogram .graph_bar {
+    padding: 15px;
+    max-height: 420px;
+    overflow: scroll; }
+    .right_column #hashtag_histogram .graph_bar {
       height: 30px;
       clear: both;
-      background-color: #cacaca;
+      background-color: #55acee;
       display: block; }
-  .right_column #revisualize button {
+  .right_column #revisualize {
+    margin-bottom: 50px;
+    margin-top: 50px;
     display: block;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 20px;
-    padding-top: 13px;
+    padding-top: 10px;
     padding-bottom: 10px;
-    min-width: 250px;
+    min-width: 150px;
     color: white;
     border: none;
     border-radius: 3px;
-    background-color: #55ACEE;
-    font-size: 1.7em; }
-  .right_column #revisualize button:hover {
-    color: #55ACEE;
-    background-color: white; }
-  .right_column #revisualize button:last-child {
-    margin-bottom: 0; }
+    background-color: #55acee;
+    font-size: 1em; }
 
 .login_wrap {
   width: 100%;
@@ -260,7 +261,7 @@ a {
     color: white;
     border: none;
     border-radius: 3px;
-    background-color: #55ACEE;
+    background-color: #55acee;
     font-size: 1.2em; }
   .login_wrap #twitter_login {
     background-image: url("images/twitter_icon.png");
@@ -271,7 +272,5 @@ a {
   .login_wrap span {
     color: #d0d0d0; }
   .login_wrap a {
-    color: #55ACEE;
+    color: #55acee;
     text-decoration: none; }
-
-/*# sourceMappingURL=main.css.map */
