@@ -23,8 +23,8 @@ describe('Directives', function(){
     // Load the main app before each spec
     beforeEach(module('twitterTool'));
 
-    // Store references to $rootScope and $compile
-    // so they are available to all tests in this describe block
+    // Store references to $rootScope, $compile, and $state
+    // so they are available to all tests in this describe block,
     beforeEach(inject(function(_$compile_, _$rootScope_, _$state_, $templateCache){
         $compile = _$compile_;
         $rootScope = _$rootScope_;
@@ -32,11 +32,12 @@ describe('Directives', function(){
 
         $rootScope.tweet = sample_tweet;
 
+        // store the html files when testing the current state/routing of the application
         $templateCache.put('partials/search.html', '');
         $templateCache.put('partials/login.html', '');
     }));
 
-    // make sure that the display blocks contain the appropriate tweet data
+    // Test that the display blocks contain the appropriate tweet data
     it('should test that a masonry brick contains correct tweet data', function(){
 
         // Test that the correct profile image is displayed based on the sample tweet
@@ -149,7 +150,7 @@ describe('Directives', function(){
         expect(element.attr('ng-href')).toContain('https://twitter.com/TestUser1/status/abc123/');
     });
 
-    // Test the View More Tweets button
+    // Test that the View More Tweets button is initially hidden and displays correctly when making queries.
     it('should test the "View More Tweets" view', function(){
         // Simulate initial state of variables
         $rootScope.show_loading = false;
@@ -194,7 +195,7 @@ describe('Directives', function(){
         expect(element.html()).toBe('...');
     });
 
-    // Test the Visualize button
+    // Test that the visualizations view is initially hidden, but displayed correctly when toggled.
     it('should test the visualize view behavior', function(){
         $rootScope.show_visualize = false;
         var visualize_template = '<div class="container" ng-show="show_visualize">' +
@@ -213,7 +214,7 @@ describe('Directives', function(){
         expect(element.hasClass('ng-hide')).toBe(false);
     });
 
-    // Test the Loading Spinner
+    // Test that the loading spinner is initially hidden, but displayed correctly when making queries.
     it('should test the loading_gif behavior', function(){
         $rootScope.show_loading = false;
         var loading_template = '<div class="container" ng-show="show_loading">' +
@@ -232,7 +233,7 @@ describe('Directives', function(){
         expect(element.hasClass('ng-hide')).toBe(false);
     });
 
-    // Test the initial right instructions panel
+    // Test that the default right panel of the search page is initially displayed, but is hidden once a query is made.
     it('should test the initial right panel', function(){
         $rootScope.have_searched = false;
         var right_panel_template = '<div class="container" ng-show="!have_searched">' +
@@ -251,7 +252,7 @@ describe('Directives', function(){
         expect(element.hasClass('ng-hide')).toBe(true);
     });
 
-    // Test the logout link display
+    // Test that the logout link correctly displays the user’s screen name.
     it('should test the logout link display', function(){
         $rootScope.screen_name = 'Guest';
         var logout_template = '<span>Logged in as {{ screen_name }}. ' +

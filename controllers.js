@@ -245,16 +245,16 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     $scope.column_names = [
         { infoMapId: 9,  name: 'Username',        value: 'username',  isChecked: true },
         { infoMapId: 10, name: 'Country',         value: 'country',   isChecked: true },
-        { infoMapId: 11, name: 'Location',        value: 'location',  isChecked: true }, 
-        { infoMapId: 12, name: 'Timestamp',       value: 'timestamp', isChecked: true }, 
-        { infoMapId: 13, name: 'Message',         value: 'message',   isChecked: true }, 
-        { infoMapId: 14, name: 'Media',           value: 'media',     isChecked: true }, 
-        { infoMapId: 15, name: 'Favorited',       value: 'favorited', isChecked: true }, 
-        { infoMapId: 16, name: 'Favorite Count',  value: 'favcount',  isChecked: true }, 
-        { infoMapId: 17, name: 'Replied To',      value: 'replyto',   isChecked: true }, 
-        { infoMapId: 18, name: 'Total Followers', value: 'followers', isChecked: true }, 
+        { infoMapId: 11, name: 'Location',        value: 'location',  isChecked: true },
+        { infoMapId: 12, name: 'Timestamp',       value: 'timestamp', isChecked: true },
+        { infoMapId: 13, name: 'Message',         value: 'message',   isChecked: true },
+        { infoMapId: 14, name: 'Media',           value: 'media',     isChecked: true },
+        { infoMapId: 15, name: 'Favorited',       value: 'favorited', isChecked: true },
+        { infoMapId: 16, name: 'Favorite Count',  value: 'favcount',  isChecked: true },
+        { infoMapId: 17, name: 'Replied To',      value: 'replyto',   isChecked: true },
+        { infoMapId: 18, name: 'Total Followers', value: 'followers', isChecked: true },
         { infoMapId: 19, name: 'Total Friends',   value: 'friends',   isChecked: true },
-        { infoMapId: 19, name: 'Total Favorites', value: 'favorites', isChecked: true }
+        { infoMapId: 20, name: 'Total Favorites', value: 'favorites', isChecked: true }
     ];
 
     // Default date options
