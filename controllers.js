@@ -773,6 +773,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 if ($scope.tweets.length == 0){
                     $scope.errorDialog("Please perform a search before visualizing!");
                     $scope.show_visualize = false;
+                    $scope.visualize_copy = "Visualize";
                     return;
                 }
                 buildCloud();
