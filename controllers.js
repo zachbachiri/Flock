@@ -263,7 +263,31 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         minDate: '-7', 
         maxDate: '0D' 
     }
+    // Build Info Dialog
+    var loaded_info_dialog_sidebar  = false;
+    var loaded_info_dialog_filter   = false;
+    loaded_info_dialog_visual   = false;
+    var loaded_info_dialog_download = false;
 
+    var info =  '<div id="info_dialog"><h1>Helpful Information</h1>';
+    for(var i=0; i<infoMap.length; i++){
+        var info_dialog_sidebar  = infoMap[i].section === 'Sidebar';
+        var info_dialog_filter   = infoMap[i].section === 'Filter';
+        var info_dialog_visual   = infoMap[i].section === 'Visual';
+        var info_dialog_download = infoMap[i].section === 'Download';
+        info_dialog_sidebar  && !loaded_info_dialog_sidebar  ? (info += '<div id="info_dialog_sidebar"><h3><u>'        + infoMap[i].section + '</u></h3>', loaded_info_dialog_sidebar  = true) : '';
+        info_dialog_filter   && !loaded_info_dialog_filter   ? (info += '</div><div id="info_dialog_filter"><h3><u>'   + infoMap[i].section + '</u></h3>', loaded_info_dialog_filter   = true) : '';
+        info_dialog_visual   && !loaded_info_dialog_visual   ? (info += '</div><div id="info_dialog_visual"><h3><u>'   + infoMap[i].section + '</u></h3>', loaded_info_dialog_visual   = true) : '';
+        info_dialog_download && !loaded_info_dialog_download ? (info += '</div><div id="info_dialog_download"><h3><u>' + infoMap[i].section + '</u></h3>', loaded_info_dialog_download = true) : '';
+        info += '<h3>' + infoMap[i].title + '</h3><p>' + infoMap[i].msg + '</p>';
+    }
+    info += '</div></div>';
+
+    // Reset default variables
+    loaded_info_dialog_sidebar  = false;
+    loaded_info_dialog_filter   = false;
+    loaded_info_dialog_visual   = false;
+    loaded_info_dialog_download = false;
 
     /*
         @name:    infoDialog
@@ -277,29 +301,9 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         @modhist: 
     */
     $scope.infoDialog = function(){
+        // Open dialog with info as template
         ngDialog.open({
-            template: '<div><h1>Helpful Information</h1><h3>'+ infoMap[0].title +'</h3><p>' + infoMap[0].msg + '</p>' 
-                        + '<h3>'+ infoMap[1].title +'</h3><p>' + infoMap[1].msg + '</p>'
-                        + '<h3>'+ infoMap[2].title +'</h3><p>' + infoMap[2].msg + '</p>'
-                        + '<h3>'+ infoMap[3].title +'</h3><p>' + infoMap[3].msg + '</p>'
-                        + '<h3>'+ infoMap[4].title +'</h3><p>' + infoMap[4].msg + '</p>'
-                        + '<h3>'+ infoMap[5].title +'</h3><p>' + infoMap[5].msg + '</p>'
-                        + '<h3>'+ infoMap[6].title +'</h3><p>' + infoMap[6].msg + '</p>'
-                        + '<h3>'+ infoMap[7].title +'</h3><p>' + infoMap[7].msg + '</p>'
-                        + '<h3>'+ infoMap[8].title +'</h3><p>' + infoMap[8].msg + '</p>'
-                        + '<h3>'+ infoMap[9].title +'</h3><p>' + infoMap[9].msg + '</p>'
-                        + '<h3>'+ infoMap[10].title +'</h3><p>' + infoMap[10].msg + '</p>'
-                        + '<h3>'+ infoMap[11].title +'</h3><p>' + infoMap[11].msg + '</p>'
-                        + '<h3>'+ infoMap[12].title +'</h3><p>' + infoMap[12].msg + '</p>'
-                        + '<h3>'+ infoMap[13].title +'</h3><p>' + infoMap[13].msg + '</p>'
-                        + '<h3>'+ infoMap[14].title +'</h3><p>' + infoMap[14].msg + '</p>'
-                        + '<h3>'+ infoMap[15].title +'</h3><p>' + infoMap[15].msg + '</p>'
-                        + '<h3>'+ infoMap[16].title +'</h3><p>' + infoMap[16].msg + '</p>'
-                        + '<h3>'+ infoMap[17].title +'</h3><p>' + infoMap[17].msg + '</p>'
-                        + '<h3>'+ infoMap[18].title +'</h3><p>' + infoMap[18].msg + '</p>'
-                        + '<h3>'+ infoMap[19].title +'</h3><p>' + infoMap[19].msg + '</p>'
-                        + '<h3>'+ infoMap[20].title +'</h3><p>' + infoMap[20].msg + '</p>'
-                        + '</div>',
+            template: info,
             plain: true,
             scope: $scope
         });
@@ -872,10 +876,16 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             // Set initiated variables parsed from json response
             message = $scope.tweets[i]["text"];
 
-            // Convert message to encoded String
-            message = message.replace(/[!,\[\]?.":;\n\s]/g,'|||');
+            // Remove all special characters
+            message = message.replace(/[^\w\s]/gi, '');
 
-            // Separate data with commas
+            // Remove all words beginning with http
+            message = message.replace(/(http\S+)/gi, '')
+
+            // Clean message and seperate with three pipes
+            message = message.replace(/[\s]/g,'|||');
+
+            // Separate data with three pipes
             text += message;
         }
 
@@ -1013,7 +1023,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     */
     $scope.calculateCloud = function(data){
         // Scale for font size
-        var sizeScale = d3.scale.linear().domain([0, 50]).range([10, 50]);
+        var sizeScale = d3.scale.linear().domain([0, 50]).range([15, 50]);
 
         // Start cloud calculations
         d3.layout.cloud()
@@ -1041,7 +1051,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     */
     $scope.drawCloud = function(words){
         // Scale for font size
-        var sizeScale = d3.scale.linear().domain([0, 50]).range([10, 50]);
+        var sizeScale = d3.scale.linear().domain([0, 50]).range([15, 50]);
 
         d3.select('svg').remove();
         d3.select("#cloud").append("svg")
