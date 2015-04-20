@@ -104,6 +104,13 @@ describe('MainController', function() {
             result_type: "popular",
             count: 100
         };
+
+        // set Guest access token/secret cookies required for the query
+        setCookie('at', '31c4e57b83e28607356f878e10162774ef874f2dd0f84b5484376e7ff8f5f0894df8604b27ad' +
+                        'd2aa066fd9b8c542b4c65f5df3beae3d089cef2a2963a00dfe36');
+        setCookie('ats', 'd3c46a874b4a8b82c9d1f6625e9ecf33ee49e074e48e3753a27cd35ccd4e80f5fb953efa77c' +
+                         '0e8accdf561d259ae133e')
+
         scope.query(form_parameters);
 
         expect(scope.show_visualize).toBe(false);

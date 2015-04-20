@@ -24,6 +24,7 @@ module.exports = function(config){
       'infoMap.js',
       'controllers.js',
       'partials/*',
+      'utils/*',
       'test/unit/*.js'
     ],
 
