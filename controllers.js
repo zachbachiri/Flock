@@ -2,7 +2,12 @@ var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'u
 
     //var flock_server_url = "http://localhost:5000";
     var flock_server_url = "https://flock-backend.herokuapp.com";
-    var sessionId = '';
+
+    // cached access token from cookie
+    var accessToken;
+    // cached access token secret from cookie
+    var accessTokenSecret;
+
 
     // Array of stop words
     var stopWords = '';
@@ -17,33 +22,17 @@ var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'u
     @param:   $scope - object required for angular usage
               $state - object required for redirecting user to other states/pages
     @return:  void
+    @modhist: Apr 19 2015 : Jimmy Ly : Replaced sessions with cookies
 */
 app.controller('LoginController', function($scope, $state){
 
-    // Upon visiting the login page, check if the user is already logged in.
-    // If so, sessionStorage should contain a 'sessionId' value that hasn't
-    // expired. Make a call to the flock backend to check that the sessionId
-    // is valid if present.
-    if (sessionStorage.getItem('sessionId') != null){
-        $.ajax({
-            data: { session_id: sessionStorage.getItem('sessionId') },
-            url: flock_server_url + "/checkSession",
-            success: function(response){
-                // If the session is found, then go directly to the search page
-                if (response === "session found"){
-                    $state.go('search');
-                // Otherwise clear the expired session information from the browser
-                } else {
-                    sessionStorage.clear();
-                }
-            },
-            error: function(error){
-                // If an error occurs, then clear the current session information
-                // and have the user login again
-                sessionStorage.clear();
-                console.log(error);
-            }
-        });
+    // Upon visiting the login page, check if the user is already logged in
+    // based on whether or not the access token and secret cookies are present.
+    if (readCookie('at') && readCookie('ats')){
+        $state.go('search');
+    // Otherwise clear the expired session information from the browser
+    } else {
+        clearCookies();
     }
 
     /*
@@ -52,15 +41,17 @@ app.controller('LoginController', function($scope, $state){
         @created: Mar 16, 2015
         @purpose: Requests query tokens from backend and redirects to Twitter sign in
         @return:  void
+        @modhist: Apr 19 2015 : Jimmy Ly : Replaced sessions with cookies
     */
     $scope.twitter_sign_in = function(){
         $.ajax({
             url: flock_server_url + "/requestToken",
             success: function(response){
-                // Set the sessionId provided by the backend to the sessionStorage
-                // and redirect the user to the Twitter sign in page
-                sessionStorage.setItem('sessionId', response[0]);
-                window.location.href = response[1];
+                // Set cookies based on the request token and secret provided
+                // by the backend and redirect the user to the Twitter sign in page
+                setCookie('rt', response[0]);
+                setCookie('rts', response[1]);
+                window.location.href = response[2];
             },
             error: function(error){
                 $scope.errorDialog('Sorry, there is an error with the login server. ' +
@@ -73,12 +64,13 @@ app.controller('LoginController', function($scope, $state){
         @name:    guest_sign_in
         @author:  Jimmy Ly
         @created: Mar 16, 2015
-        @purpose: Set the default Guest session information, including the
-                  sessionId as the guest sessionId, screen_name as 'Guest',
+        @purpose: Set the default Guest information using cookies, including the
+                  Guest access token and secret, screen_name as 'Guest',
                   profile_image_url as the default Twitter profile image,
                   and fromLogin = true to prevent search page from initially
                   redirecting back to login page
         @return:  void
+        @modhist: Apr 19 2015 : Jimmy Ly : Replaced sessions with cookies
     */
     $scope.guest_sign_in = function(){
         // make a call to the flock backend to retrieve the Guest session information
@@ -86,10 +78,11 @@ app.controller('LoginController', function($scope, $state){
             url: flock_server_url + "/guestSession",
             success: function(response){
                 // Set default Guest session information as described in @purpose
-                sessionStorage.setItem('sessionId', response.sessionId);
-                sessionStorage.setItem('screen_name', response.screen_name);
-                sessionStorage.setItem('profile_image_url', response.profile_image_url);
-                sessionStorage.setItem('fromLogin', true);
+                setCookie('at', response.accessToken);
+                setCookie('ats', response.accessTokenSecret);
+                setCookie('screen_name', response.screen_name);
+                setCookie('profile_image_url', response.profile_image_url);
+                setCookie('fromLogin', 'true');
                 // Bring the user to the search page
                 $state.go('search');
             },
@@ -120,6 +113,7 @@ app.controller('RedirectController', function($scope, $location){
                   then bring the user back to the login page. Also clear current session
                   information
         @return:  void
+        @modhist: Apr 19 2015 : Jimmy Ly : Replace sessions with cookies
     */
     $scope.redirect_error = function(){
         $scope.errorDialog('Sorry, there is an error with the login server. ' +
@@ -144,20 +138,23 @@ app.controller('RedirectController', function($scope, $location){
         key_value_pair = query_params[i].split("=");
         oauth_params[key_value_pair[0]] = key_value_pair[1];
     }
+    // send in request token and secret with request
+    oauth_params['requestToken'] = readCookie('rt');
+    oauth_params['requestTokenSecret'] = readCookie('rts');
     // check to make sure the current page's URL contains the oauth token and verifier from Twitter
     if (_.has(oauth_params, 'oauth_token') && _.has(oauth_params, 'oauth_verifier')){
-        // set session id in data to send to backend
-        oauth_params.session_id = sessionStorage.getItem('sessionId');
         // url for backend access token request endpoint
         var request_url = flock_server_url + "/accessToken";
         $.ajax({
             data: oauth_params,
             url: request_url,
             success: function(response){
-                // Set returned screen_name and profile_image_url for current user
-                // in sessionStorage and redirect user to search page
-                sessionStorage.setItem('screen_name', '@' + response.screen_name);
-                sessionStorage.setItem('profile_image_url', response.profile_image_url);
+                // Set returned access token and secret, screen_name, and
+                // profile_image_url for current user with cookie and redirect user to search page
+                setCookie('at', response.accessToken);
+                setCookie('ats', response.accessTokenSecret);
+                setCookie('screen_name', '@' + response.screen_name);
+                setCookie('profile_image_url', response.profile_image_url);
                 window.location.href = current_url.split("?")[0] + "#/search";
             },
             error: function(error){
@@ -182,36 +179,19 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
 
     // Upon visiting the search page, check if the user is already logged in.
     // If the user is a Guest, then make sure they were just redirected from
-    // the login page. Otherwise, remove the current session information and
+    // the login page. Otherwise, remove the current cookies and
     // bring the user back to the login page.
-    if (sessionStorage.getItem('sessionId') != null && !sessionStorage.getItem('fromLogin')){
-        $.ajax({
-            data: { session_id: sessionStorage.getItem('sessionId') },
-            url: flock_server_url + "/checkSession",
-            success: function(response){
-                // If the session id is invalid, then clear the current session information
-                // and redirect the user to the login screen
-                if (response === "session not found"){
-                    sessionStorage.clear();
-                    $state.go('login');
-                }
-            },
-            error: function(error){
-                sessionStorage.clear();
-                $state.go('login');
-            }
-        });
-    // If the user visits the page with a saved Guest session id but did not
-    // come directly from the login page, then redirect the user to the login
-    // page to encourage user logins through Twitter and reduce rate limit issue
-    } else if (!sessionStorage.fromLogin){
-        sessionStorage.clear();
+    accessToken = readCookie('at');
+    accessTokenSecret = readCookie('ats');
+    var isGuest = readCookie('screen_name') == 'Guest';
+    if (!accessToken || !accessTokenSecret || (isGuest && readCookie('fromLogin') != 'true')){
+        clearCookies();
         $state.go('login');
     }
-    // Remove 'fromLogin' item from sessionStorage so that next time Guest visitor
+    // Remove 'fromLogin' cookie so that next time Guest visitor
     // will be redirected to login page to encourage signing in through Twitter
     // to reduce rate limit issue
-    sessionStorage.removeItem('fromLogin');
+    deleteCookie('fromLogin');
 
     // Set default variable values
     $scope.tweets = [];
@@ -223,8 +203,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     $scope.load_more_copy = "View More Tweets";
     $scope.have_searched = false;
     $scope.have_visualized = false;
-    $scope.screen_name = sessionStorage.getItem('screen_name');
-    $scope.profile_image_url = sessionStorage.getItem('profile_image_url');
+    $scope.screen_name = readCookie('screen_name');
+    $scope.profile_image_url = readCookie('profile_image_url');
     $scope.count_options = [10, 25, 50, 75, 100];
     $scope.radius_options = [1, 5, 15, 50, 100, 500, 1000];
     $scope.sensitive = true;
@@ -341,6 +321,27 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         var geocoder = new google.maps.Geocoder();
         var query_parameters = {};
 
+        // Make sure that access token and secret are in the cache
+        if (!accessToken || !accessTokenSecret){
+            // Access token or secret not found in cache so check cookies.
+            // If not found in cookies, display error and reroute to login
+            if (!readCookie('at') || !readCookie('ats')){
+                $scope.errorDialog("Sorry, there has been an error with the " +
+                    "current session. Please login and try again.");
+                clearCookies();
+                $scope.go('login');
+            } else {
+                accessToken = readCookie('at');
+                accessTokenSecret = readCookie('ats');
+            }
+        }
+
+        // Access Token
+        query_parameters.accessToken = accessToken;
+
+        // Access Token Secret
+        query_parameters.accessTokenSecret = accessTokenSecret;
+
         // Search Term
         query_parameters.q = form_parameters.q;
 
@@ -438,7 +439,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 $scope.$apply();
             },
             error: function(error){
-                $scope.sessionExpired(error);
+                $scope.errorDialog('Sorry, an error has occurred. Please relogin and try again.');
+                console.log(error);
             }
         });
     }
@@ -477,7 +479,6 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                   Mar 30 : Jimmy Ly : Add warning for user if reaching rate limit
     */
     var twitterCall = function(params){
-        params.session_id = sessionStorage.sessionId;
         $scope.last_query = params;
         $.ajax({
             data: params,
@@ -530,7 +531,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 $scope.$apply();
             },
             error: function(error){
-                $scope.sessionExpired(error);
+                $scope.errorDialog('Sorry, an error has occurred. Please relogin and try again.');
+                console.log(error);
             }
         });
     };
@@ -1155,34 +1157,15 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     }
 
     /*
-        @name:    sessionExpired
-        @author   Jimmy Ly
-        @created  Mar 16, 2015
-        @purpose: Handles error where user's session has expired. Displays error message,
-                  clears saved session id, and redirects user to login page
-        @return:  void
-        @modhist:
-    */
-    $scope.sessionExpired = function(error){
-        if (error.status === 403){
-            $scope.errorDialog('Sorry, your session has expired. Please login again.');
-            sessionStorage.clear();
-            $state.go('login');
-        } else {
-            console.log(error);
-        }
-    }
-
-    /*
         @name:    logout
         @author   Jimmy Ly
         @created  Mar 16, 2015
-        @purpose: Logs out the user by clearing saved session id and redirecting to login page
+        @purpose: Logs out the user by clearing saved cookies and redirecting to login page
         @return:  void
-        @modhist:
+        @modhist: Apr 19 2015 : Jimmy Ly : Replace sessions with cookies
     */
     $scope.logout = function(){
-        sessionStorage.clear();
+        clearCookies();
         $state.go('login');
     }
 });
