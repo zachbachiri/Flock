@@ -822,6 +822,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     build_heatmap = function(){
         $("#heatmap").remove();
         $("#heatmap_wrap").append("<div id='heatmap' style='width:100%;height:400px;'></div>");
+        $("#heatmap_error").css("display", "none");
 
         var heatmapData = [];
 
@@ -853,6 +854,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             });
         } else {
             $("#heatmap").css("display", "none");
+            $("#heatmap_error").css("display", "block");
         }
     }
 
