@@ -1121,6 +1121,110 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             document.body.removeChild(link);
         };
     }
+    
+    /*
+        @name:    downloadHistogram
+        @author:  Alex Seeto
+        @created: Apr 18, 2015
+        @purpose: Converts canvas context to PNG, creates temp link to download
+        @param:   visual - String representing id for visual
+        @reqfile: html2ccanvas.js
+        @return:
+        @errors:
+        @modhist:
+    */
+    $scope.downloadHistogram = function(){
+        html2canvas($("#hashtag_histogram"), {
+            onrendered: function(canvas) {
+                theCanvas = canvas;
+                document.body.appendChild(theCanvas);
+                var url = theCanvas.toDataURL("image/png");
+                // Generate a temp <a /> tag
+                var link = document.createElement("a");
+                link.href = url;
+
+                // Set the visibility hidden so it will not affect web-layout
+                link.style = "visibility:hidden";
+                link.download = "flockhistogram.png";
+
+                // Append the anchor tag and remove it after automatic click
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+
+                document.body.removeChild(theCanvas);
+            }
+        });
+    }        
+    
+    /*
+        @name:    downloadHeatmap
+        @author:  Alex Seeto
+        @created: Apr 18, 2015
+        @purpose: Converts canvas context to PNG, creates temp link to download
+        @param:   visual - String representing id for visual
+        @reqfile: html2ccanvas.js
+        @return:
+        @errors:
+        @modhist:
+    */
+    $scope.downloadHeatmap = function(){
+        //get transform value
+        var transform=$(".gm-style>div:first>div").css("transform")
+        var comp=transform.split(",") //split up the transform matrix
+        var mapleft=parseFloat(comp[4]) //get left value
+        var maptop=parseFloat(comp[5])  //get top value
+        $(".gm-style>div:first>div").css({ //get the map container. not sure if stable
+            "transform":"none",
+            "left":mapleft,
+            "top":maptop,
+        })
+        // html2canvas($('#map-canvas'){
+        //     useCORS: true,
+        //     onrendered: function(canvas){
+        //         var dataUrl= canvas.toDataURL('image/png');
+        //         location.href=dataUrl //for testing I never get window.open to work
+        //         $(".gm-style>div:first>div").css({
+        //             left:0,
+        //             top:0,
+        //             "transform":transform
+        //         })
+        //     }
+        // });
+        html2canvas($("#heatmap"), {
+            // useCORS: true,
+            // allowTaint:true,
+            // onrendered: function(canvas) {
+            //    document.body.appendChild( canvas );
+            // }
+            useCORS: true,
+            // allowTaint:true,
+            onrendered: function(canvas) {
+                theCanvas = canvas;
+
+                var url = canvas.toDataURL("image/png");
+                // Generate a temp <a /> tag
+                var link = document.createElement("a");
+                link.href = url;
+
+                $(".gm-style>div:first>div").css({
+                    left:0,
+                    top:0,
+                    "transform":transform
+                })
+
+                // Set the visibility hidden so it will not affect web-layout
+                link.style = "visibility:hidden";
+                link.download = "flockheatmap.png";
+
+                // Append the anchor tag and remove it after automatic click
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        });
+    }
 
     /*
         @name:    autosuggest
