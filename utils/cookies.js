@@ -7,6 +7,13 @@
               and delete browser cookies
 */
 
+// Add startsWith functionality for browsers that don't already support it
+if (typeof String.prototype.startsWith != 'function') {
+  String.prototype.startsWith = function (str){
+    return this.slice(0, str.length) == str;
+  };
+}
+
 /*
     @author:  Jimmy Ly
     @created: Apr 19, 2015
