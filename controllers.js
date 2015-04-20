@@ -580,6 +580,26 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     }
 
     /*
+        @name:    unsupportedDialog
+        @author:  Jimmy Ly
+        @created: Apr 20, 2015
+        @purpose: Open ngDialog box warning user that their current browser doesn't
+                  support force downloading. Provides user with link and instructions on
+                  how to download the content.
+        @param:   uri - link containing content to be downloaded
+        @reqfile: plugins/ngDialog.js
+        @return:  void
+        @errors:
+        @modhist:
+    */
+    $scope.unsupportedDialog = function(uri) {
+        $scope.warningDialog("Your current browser doesn't support forced downloading. " +
+                    "Please right click this <a href='" + uri + "'>link</a> and click 'Download Linked File As...' " +
+                    "or 'Save Link As...' to download the .csv file on your computer. For more convenience, try " +
+                    "using either Google Chrome  or Mozilla Firefox.");
+    }
+
+    /*
         @name:    downloadDialog
         @author:  Alex Seeto
         @created: Feb 28, 2015
@@ -749,14 +769,20 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         var link = document.createElement("a");
         link.href = uri;
 
-        // Set the visibility hidden so it will not affect web-layout
-        link.style = "visibility:hidden";
-        link.download = fileName + ".csv";
+        // If the user is on Safari or Internet Explorer, forced downloading isn't supported. Provide
+        // them with instructions on how to download the file
+        if (link.download === undefined){
+            $scope.unsupportedDialog(uri);
+        }else{
+            // Set the visibility hidden so it will not affect web-layout
+            link.style = "visibility:hidden";
+            link.download = fileName + ".csv";
 
-        // Append the anchor tag and remove it after automatic click
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+            // Append the anchor tag and remove it after automatic click
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     }
 
     /*
