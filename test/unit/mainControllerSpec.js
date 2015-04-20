@@ -7,6 +7,12 @@
               accessible code is tested.
 */
 
+// Encrypted Guest access token and access token secret
+var guestAccessToken = '31c4e57b83e28607356f878e10162774ef874f2dd0f84b5484376e7ff8f5f0894df8604b27ad' +
+                       'd2aa066fd9b8c542b4c65f5df3beae3d089cef2a2963a00dfe36';
+var guestAccessSecret = 'd3c46a874b4a8b82c9d1f6625e9ecf33ee49e074e48e3753a27cd35ccd4e80f5fb953efa77c' +
+                        '0e8accdf561d259ae133e';
+
 // Test suite for the MainController
 describe('MainController', function() {
 
@@ -106,10 +112,8 @@ describe('MainController', function() {
         };
 
         // set Guest access token/secret cookies required for the query
-        setCookie('at', '31c4e57b83e28607356f878e10162774ef874f2dd0f84b5484376e7ff8f5f0894df8604b27ad' +
-                        'd2aa066fd9b8c542b4c65f5df3beae3d089cef2a2963a00dfe36');
-        setCookie('ats', 'd3c46a874b4a8b82c9d1f6625e9ecf33ee49e074e48e3753a27cd35ccd4e80f5fb953efa77c' +
-                         '0e8accdf561d259ae133e')
+        setCookie('at', guestAccessToken);
+        setCookie('ats', guestAccessSecret);
 
         scope.query(form_parameters);
 
@@ -214,12 +218,21 @@ describe('MainController', function() {
         var scope = {},
             ctrl = $controller('MainController', { $scope: scope });
 
+        // Set cookies to be cleared
+        setCookie('at', guestAccessToken);
+        setCookie('ats', guestAccessSecret);
+        // Start at the search page
         $state.go('search');
         $rootScope.$digest();
+        // Test that we are at the search page
         expect($state.is('search')).toBe(true);
+
         scope.logout();
         $rootScope.$digest();
+        // Test that we are now at the login screen
         expect($state.is('login')).toBe(true);
+        // Test that the cookies were cleared correctly
+        expect(document.cookie).toBe('');
     }));
 });
 
@@ -247,16 +260,21 @@ describe('LoginController', function() {
         // Begin at the login page
         $state.go('login');
         $rootScope.$digest();
+        // set Guest access token/secret cookies
+        setCookie('at', guestAccessToken);
+        setCookie('ats', guestAccessSecret);
     });
-
-    // Test that the guest_sign_in function keeps user at the login screen on error
+    // Test that the guest_sign_in function brings user to search page
     it('should test the guest_sign_in function', inject(function($controller, $state) {
         var scope = {},
             ctrl = $controller('LoginController', { $scope: scope });
 
+        // Test that we are beginning at the login page
         expect($state.is('login')).toBe(true);
+        // Use the Guest sign in
         scope.guest_sign_in();
         $rootScope.$digest();
-        expect($state.is('login')).toBe(true); // since tester cannot make cross domain requests
+        // Test that we are now on the search page
+        expect($state.is('search')).toBe(true);
     }));
 });
