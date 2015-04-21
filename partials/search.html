@@ -10,7 +10,7 @@
                 <p class="parameters_title">Search tweets</p>
                 <input id="query_text" class="text_box" type="text" ng-model="parameters.q" value="" placeholder="Search @user, #hashtag or Keyword"/>
                 <p class="parameters_title">Location</p>
-                <input id="loc_text" class="text_box" type="text" ng-keyup="autosuggest()" ng-model="parameters.loc" value="" placeholder="Boston, MA"/>
+                <input id="loc_text" class="text_box" type="text" ng-keyup="autosuggest()" ng-model="parameters.loc" value="" placeholder="Enter a Location"/>
 
                 <span class="show_hide_search" ng-hide="show_advanced_search" ng-click="toggle_advanced_search()">Advanced Search</span>
                 <span class="show_hide_search" ng-show="show_advanced_search" ng-click="toggle_advanced_search()">Hide Advanced Search</span>
@@ -93,9 +93,10 @@
         <h1>Word Cloud</h1>
         <div id="cloud" style="border:1px solid #cacaca; width: 800px; height: 300px;"></div>
         <br />
-        <button type="button" ng-click="downloadCloud()">Download Word Cloud</button>
+        <button type="button" ng-click="downloadCloud()">Download Word Cloud as Image</button>
         <h1>Hashtag Histogram</h1>
         <div id="hashtag_histogram"></div>
+        <button type="button" ng-click="downloadHashtagHistogram()">Download CSV File</button>
         <h1>Heatmap</h1>
         <div id="heatmap_wrap">
             <h2 id="heatmap_error">No location data for tweets.</h2>

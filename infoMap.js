@@ -37,5 +37,7 @@ var infoMap = [
     { title: 'Replied To',          section: "Download",        msg: 'Provides the username of person that tweet is replying to (if any).' },
     { title: 'Total Followers',     section: "Download",        msg: 'Provides the number of users following the author of tweet at time of tweet.' },
     { title: 'Total Friends',       section: "Download",        msg: 'Provides the number of users that the author of tweet had followed at the time of tweet.' },
-    { title: 'Total Favorites',     section: "Download",        msg: 'Provides the number of tweets that the author of tweet had favorited at the time of tweet.' }
+    { title: 'Total Favorites',     section: "Download",        msg: 'Provides the number of tweets that the author of tweet had favorited at the time of tweet.' },
+    { title: 'Tweet Mentions',      section: "Download",        msg: 'Provides list of mentions included in tweet.' },
+    { title: 'Tweet Hashtags',      section: "Download",        msg: 'Provides list of hashtags included in tweet.' }
 ]
