@@ -838,14 +838,20 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         var link = document.createElement("a");
         link.href = uri;
 
-        // Set the visibility hidden so it will not affect web-layout
-        link.style = "visibility:hidden";
-        link.download = fileName + ".csv";
-
-        // Append the anchor tag and remove it after automatic click
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        // If the user is on Safari or Internet Explorer, forced downloading isn't supported. Provide
+        // them with instructions on how to download the file
+        if (link.download === undefined){
+            $scope.unsupportedDialog(uri);
+        }else{
+            // Set the visibility hidden so it will not affect web-layout
+            link.style = "visibility:hidden";
+            link.download = fileName + ".csv";
+        
+            // Append the anchor tag and remove it after automatic click
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     }
 
     /*
@@ -1273,14 +1279,20 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         var link = document.createElement("a");
         link.href = uri;
 
-        // Set the visibility hidden so it will not affect web-layout
-        link.style = "visibility:hidden";
-        link.download = fileName + ".csv";
-
-        // Append the anchor tag and remove it after automatic click
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        // If the user is on Safari or Internet Explorer, forced downloading isn't supported. Provide
+        // them with instructions on how to download the file
+        if (link.download === undefined){
+            $scope.unsupportedDialog(uri);
+        }else{
+            // Set the visibility hidden so it will not affect web-layout
+            link.style = "visibility:hidden";
+            link.download = fileName + ".csv";
+        
+            // Append the anchor tag and remove it after automatic click
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     }
 
     /*
