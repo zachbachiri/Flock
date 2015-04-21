@@ -8,7 +8,6 @@ var appControllers = angular.module('appControllers', ['masonry', 'ngDialog', 'u
     // cached access token secret from cookie
     var accessTokenSecret;
 
-
     // Array of stop words
     var stopWords = '';
     $.get("stopwords_en.txt", function(data) {
@@ -234,8 +233,13 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         { infoMapId: 17, name: 'Replied To',      value: 'replyto',   isChecked: true },
         { infoMapId: 18, name: 'Total Followers', value: 'followers', isChecked: true },
         { infoMapId: 19, name: 'Total Friends',   value: 'friends',   isChecked: true },
-        { infoMapId: 20, name: 'Total Favorites', value: 'favorites', isChecked: true }
+        { infoMapId: 20, name: 'Total Favorites', value: 'favorites', isChecked: true },
+        { infoMapId: 21, name: 'Tweet Mentions',  value: 'mentions',  isChecked: true },
+        { infoMapId: 22, name: 'Tweet Hashtags',  value: 'hashtags',  isChecked: true }
     ];
+
+    // Default Toggle All
+    $scope.selectedAll = true;
 
     // Default date options
     $scope.dateOptions = { 
@@ -243,6 +247,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         minDate: '-7', 
         maxDate: '0D' 
     }
+
     // Build Info Dialog
     var loaded_info_dialog_sidebar  = false;
     var loaded_info_dialog_filter   = false;
@@ -268,6 +273,9 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     loaded_info_dialog_filter   = false;
     loaded_info_dialog_visual   = false;
     loaded_info_dialog_download = false;
+
+    // Default Hashtag Histogram Data
+    var hashtag_histogram = '';
 
     /*
         @name:    infoDialog
@@ -618,6 +626,10 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         }
         ngDialog.open({
             template: '<div><h3>Select Columns to Download </h3>' +
+                          '<div>' +
+                              '<input type="checkbox" ng-model="selectedAll" ng-click="checkAll()" />' +
+                              '&nbsp;<label>Toggle All Checkboxes</label>' +
+                          '</div>' +
                           '<div ng-repeat="elem in column_names">' +
                               '<input type="checkbox" ng-model="elem.isChecked" id="check-box-{{$index}}" />' +
                               '&nbsp;<label ng-bind="elem.name" for="check-box-{{$index}}"></label>' +
@@ -631,6 +643,29 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             scope: $scope
         });
     }
+
+    /*
+        @name:    checkAll
+        @author:  Alex Seeto
+        @created: Apr 21, 2015
+        @purpose: Toggles all download dialog checkboxes
+        @param:
+        @reqfile:
+        @return:  
+        @errors:
+        @modhist:
+    */
+    $scope.checkAll = function () {
+        if ($scope.selectedAll) {
+            $scope.selectedAll = false;
+        } else {
+            $scope.selectedAll = true;
+        }
+        angular.forEach($scope.column_names, function (item) {
+            item.isChecked = $scope.selectedAll;
+        });
+
+    };
 
     /*
         @name:    isChecked
@@ -682,6 +717,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         var followers = '';
         var friends   = '';
         var favorites = '';
+        var mentions  = '';
+        var hashtags  = '';
 
         // Boolean checks for selected columns
         var checkedUsername = $scope.column_names[0].isChecked;
@@ -696,6 +733,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         var checkedTotalFollowers = $scope.column_names[9].isChecked;
         var checkedTotalFriends = $scope.column_names[10].isChecked;
         var checkedTotalFavorites = $scope.column_names[11].isChecked;
+        var checkedMentions = $scope.column_names[12].isChecked;
+        var checkedHashtags = $scope.column_names[13].isChecked;
 
         // Create string of CSV column headers separated by commas
         for(var e in $scope.column_names) {
@@ -726,11 +765,39 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             followers = $scope.tweets[i]["user"]["followers_count"];
             friends   = $scope.tweets[i]["user"]["friends_count"];
             favorites = $scope.tweets[i]["user"]["favourites_count"];
+            mentions  = $scope.tweets[i]["entities"]["user_mentions"];
+            hashtags  = $scope.tweets[i]["entities"]["hashtags"];
 
             // Boolean checks for possible null or undefined variables
-            var placeCheck = place === null;
-            var mediaCheck = typeof media == "undefined";
-            var replyCheck = repliedto === null;
+            var placeCheck   = place === null;
+            var mediaCheck   = typeof media == "undefined";
+            var replyCheck   = repliedto === null;
+            var mentionCheck = typeof mentions == "undefined";
+            var hashtagCheck = typeof hashtags == "undefined";
+
+            // Create string of all media separated by commas
+            if(!mediaCheck){
+                media = '';
+                $scope.tweets[i].entities.media.forEach(function(y){
+                    media ? media += "\, " + y.url : media += y.url;
+                });
+            }
+
+            // Create string of all mentions separated by commas
+            if(!mentionCheck){
+                mentions = '';
+                $scope.tweets[i].entities.user_mentions.forEach(function(y){
+                    mentions ? mentions += "\, " + y.screen_name : mentions += y.screen_name;
+                });
+            }
+
+            // Create string of all mentions separated by commas
+            if(!hashtagCheck){
+                hashtags = '';
+                $scope.tweets[i].entities.hashtags.forEach(function(y){
+                    hashtags ? hashtags += "\, " + y.text : hashtags += y.text;
+                });
+            }
 
             // Convert message to encoded String
             message = message.replace(/\n/g, ' ').replace(/"/g,'""');
@@ -741,13 +808,15 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             (checkedLocation)       ? row += '"' + (placeCheck ? "Not Available" : place["full_name"]) + '",' : "";
             (checkedTimestamp)      ? row += '"' + timestamp + '",' : "";
             (checkedMessage)        ? row += '"' + message + '",' : "";
-            (checkedMedia)          ? row += '"' + (mediaCheck ? "Not Available" : media[0]["url"]) + '",' : "";
+            (checkedMedia)          ? row += '"' + (media ? media : "Not Available") + '",' : "";
             (checkedFavorited)      ? row += '"' + favorited + '",' : "";
             (checkedFavCount)       ? row += '"' + favcount + '",' : "";
             (checkedRepliedTo)      ? row += '"' + (replyCheck ? "Not Available" : repliedto) + '",' : "";
             (checkedTotalFollowers) ? row += '"' + followers + '",' : "";
             (checkedTotalFriends)   ? row += '"' + friends + '",' : "";
             (checkedTotalFavorites) ? row += '"' + favorites + '",' : "";
+            (checkedMentions)       ? row += '"' + (mentions ? mentions : "Not Available") + '",' : "";
+            (checkedHashtags)       ? row += '"' + (hashtags ? hashtags : "Not Available") + '",' : "";
 
             // Add a line break after each row of data
             CSV += row + '\r\n';
@@ -769,20 +838,14 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         var link = document.createElement("a");
         link.href = uri;
 
-        // If the user is on Safari or Internet Explorer, forced downloading isn't supported. Provide
-        // them with instructions on how to download the file
-        if (link.download === undefined){
-            $scope.unsupportedDialog(uri);
-        }else{
-            // Set the visibility hidden so it will not affect web-layout
-            link.style = "visibility:hidden";
-            link.download = fileName + ".csv";
+        // Set the visibility hidden so it will not affect web-layout
+        link.style = "visibility:hidden";
+        link.download = fileName + ".csv";
 
-            // Append the anchor tag and remove it after automatic click
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+        // Append the anchor tag and remove it after automatic click
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     /*
@@ -1019,7 +1082,9 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         // If no hashtags are found, add message
         if($('#hashtag_histogram').is(':empty')){
             $('#hashtag_histogram').text("No hashtags were found that occurred more than once within search results.");
-        } 
+        }
+
+        hashtag_histogram = tuples;
     }
 
 
@@ -1146,6 +1211,76 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
             link.click();
             document.body.removeChild(link);
         };
+    }
+
+    /*
+        @name:    downloadHashtagHistogram
+        @author:  Alex Seeto
+        @created: Apr 21, 2015
+        @purpose: Converts hashtag histogram data into CSV file with hashtags and respective frequencies
+        @param:
+        @reqfile:
+        @return:
+        @errors:
+        @modhist:
+    */
+    $scope.downloadHashtagHistogram = function() {
+        // Initiate final CSV string
+        var CSV = '';
+
+        // Initiate row variable
+        var row = "";
+
+        // Initiate column variables
+        var hashtag   = '';
+        var frequency = '';
+
+        row = "\"Hashtag\",\"Frequency\"";
+
+        // Append column header row with line break
+        CSV += row + '\r\n';
+
+        // Loop through all tweets
+        for (var i = 0; i < hashtag_histogram.length; i++){
+            row = '';
+
+            var key = hashtag_histogram[i][0];
+            var value = hashtag_histogram[i][1];
+
+            if(value > 1){
+                // Separate data with commas
+                row += '"' + key   + '",';
+                row += '"' + value + '"';
+
+                // Add a line break after each row of data
+                CSV += row + '\r\n';
+            }
+        }
+
+        // Check CSV data exists
+        if (CSV == ''){
+            $scope.errorDialog("The CSV file does not contain any data.");
+            return;
+        }
+
+        // Generate a file name
+        var fileName = "hashtagHistogram";
+
+        // Initialize file format you want csv or xls
+        var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+
+        // Generate a temp <a /> tag
+        var link = document.createElement("a");
+        link.href = uri;
+
+        // Set the visibility hidden so it will not affect web-layout
+        link.style = "visibility:hidden";
+        link.download = fileName + ".csv";
+
+        // Append the anchor tag and remove it after automatic click
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     /*
