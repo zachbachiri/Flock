@@ -264,7 +264,7 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         info_dialog_filter   && !loaded_info_dialog_filter   ? (info += '</div><div id="info_dialog_filter"><h3><u>'   + infoMap[i].section + '</u></h3>', loaded_info_dialog_filter   = true) : '';
         info_dialog_visual   && !loaded_info_dialog_visual   ? (info += '</div><div id="info_dialog_visual"><h3><u>'   + infoMap[i].section + '</u></h3>', loaded_info_dialog_visual   = true) : '';
         info_dialog_download && !loaded_info_dialog_download ? (info += '</div><div id="info_dialog_download"><h3><u>' + infoMap[i].section + '</u></h3>', loaded_info_dialog_download = true) : '';
-        info += '<h3>' + infoMap[i].title + '</h3><p>' + infoMap[i].msg + '</p>';
+        info += '<h4>' + infoMap[i].title + '</h4><p>' + infoMap[i].msg + '</p>';
     }
     info += '</div></div>';
 
