@@ -408,6 +408,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                   Mar 30 : Jimmy Ly : Add warning for user if reaching rate limit
     */
     $scope.load_more = function(){
+        // Maintain previous number of displayed tweets
+        var prevTweetCount = $scope.tweets.length;
         // Change 'View More Tweets' button display value
         $scope.load_more_copy = "...";
         $.ajax({
@@ -445,6 +447,10 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
                 }
                 $scope.load_more_copy = "View More Tweets";
                 $scope.$apply();
+                // Alert user to try again soon if no new tweets were found
+                if (prevTweetCount === $scope.tweets.length){
+                    $scope.errorDialog('No new tweets were found. Please try again soon.');
+                }
             },
             error: function(error){
                 $scope.errorDialog('Sorry, an error has occurred. Please relogin and try again.');
