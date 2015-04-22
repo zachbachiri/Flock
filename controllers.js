@@ -353,6 +353,19 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         // Search Term
         query_parameters.q = form_parameters.q;
 
+        // Exclusion Terms
+        if(form_parameters.exclude){
+            var exclusion_terms = [];
+            if(form_parameters.exclude.indexOf(",") > -1){
+                exclusion_terms = form_parameters.exclude.replace(" ", "").split(","); 
+            } else {
+                exclusion_terms.push(form_parameters.exclude);
+            }
+            for(var i=0; i<exclusion_terms.length; i++){
+                query_parameters.q += " -" + exclusion_terms[i];
+            }
+        }
+
         // Tweets returned
         query_parameters.count = form_parameters.count;
 
