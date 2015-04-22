@@ -10,6 +10,7 @@ var infoMap = [
                                                                                 'This parameter will be ignored unless it is inside the range -180.0 to +180.0 (East is positive) inclusive. ' +
                                                                                 'It will also be ignored if there isn’t a corresponding lat parameter.</li>' +
                                                                      '</ul>' },
+    { title: 'Exclusion Terms',     section: "Filter",          msg: 'Allows user to enter a keyword to be excluded from the search. Multiple keywords may be provided so long as they are delimited by a comma.' },
     { title: 'Date',                section: "Filter",          msg: 'Start Date: Returns tweets generated since the given date. Date should be formatted as YYYY-MM-DD.</p><p>' +
                                                                      'End Date: Returns tweets generated until the given date. Date should be formatted as YYYY-MM-DD.</p><p> ' +
                                                                      'Please note that the search index is limited as Twitter archives only 1 week of tweets.' },
