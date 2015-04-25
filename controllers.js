@@ -931,7 +931,8 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
         @reqfile:
         @return:  void
         @errors:
-        @modhist:
+        @modhist: Apr 24 2015 : Jimmy Ly : Fix bug where points were plotted with coordinates
+                                          (0, 0) using the tweet's 'bounding_box' property
     */
     build_heatmap = function(){
         $("#heatmap").remove();
@@ -942,7 +943,26 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
 
         $scope.tweets.forEach(function(x){
             if(x.geo){
-                var obj = {location: new google.maps.LatLng(x.geo.coordinates[0], x.geo.coordinates[1]), weight: 3};
+                // get latitude and longitude data
+                var lat = x.geo.coordinates[0];
+                var lng = x.geo.coordinates[1];
+                // check if latitude and longitude values are (0, 0). Replace these
+                // values, otherwise points are plotted in the middle of the ocean
+                if (lat === 0 && lng === 0 && x.place && x.place.bounding_box){
+                    var coordinates = x.place.bounding_box.coordinates[0];
+                    var latSum = 0;
+                    var lngSum = 0
+                    // 'place' property in tweet provides four latitude/longitude
+                    // values for a 'bounding_box' of the location. Average these
+                    // values and use the center position as this tweet's geolocation
+                    for (var i in coordinates){
+                        latSum += coordinates[i][1];
+                        lngSum += coordinates[i][0];
+                    }
+                    lat = latSum / 4;
+                    lng = lngSum / 4;
+                }
+                var obj = {location: new google.maps.LatLng(lat, lng), weight: 3};
                 heatmapData.push(obj);
             }
         });
