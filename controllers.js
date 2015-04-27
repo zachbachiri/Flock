@@ -907,22 +907,6 @@ app.controller('MainController', function($scope, $q, $state, ngDialog){
     }
 
     /*
-        @name:    revisualize
-        @author:  Alex Seeto
-        @created: Apr 10, 2015
-        @purpose: Initiates default variables before executing visualize function
-        @param:
-        @reqfile:
-        @return:  void
-        @errors:
-        @modhist:
-    */
-    $scope.revisualize = function(){
-        $scope.show_visualize = !$scope.show_visualize;
-        $scope.visualize();
-    }
-
-    /*
         @name:    build_heatmap
         @author:  Zach Bachiri
         @created: Apr 12, 2015

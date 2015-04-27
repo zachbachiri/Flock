@@ -144,9 +144,8 @@ describe('MainController', function() {
 
     }));
 
-    // Test both the visualize and revisualize functions. The visualization
-    // variables should change after calling visualize, but should not after
-    // a call to revisualize
+    // Test the visualize functions. The visualization
+    // variables should change after calling visualize
     it('should test the visualize function', inject(function($controller) {
         var scope = {},
             ctrl = $controller('MainController', { $scope: scope });
@@ -170,12 +169,6 @@ describe('MainController', function() {
 
         // Test that once a search has been made, then the visualization view will display when toggled
         scope.visualize();
-        expect(scope.show_visualize).toBe(true);
-        expect(scope.visualize_copy).toBe('Tweets');
-        expect(scope.have_visualized).toBe(true);
-
-        // Test that the visualize variables will maintain the same values after calling revisualize
-        scope.revisualize();
         expect(scope.show_visualize).toBe(true);
         expect(scope.visualize_copy).toBe('Tweets');
         expect(scope.have_visualized).toBe(true);
